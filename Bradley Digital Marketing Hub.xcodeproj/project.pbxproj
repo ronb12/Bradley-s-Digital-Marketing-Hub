@@ -34,6 +34,8 @@
 	A1000010000000000000001A /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001A /* ProfileView.swift */; };
 	A1000010000000000000001B /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001B /* PaywallView.swift */; };
 	A1000010000000000000001C /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001C /* SafariView.swift */; };
+	A1000010000000000000001F /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000021 /* DemoData.swift */; };
+	A10000100000000000000020 /* DemoDataSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000022 /* DemoDataSeeder.swift */; };
 	A1000010000000000000001D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001D /* Assets.xcassets */; };
 	A1000010000000000000001E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001E /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -71,6 +73,8 @@
 	A1000110000000000000001E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = "Preview Assets.xcassets"; path = "Preview Content/Preview Assets.xcassets"; sourceTree = "<group>"; };
 	A1000110000000000000001F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
 	A10001100000000000000020 /* Bradley Digital Marketing Hub.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Bradley Digital Marketing Hub.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+	A10001100000000000000021 /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Supporting/DemoData.swift"; sourceTree = "<group>"; };
+	A10001100000000000000022 /* DemoDataSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Services/DemoDataSeeder.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,7 +140,8 @@
 		children = (
 			A10001100000000000000005 /* CloudKitService.swift */,
 			A10001100000000000000006 /* AuthService.swift */,
-			A10001100000000000000007 /* SubscriptionManager.swift */
+			A10001100000000000000007 /* SubscriptionManager.swift */,
+			A10001100000000000000022 /* DemoDataSeeder.swift */
 		);
 		name = Services;
 		sourceTree = "<group>";
@@ -163,7 +168,8 @@
 		isa = PBXGroup;
 		children = (
 			A10001100000000000000003 /* Constants.swift */,
-			A10001100000000000000004 /* Extensions.swift */
+			A10001100000000000000004 /* Extensions.swift */,
+			A10001100000000000000021 /* DemoData.swift */
 		);
 		name = Supporting;
 		sourceTree = "<group>";
@@ -350,8 +356,10 @@
 			A10000100000000000000009 /* ContentGeneratorViewModel.swift in Sources */,
 			A10000100000000000000008 /* AppViewModel.swift in Sources */,
 			A10000100000000000000007 /* SubscriptionManager.swift in Sources */,
+			A10000100000000000000020 /* DemoDataSeeder.swift in Sources */,
 			A10000100000000000000006 /* AuthService.swift in Sources */,
 			A10000100000000000000005 /* CloudKitService.swift in Sources */,
+			A1000010000000000000001F /* DemoData.swift in Sources */,
 			A10000100000000000000004 /* Extensions.swift in Sources */,
 			A10000100000000000000003 /* Constants.swift in Sources */,
 			A10000100000000000000002 /* MarketingModels.swift in Sources */,

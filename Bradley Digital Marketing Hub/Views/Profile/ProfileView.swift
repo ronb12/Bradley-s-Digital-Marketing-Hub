@@ -3,6 +3,8 @@ import SwiftUI
 struct ProfileView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
     @StateObject private var profileViewModel = ProfileViewModel()
+    @State private var isSeedingDemoData = false
+    @State private var demoSeedStatus: String?
 
     var body: some View {
         List {
@@ -56,6 +58,39 @@ struct ProfileView: View {
                     }
                 } else {
                     Text("Upgrade to Agency to add more brands.")
+                        .foregroundColor(.secondary)
+                }
+            }
+
+            Section(header: Text("Demo Utilities"), footer: Text("Seeds CloudKit with sample brands, campaigns, templates, and affiliate tools.")) {
+                Button {
+                    guard !isSeedingDemoData else { return }
+                    isSeedingDemoData = true
+                    demoSeedStatus = "Seeding demo data..."
+                    Task {
+                        do {
+                            let result = try await appViewModel.seedDemoData()
+                            demoSeedStatus = result.summary
+                        } catch {
+                            demoSeedStatus = error.localizedDescription
+                        }
+                        isSeedingDemoData = false
+                    }
+                } label: {
+                    if isSeedingDemoData {
+                        HStack {
+                            ProgressView()
+                            Text("Seeding Demo Data…")
+                        }
+                    } else {
+                        Label("Seed Demo Data", systemImage: "shippingbox.fill")
+                    }
+                }
+                .disabled(isSeedingDemoData)
+
+                if let status = demoSeedStatus {
+                    Text(status)
+                        .font(.caption)
                         .foregroundColor(.secondary)
                 }
             }

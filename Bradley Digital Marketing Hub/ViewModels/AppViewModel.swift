@@ -201,6 +201,16 @@ final class AppViewModel: ObservableObject {
         }
     }
 
+    func seedDemoData() async throws -> DemoSeedResult {
+        guard let profile = userProfile else {
+            throw CloudKitError.operationFailed("Missing user profile for demo data seeding.")
+        }
+        let seeder = DemoDataSeeder(cloudKitService: cloudKitService)
+        let result = try await seeder.seed(for: profile.userId)
+        await refreshPortal()
+        return result
+    }
+
     func updatePlan(to tier: SubscriptionTier) async {
         guard var profile = userProfile else { return }
         profile.plan = tier

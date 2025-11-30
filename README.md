@@ -54,6 +54,7 @@ Bradley-Digital-Marketing-Hub
 4. **StoreKit 2**: Configure `dmhub.pro.monthly` and `dmhub.agency.monthly` in App Store Connect or change the identifiers in `SubscriptionTier` to match your products.
 5. **Sign in with Apple**: Enable Sign in with Apple capability in the Signing & Capabilities tab.
 6. **Run**: Choose an iPhone or iPad target running iOS 17+ and press **Run**.
+7. **Seed demo data (optional)**: After onboarding, open the Profile tab → Demo Utilities → **Seed Demo Data** to publish example brands, campaigns, templates, and affiliate tools to your CloudKit containers.
 
 ## CloudKit Record Guidance
 Each record type is defined in `Models/MarketingModels.swift`. Comments in `CloudKitService` highlight where to add new record logic, modify quotas, or seed template/affiliate data.

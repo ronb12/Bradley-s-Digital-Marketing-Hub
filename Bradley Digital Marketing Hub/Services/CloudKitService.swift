@@ -128,10 +128,18 @@ final class CloudKitService {
         try await fetch(recordType: TemplateItem.recordType, scope: .public)
     }
 
+    func saveTemplate(_ template: TemplateItem) async throws -> TemplateItem {
+        try await save(template, scope: .public)
+    }
+
     // MARK: - Affiliate Tools
 
     func fetchAffiliateTools() async throws -> [AffiliateTool] {
         try await fetch(recordType: AffiliateTool.recordType, scope: .public)
+    }
+
+    func saveAffiliateTool(_ tool: AffiliateTool) async throws -> AffiliateTool {
+        try await save(tool, scope: .public)
     }
 
     func logAffiliateClick(_ click: AffiliateClick) async throws {
