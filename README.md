@@ -74,6 +74,7 @@ Each record type is defined in `Models/MarketingModels.swift`. Comments in `Clou
 ## Legal
 - Review the [Terms of Service](Docs/TermsOfService.md).
 - Read the [Privacy Policy](Docs/PrivacyPolicy.md) to understand how CloudKit data is handled.
+- Public GitHub Pages link (after enabling Pages → `main` branch / `docs/` folder): `https://ronb12.github.io/Bradley-s-Digital-Marketing-Hub/privacy-policy`
 
 ## Support
 For questions or consulting, email `support@bradleyvirtualsolutions.com`.
