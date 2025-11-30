@@ -62,36 +62,43 @@ struct ProfileView: View {
                 }
             }
 
-            Section(header: Text("Demo Utilities"), footer: Text("Seeds CloudKit with sample brands, campaigns, templates, and affiliate tools.")) {
-                Button {
-                    guard !isSeedingDemoData else { return }
-                    isSeedingDemoData = true
-                    demoSeedStatus = "Seeding demo data..."
-                    Task {
-                        do {
-                            let result = try await appViewModel.seedDemoData()
-                            demoSeedStatus = result.summary
-                        } catch {
-                            demoSeedStatus = error.localizedDescription
-                        }
-                        isSeedingDemoData = false
-                    }
-                } label: {
-                    if isSeedingDemoData {
-                        HStack {
-                            ProgressView()
-                            Text("Seeding Demo Data…")
-                        }
-                    } else {
-                        Label("Seed Demo Data", systemImage: "shippingbox.fill")
-                    }
-                }
-                .disabled(isSeedingDemoData)
-
-                if let status = demoSeedStatus {
-                    Text(status)
-                        .font(.caption)
+            if appViewModel.isDemoMode {
+                Section(header: Text("Demo Mode")) {
+                    Text("You are browsing demo data. Sign in with Apple for a personal workspace.")
                         .foregroundColor(.secondary)
+                }
+            } else {
+                Section(header: Text("Demo Utilities"), footer: Text("Seeds CloudKit with sample brands, campaigns, templates, and affiliate tools.")) {
+                    Button {
+                        guard !isSeedingDemoData else { return }
+                        isSeedingDemoData = true
+                        demoSeedStatus = "Seeding demo data..."
+                        Task {
+                            do {
+                                let result = try await appViewModel.seedDemoData()
+                                demoSeedStatus = result.summary
+                            } catch {
+                                demoSeedStatus = error.localizedDescription
+                            }
+                            isSeedingDemoData = false
+                        }
+                    } label: {
+                        if isSeedingDemoData {
+                            HStack {
+                                ProgressView()
+                                Text("Seeding Demo Data…")
+                            }
+                        } else {
+                            Label("Seed Demo Data", systemImage: "shippingbox.fill")
+                        }
+                    }
+                    .disabled(isSeedingDemoData)
+
+                    if let status = demoSeedStatus {
+                        Text(status)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
 

@@ -23,6 +23,17 @@ struct WelcomeView: View {
             }
             .signInWithAppleButtonStyle(.black)
             .frame(height: 48)
+            Button {
+                appViewModel.enterDemoMode()
+            } label: {
+                Text("Explore Demo Mode")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(.hubBlue)
+            Text("Preview the app with sample data before signing in. Demo mode is read-only.")
+                .font(.footnote)
+                .foregroundColor(.secondary)
             Text("We use Sign in with Apple to securely create your marketing workspace.")
                 .font(.footnote)
                 .foregroundColor(.secondary)

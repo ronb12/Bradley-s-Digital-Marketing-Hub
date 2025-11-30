@@ -21,6 +21,7 @@ final class AppViewModel: ObservableObject {
     @Published var selectedBrand: Brand?
     @Published var showPaywall = false
     @Published var errorMessage: String?
+    @Published var isDemoMode = false
 
     let cloudKitService = CloudKitService()
     let authService = AuthService()
@@ -96,8 +97,34 @@ final class AppViewModel: ObservableObject {
         await refreshPortal()
     }
 
+    func enterDemoMode() {
+        guard !isDemoMode else { return }
+        isDemoMode = true
+        didBootstrap = true
+        let demoUserId = "demo-user"
+        let demoBrand = DemoData.brands(userId: demoUserId)
+        userProfile = UserProfile(
+            userId: demoUserId,
+            name: "Demo User",
+            businessName: "Social Labs Co.",
+            businessType: "Marketing Services",
+            plan: .pro,
+            createdAt: Date()
+        )
+        brands = demoBrand
+        selectedBrand = brands.first
+        campaignPlans = DemoData.campaignPlans(userId: demoUserId, brandId: selectedBrand?.id)
+        calendarItems = DemoData.calendarItems(userId: demoUserId, brandId: selectedBrand?.id)
+        templates = DemoData.templates
+        affiliateTools = DemoData.affiliateTools
+        subscriptionManager.overrideTier(.pro)
+        authState = .authenticated
+        errorMessage = "Demo mode is read-only. Sign in with Apple for full functionality."
+    }
+
     func refreshPortal() async {
         guard let profile = userProfile else { return }
+        guard !isDemoMode else { return }
         async let brandsTask = fetchBrands(for: profile)
         async let campaignsTask = fetchCampaigns(for: profile)
         async let calendarTask = fetchCalendar(for: profile)
@@ -144,6 +171,8 @@ final class AppViewModel: ObservableObject {
 
     func signOut() {
         authService.signOut()
+        isDemoMode = false
+        didBootstrap = false
         userProfile = nil
         brands = []
         campaignPlans = []
@@ -156,6 +185,10 @@ final class AppViewModel: ObservableObject {
     }
 
     func saveCampaignPlan(_ plan: CampaignPlan) async {
+        guard !isDemoMode else {
+            errorMessage = "Demo mode is read-only. Sign in to save campaign plans."
+            return
+        }
         do {
             let saved = try await cloudKitService.saveCampaignPlan(plan)
             campaignPlans.insert(saved, at: 0)
@@ -165,6 +198,10 @@ final class AppViewModel: ObservableObject {
     }
 
     func saveCalendarItem(_ item: ContentCalendarItem) async {
+        guard !isDemoMode else {
+            errorMessage = "Demo mode is read-only. Sign in to schedule items."
+            return
+        }
         do {
             let saved = try await cloudKitService.saveCalendarItem(item)
             calendarItems.append(saved)
@@ -174,6 +211,10 @@ final class AppViewModel: ObservableObject {
     }
 
     func saveBrand(_ brand: Brand) async {
+        guard !isDemoMode else {
+            errorMessage = "Demo mode is read-only. Sign in to add brands."
+            return
+        }
         do {
             let saved = try await cloudKitService.saveBrand(brand)
             brands.append(saved)
@@ -184,6 +225,10 @@ final class AppViewModel: ObservableObject {
     }
 
     func saveBooking(_ booking: Booking) async {
+        guard !isDemoMode else {
+            errorMessage = "Demo mode is read-only. Sign in to book services."
+            return
+        }
         do {
             _ = try await cloudKitService.saveBooking(booking)
         } catch {
@@ -192,6 +237,7 @@ final class AppViewModel: ObservableObject {
     }
 
     func logAffiliateClick(tool: AffiliateTool) async {
+        guard !isDemoMode else { return }
         guard let profile = userProfile else { return }
         let click = AffiliateClick(userId: profile.userId, toolId: tool.id)
         do {
@@ -202,6 +248,9 @@ final class AppViewModel: ObservableObject {
     }
 
     func seedDemoData() async throws -> DemoSeedResult {
+        guard !isDemoMode else {
+            throw CloudKitError.operationFailed("Seed is disabled in demo mode. Sign in with Apple to publish CloudKit data.")
+        }
         guard let profile = userProfile else {
             throw CloudKitError.operationFailed("Missing user profile for demo data seeding.")
         }
@@ -212,6 +261,10 @@ final class AppViewModel: ObservableObject {
     }
 
     func updatePlan(to tier: SubscriptionTier) async {
+        guard !isDemoMode else {
+            subscriptionManager.overrideTier(tier)
+            return
+        }
         guard var profile = userProfile else { return }
         profile.plan = tier
         do {
