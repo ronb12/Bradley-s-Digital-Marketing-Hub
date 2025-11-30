@@ -11,6 +11,7 @@ Bradley Digital Marketing Hub is a native iOS 17+ SwiftUI application that helps
 - Sign in with Apple onboarding and notifications primer
 - Affiliate link logging via CloudKit and SFSafariViewController deep links
 - Booking workflow for consultations and services with future payment integration placeholder
+- Profile avatar uploads stored as CloudKit assets with optional removal
 
 ## Tech Stack
 - SwiftUI + NavigationStack + TabView

@@ -77,6 +77,23 @@ final class CloudKitService {
         try await save(profile, scope: .private)
     }
 
+    func updateUserAvatar(data: Data, userId: String) async throws -> UserProfile {
+        let tempURL = try writeTemporaryAsset(data: data, preferredExtension: "jpg")
+        let recordID = CKRecord.ID(recordName: userId)
+        let record = try await privateDB.record(for: recordID)
+        record["avatarAsset"] = CKAsset(fileURL: tempURL)
+        let saved = try await privateDB.save(record)
+        return try UserProfile(record: saved)
+    }
+
+    func removeUserAvatar(userId: String) async throws -> UserProfile {
+        let recordID = CKRecord.ID(recordName: userId)
+        let record = try await privateDB.record(for: recordID)
+        record["avatarAsset"] = nil
+        let saved = try await privateDB.save(record)
+        return try UserProfile(record: saved)
+    }
+
     // MARK: - Brands
 
     func fetchBrands(userId: String) async throws -> [Brand] {
@@ -172,5 +189,14 @@ final class CloudKitService {
 
     func saveBooking(_ booking: Booking) async throws -> Booking {
         try await save(booking, scope: .private)
+    }
+
+    // MARK: - Helpers
+
+    private func writeTemporaryAsset(data: Data, preferredExtension: String) throws -> URL {
+        let tempDirectory = FileManager.default.temporaryDirectory
+        let fileURL = tempDirectory.appendingPathComponent(UUID().uuidString).appendingPathExtension(preferredExtension)
+        try data.write(to: fileURL, options: .atomic)
+        return fileURL
     }
 }

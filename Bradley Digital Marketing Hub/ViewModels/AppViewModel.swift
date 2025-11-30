@@ -260,6 +260,34 @@ final class AppViewModel: ObservableObject {
         return result
     }
 
+    func updateAvatar(with data: Data) async {
+        guard !isDemoMode else {
+            errorMessage = "Demo mode is read-only. Sign in to update your avatar."
+            return
+        }
+        guard let profile = userProfile else { return }
+        do {
+            let updated = try await cloudKitService.updateUserAvatar(data: data, userId: profile.userId)
+            userProfile = updated
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func removeAvatar() async {
+        guard !isDemoMode else {
+            errorMessage = "Demo mode is read-only. Sign in to update your avatar."
+            return
+        }
+        guard let profile = userProfile else { return }
+        do {
+            let updated = try await cloudKitService.removeUserAvatar(userId: profile.userId)
+            userProfile = updated
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
     func updatePlan(to tier: SubscriptionTier) async {
         guard !isDemoMode else {
             subscriptionManager.overrideTier(tier)

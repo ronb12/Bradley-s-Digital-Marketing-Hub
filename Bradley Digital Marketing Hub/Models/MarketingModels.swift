@@ -113,6 +113,7 @@ struct UserProfile: Identifiable, Hashable, CloudKitRecordConvertible {
     var businessType: String?
     var plan: SubscriptionTier = .free
     var createdAt: Date
+    var avatarAssetURL: URL?
 
     init(userId: String,
          name: String? = nil,
@@ -120,7 +121,8 @@ struct UserProfile: Identifiable, Hashable, CloudKitRecordConvertible {
          businessName: String? = nil,
          businessType: String? = nil,
          plan: SubscriptionTier = .free,
-         createdAt: Date = Date()) {
+         createdAt: Date = Date(),
+         avatarAssetURL: URL? = nil) {
         self.userId = userId
         self.name = name
         self.email = email
@@ -128,6 +130,7 @@ struct UserProfile: Identifiable, Hashable, CloudKitRecordConvertible {
         self.businessType = businessType
         self.plan = plan
         self.createdAt = createdAt
+        self.avatarAssetURL = avatarAssetURL
     }
 
     init(record: CKRecord) throws {
@@ -147,6 +150,11 @@ struct UserProfile: Identifiable, Hashable, CloudKitRecordConvertible {
             self.plan = .free
         }
         self.createdAt = createdAt
+        if let asset = record["avatarAsset"] as? CKAsset {
+            self.avatarAssetURL = asset.fileURL
+        } else {
+            self.avatarAssetURL = nil
+        }
     }
 
     var recordID: CKRecord.ID {
