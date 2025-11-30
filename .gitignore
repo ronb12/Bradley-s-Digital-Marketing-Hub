@@ -1,0 +1,31 @@
+# Xcode
+DerivedData/
+*.xcuserstate
+*.xcworkspace/xcuserdata/
+*.xcworkspace/contents.xcworkspacedata
+xcuserdata/
+*.moved-aside
+*.xcuserstate
+
+# SwiftPM
+.build/
+
+# macOS files
+.DS_Store
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Swift Package Manager
+Packages/
+.xcodeproj/project.xcworkspace/
+
+# Misc
+*.swp
+*.lock
+
+# User secrets
+*.env
