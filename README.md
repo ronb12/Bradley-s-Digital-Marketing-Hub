@@ -39,7 +39,9 @@ Bradley-Digital-Marketing-Hub
 ├─ Docs/
 │  ├─ MarketingPlanPlaceholder.md
 │  ├─ AffiliateStrategy.md
-│  └─ ArchitectureOverview.md
+│  ├─ ArchitectureOverview.md
+│  ├─ TermsOfService.md
+│  └─ PrivacyPolicy.md
 ├─ README.md
 ├─ LICENSE
 └─ .gitignore
@@ -62,6 +64,10 @@ Each record type is defined in `Models/MarketingModels.swift`. Comments in `Clou
 - Collaboration features for multi-user agencies
 - SwiftData-powered offline cache + Spotlight search
 - Web dashboard companion for reporting and approvals
+
+## Legal
+- Review the [Terms of Service](Docs/TermsOfService.md).
+- Read the [Privacy Policy](Docs/PrivacyPolicy.md) to understand how CloudKit data is handled.
 
 ## Support
 For questions or consulting, email `support@bradleyvirtualsolutions.com`.
