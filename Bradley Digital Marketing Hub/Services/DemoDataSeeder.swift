@@ -66,6 +66,7 @@ final class DemoDataSeeder {
     private func seedTemplates() async throws -> Int {
         var count = 0
         for template in DemoData.templates {
+            await cloudKitService.deleteTemplate(withID: template.id)
             _ = try await cloudKitService.saveTemplate(template)
             count += 1
         }
@@ -75,6 +76,7 @@ final class DemoDataSeeder {
     private func seedAffiliateTools() async throws -> Int {
         var count = 0
         for tool in DemoData.affiliateTools {
+            await cloudKitService.deleteAffiliateTool(withID: tool.id)
             _ = try await cloudKitService.saveAffiliateTool(tool)
             count += 1
         }

@@ -132,6 +132,17 @@ final class CloudKitService {
         try await save(template, scope: .public)
     }
 
+    func deleteTemplate(withID id: String) async {
+        let recordID = CKRecord.ID(recordName: id)
+        do {
+            _ = try await database(for: .public).deleteRecord(withID: recordID)
+        } catch let error as CKError where error.code == .unknownItem {
+            // Nothing to delete
+        } catch {
+            print("Template deletion failed: \(error)")
+        }
+    }
+
     // MARK: - Affiliate Tools
 
     func fetchAffiliateTools() async throws -> [AffiliateTool] {
@@ -140,6 +151,17 @@ final class CloudKitService {
 
     func saveAffiliateTool(_ tool: AffiliateTool) async throws -> AffiliateTool {
         try await save(tool, scope: .public)
+    }
+
+    func deleteAffiliateTool(withID id: String) async {
+        let recordID = CKRecord.ID(recordName: id)
+        do {
+            _ = try await database(for: .public).deleteRecord(withID: recordID)
+        } catch let error as CKError where error.code == .unknownItem {
+            // Ignore missing records
+        } catch {
+            print("Affiliate tool deletion failed: \(error)")
+        }
     }
 
     func logAffiliateClick(_ click: AffiliateClick) async throws {

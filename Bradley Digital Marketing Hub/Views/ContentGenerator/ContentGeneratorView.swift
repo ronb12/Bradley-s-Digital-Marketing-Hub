@@ -31,7 +31,7 @@ struct ContentGeneratorView: View {
 
             if !viewModel.generatedContent.isEmpty {
                 Section(header: Text("Ideas")) {
-                    ForEach(Array(viewModel.generatedContent.enumerated()), id: \\.offset) { index, idea in
+                    ForEach(Array(viewModel.generatedContent.enumerated()), id: \.offset) { index, idea in
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Idea #\(index + 1)").font(.headline)
                             Text(idea)
