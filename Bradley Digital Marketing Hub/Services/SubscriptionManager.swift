@@ -8,33 +8,50 @@ final class SubscriptionManager: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    private let productIdentifiers: Set<String> = [
-        SubscriptionTier.pro.productIdentifier!,
-        SubscriptionTier.agency.productIdentifier!
-    ]
+    private var productIdentifiers: Set<String> {
+        var identifiers: Set<String> = []
+        if let proId = SubscriptionTier.pro.productIdentifier {
+            identifiers.insert(proId)
+        }
+        if let agencyId = SubscriptionTier.agency.productIdentifier {
+            identifiers.insert(agencyId)
+        }
+        return identifiers
+    }
 
     func loadProducts() async {
+        let identifiers = Array(productIdentifiers)
+        guard !identifiers.isEmpty else {
+            errorMessage = "No valid product identifiers configured."
+            return
+        }
         do {
-            availableProducts = try await Product.products(for: Array(productIdentifiers))
+            availableProducts = try await Product.products(for: identifiers)
         } catch {
             errorMessage = error.localizedDescription
         }
     }
 
     func refreshEntitlements() async {
+        var foundTier: SubscriptionTier? = nil
+        
         for await result in Transaction.currentEntitlements {
             switch result {
             case .verified(let transaction):
+                // Agency tier takes precedence over pro tier
                 if transaction.productID == SubscriptionTier.agency.productIdentifier {
-                    currentTier = .agency
-                } else if transaction.productID == SubscriptionTier.pro.productIdentifier {
-                    currentTier = .pro
+                    foundTier = .agency
+                } else if transaction.productID == SubscriptionTier.pro.productIdentifier && foundTier != .agency {
+                    foundTier = .pro
                 }
                 await transaction.finish()
             case .unverified:
                 continue
             }
         }
+        
+        // Reset to free tier if no active entitlements found
+        currentTier = foundTier ?? .free
     }
 
     func purchase(tier: SubscriptionTier) async {

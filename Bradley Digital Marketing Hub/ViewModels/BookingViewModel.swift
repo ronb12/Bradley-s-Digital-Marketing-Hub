@@ -2,7 +2,7 @@ import Foundation
 
 @MainActor
 final class BookingViewModel: ObservableObject {
-    @Published var serviceType: String = "Consultation"
+    @Published var serviceType: ServiceType = .consultation
     @Published var requestedDate: Date = Date()
     @Published var notes: String = ""
     @Published var statusMessage: String?
@@ -19,7 +19,7 @@ final class BookingViewModel: ObservableObject {
         defer { isSubmitting = false }
         let booking = Booking(
             userId: userId,
-            serviceType: serviceType,
+            serviceType: serviceType.rawValue,
             requestedTime: requestedDate,
             notes: notes
         )

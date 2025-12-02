@@ -4,6 +4,8 @@ import UIKit
 
 struct ProfileView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
     @StateObject private var profileViewModel = ProfileViewModel()
     @State private var isSeedingDemoData = false
     @State private var demoSeedStatus: String?
@@ -31,15 +33,58 @@ struct ProfileView: View {
                         }
                     }
                 }
-                PhotosPicker(selection: $avatarSelection, matching: .images) {
-                    HStack {
-                        if isUploadingAvatar {
-                            ProgressView()
+                
+                Button("Manage Subscription") {
+                    appViewModel.showPaywall = true
+                }
+            }
+            
+            // Profile Editing Section - Always Visible and Prominent
+            Section(header: Text("Edit Profile")) {
+                // Name field - Always visible, prominent at top
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Full Name")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    TextField("Enter your name", text: $profileViewModel.userName, prompt: Text("Enter your name"))
+                        .autocapitalization(.words)
+                        .disabled(profileViewModel.isUpdatingProfile || appViewModel.isDemoMode)
+                }
+                .padding(.vertical, 4)
+                
+                // Photo upload - Make it prominent
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Profile Photo")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    PhotosPicker(selection: $avatarSelection, matching: .images) {
+                        HStack {
+                            if isUploadingAvatar {
+                                ProgressView()
+                            } else {
+                                Image(systemName: appViewModel.userProfile?.avatarAssetURL != nil || pendingAvatarImage != nil ? "photo.fill" : "photo.badge.plus")
+                                    .foregroundColor(themeManager.colors(for: colorScheme).primary)
+                                    .font(.title3)
+                            }
+                            Text(appViewModel.userProfile?.avatarAssetURL != nil || pendingAvatarImage != nil ? "Change Photo" : "Add Photo")
+                                .foregroundColor(.primary)
+                            Spacer()
                         }
-                        Text("Update Photo")
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 8)
+                        .background(appViewModel.isDemoMode ? Color.gray.opacity(0.1) : Color.clear)
+                        .cornerRadius(8)
+                    }
+                    .disabled(appViewModel.isDemoMode || isUploadingAvatar)
+                    
+                    if let message = avatarStatusMessage {
+                        Text(message)
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
                     }
                 }
-                .disabled(appViewModel.isDemoMode || isUploadingAvatar)
+                .padding(.vertical, 4)
+                
                 if (appViewModel.userProfile?.avatarAssetURL != nil || pendingAvatarImage != nil) && !appViewModel.isDemoMode {
                     Button("Remove Photo", role: .destructive) {
                         Task {
@@ -51,13 +96,152 @@ struct ProfileView: View {
                         }
                     }
                 }
-                if let message = avatarStatusMessage {
-                    Text(message)
+                
+                // Save button
+                if !appViewModel.isDemoMode {
+                    Button {
+                        Task {
+                            await profileViewModel.updateUserProfile(appViewModel: appViewModel)
+                        }
+                    } label: {
+                        if profileViewModel.isUpdatingProfile {
+                            HStack {
+                                ProgressView()
+                                    .tint(.white)
+                                Text("Saving...")
+                            }
+                        } else {
+                            Text("Save Changes")
+                        }
+                    }
+                    .disabled(profileViewModel.isUpdatingProfile || profileViewModel.userName.isEmpty)
+                    .buttonStyle(.borderedProminent)
+                    .tint(themeManager.colors(for: colorScheme).primary)
+                    .frame(maxWidth: .infinity)
+                } else {
+                    Text("Sign in with Apple to edit your profile")
                         .font(.caption)
                         .foregroundColor(.secondary)
+                        .padding(.vertical, 8)
                 }
-                Button("Manage Subscription") {
-                    appViewModel.showPaywall = true
+                
+                if let message = profileViewModel.statusMessage {
+                    Text(message)
+                        .font(.caption)
+                        .foregroundColor(message.contains("Failed") || message.contains("Error") ? .red : .secondary)
+                }
+            }
+            
+            // Additional Profile Information Editing
+            if !appViewModel.isDemoMode {
+                Section(header: Text("Additional Information")) {
+                    TextField("Business Name", text: $profileViewModel.businessName, prompt: Text("Enter business name"))
+                        .autocapitalization(.words)
+                        .disabled(profileViewModel.isUpdatingProfile)
+                    
+                    Picker("Business Type", selection: $profileViewModel.userBusinessTypeOption) {
+                        ForEach(BusinessType.allWithCustom) { option in
+                            Text(option.displayName).tag(option)
+                        }
+                    }
+                    .disabled(profileViewModel.isUpdatingProfile)
+                    
+                    if case .custom = profileViewModel.userBusinessTypeOption {
+                        TextField("Enter business type", text: $profileViewModel.customUserBusinessType, prompt: Text("Custom business type"))
+                            .autocapitalization(.words)
+                            .disabled(profileViewModel.isUpdatingProfile)
+                    }
+                }
+            }
+            
+            Section(header: Text("Social Media")) {
+                NavigationLink {
+                    SocialAccountsView(service: appViewModel.socialMediaService)
+                        .environmentObject(appViewModel)
+                        .environmentObject(themeManager)
+                } label: {
+                    HStack {
+                        Image(systemName: "link.circle.fill")
+                            .foregroundColor(themeManager.colors(for: colorScheme).primary)
+                        Text("Connected Accounts")
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.secondary)
+                            .font(.caption)
+                    }
+                }
+            }
+            
+            Section(header: Text("Appearance")) {
+                // App Theme Picker with themed icon
+                LabeledContent {
+                    Picker("App Theme", selection: $themeManager.selectedTheme) {
+                        ForEach(AppTheme.allCases) { theme in
+                            HStack {
+                                Circle()
+                                    .fill(Color.themePrimary(for: theme, colorScheme: colorScheme))
+                                    .frame(width: 20, height: 20)
+                                Image(systemName: theme.iconName)
+                                    .foregroundColor(Color.themePrimary(for: theme, colorScheme: colorScheme))
+                                Text(theme.displayName)
+                            }
+                            .tag(theme)
+                        }
+                    }
+                    .labelsHidden()
+                    .tint(themeManager.colors(for: colorScheme).primary)
+                } label: {
+                    Label {
+                        Text("App Theme")
+                    } icon: {
+                        Image(systemName: themeManager.selectedTheme.iconName)
+                            .foregroundColor(themeManager.colors(for: colorScheme).primary)
+                    }
+                }
+                
+                // Theme preview
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Preview")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        HStack(spacing: 8) {
+                            Circle()
+                                .fill(themeManager.colors(for: colorScheme).primary)
+                                .frame(width: 16, height: 16)
+                            Circle()
+                                .fill(themeManager.colors(for: colorScheme).secondary)
+                                .frame(width: 16, height: 16)
+                            Circle()
+                                .fill(themeManager.colors(for: colorScheme).accent)
+                                .frame(width: 16, height: 16)
+                        }
+                    }
+                    Spacer()
+                }
+                .padding(.vertical, 4)
+                
+                // Appearance Mode Picker with themed icon
+                LabeledContent {
+                    Picker("Appearance Mode", selection: $themeManager.selectedColorScheme) {
+                        ForEach([AppColorScheme.light, .dark, .system], id: \.self) { scheme in
+                            HStack {
+                                Image(systemName: scheme == .light ? "sun.max.fill" : scheme == .dark ? "moon.fill" : "circle.lefthalf.filled")
+                                    .foregroundColor(themeManager.colors(for: colorScheme).primary)
+                                Text(scheme.displayName)
+                            }
+                            .tag(scheme)
+                        }
+                    }
+                    .labelsHidden()
+                    .tint(themeManager.colors(for: colorScheme).primary)
+                } label: {
+                    Label {
+                        Text("Appearance Mode")
+                    } icon: {
+                        Image(systemName: themeManager.selectedColorScheme == .light ? "sun.max.fill" : themeManager.selectedColorScheme == .dark ? "moon.fill" : "circle.lefthalf.filled")
+                            .foregroundColor(themeManager.colors(for: colorScheme).primary)
+                    }
                 }
             }
 
@@ -80,8 +264,39 @@ struct ProfileView: View {
                 }
                 if appViewModel.canAddBrand() {
                     TextField("Brand name", text: $profileViewModel.brandName)
-                    TextField("Industry", text: $profileViewModel.brandIndustry)
-                    TextField("Color hex", text: $profileViewModel.brandColorHex)
+                        .autocapitalization(.words)
+                    
+                    Picker("Industry", selection: $profileViewModel.brandIndustryOption) {
+                        ForEach(BusinessType.allWithCustom) { option in
+                            Text(option.displayName).tag(option)
+                        }
+                    }
+                    
+                    // Custom Industry TextField (shown only when custom is selected)
+                    if case .custom = profileViewModel.brandIndustryOption {
+                        TextField("Enter industry", text: $profileViewModel.customIndustry)
+                            .autocapitalization(.words)
+                    }
+                    
+                    Picker("Brand Color", selection: $profileViewModel.brandColorOption) {
+                        ForEach(BrandColor.allWithCustom) { option in
+                            HStack {
+                                Circle()
+                                    .fill(Color(hex: option.hexValue ?? "#5B8DEF"))
+                                    .frame(width: 20, height: 20)
+                                Text(option.displayName)
+                            }
+                            .tag(option)
+                        }
+                    }
+                    
+                    // Custom Color TextField (shown only when custom is selected)
+                    if case .custom = profileViewModel.brandColorOption {
+                        TextField("Enter hex color (e.g., #FF5733)", text: $profileViewModel.customColorHex)
+                            .autocapitalization(.none)
+                            .keyboardType(.default)
+                    }
+                    
                     Button("Add brand") {
                         Task {
                             guard let userId = appViewModel.userProfile?.userId else { return }
@@ -103,8 +318,12 @@ struct ProfileView: View {
 
             if appViewModel.isDemoMode {
                 Section(header: Text("Demo Mode")) {
-                    Text("You are browsing demo data. Sign in with Apple for a personal workspace.")
-                        .foregroundColor(.secondary)
+                    HStack {
+                        Image(systemName: "eye.fill")
+                            .foregroundColor(themeManager.colors(for: colorScheme).primary)
+                        Text("You are browsing demo data. Sign in with Apple for a personal workspace.")
+                            .foregroundColor(.secondary)
+                    }
                 }
             } else {
                 Section(header: Text("Demo Utilities"), footer: Text("Seeds CloudKit with sample brands, campaigns, templates, and affiliate tools.")) {
@@ -149,7 +368,15 @@ struct ProfileView: View {
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Profile")
-        .onChange(of: avatarSelection) { newValue in
+        .onAppear {
+            // Load current profile data into edit fields
+            profileViewModel.loadUserProfile(appViewModel.userProfile)
+        }
+        .onChange(of: appViewModel.userProfile) { oldValue, newValue in
+            // Reload when profile changes
+            profileViewModel.loadUserProfile(newValue)
+        }
+        .onChange(of: avatarSelection) { oldValue, newValue in
             guard let selection = newValue, !appViewModel.isDemoMode else { return }
             Task {
                 do {

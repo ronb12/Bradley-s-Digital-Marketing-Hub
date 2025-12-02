@@ -1,530 +1,640 @@
 // !$*UTF8*$!
 {
 	archiveVersion = 1;
-	classes = {};
-	objectVersion = 56;
+	classes = {
+	};
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-	A10000100000000000000001 /* BradleyDigitalMarketingHubApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000001 /* BradleyDigitalMarketingHubApp.swift */; };
-	A10000100000000000000002 /* MarketingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000002 /* MarketingModels.swift */; };
-	A10000100000000000000003 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000003 /* Constants.swift */; };
-	A10000100000000000000004 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000004 /* Extensions.swift */; };
-	A10000100000000000000005 /* CloudKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000005 /* CloudKitService.swift */; };
-	A10000100000000000000006 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000006 /* AuthService.swift */; };
-	A10000100000000000000007 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000007 /* SubscriptionManager.swift */; };
-	A10000100000000000000008 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000008 /* AppViewModel.swift */; };
-	A10000100000000000000009 /* ContentGeneratorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000009 /* ContentGeneratorViewModel.swift */; };
-	A1000010000000000000000A /* CampaignPlannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000000A /* CampaignPlannerViewModel.swift */; };
-	A1000010000000000000000B /* ContentCalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000000B /* ContentCalendarViewModel.swift */; };
-	A1000010000000000000000C /* TemplatesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000000C /* TemplatesViewModel.swift */; };
-	A1000010000000000000000D /* AffiliateToolsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000000D /* AffiliateToolsViewModel.swift */; };
-	A1000010000000000000000E /* BookingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000000E /* BookingViewModel.swift */; };
-	A1000010000000000000000F /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000000F /* ProfileViewModel.swift */; };
-	A10000100000000000000010 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000010 /* RootView.swift */; };
-	A10000100000000000000011 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000011 /* DashboardView.swift */; };
-	A10000100000000000000012 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000012 /* WelcomeView.swift */; };
-	A10000100000000000000013 /* NotificationsOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000013 /* NotificationsOnboardingView.swift */; };
-	A10000100000000000000014 /* ContentGeneratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000014 /* ContentGeneratorView.swift */; };
-	A10000100000000000000015 /* CampaignPlannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000015 /* CampaignPlannerView.swift */; };
-	A10000100000000000000016 /* ContentCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000016 /* ContentCalendarView.swift */; };
-	A10000100000000000000017 /* TemplatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000017 /* TemplatesView.swift */; };
-	A10000100000000000000018 /* AffiliateToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000018 /* AffiliateToolsView.swift */; };
-	A10000100000000000000019 /* BookingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000019 /* BookingView.swift */; };
-	A1000010000000000000001A /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001A /* ProfileView.swift */; };
-	A1000010000000000000001B /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001B /* PaywallView.swift */; };
-	A1000010000000000000001C /* SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001C /* SafariView.swift */; };
-	A1000010000000000000001F /* DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000021 /* DemoData.swift */; };
-	A10000100000000000000020 /* DemoDataSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000022 /* DemoDataSeeder.swift */; };
-	A1000010000000000000001D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001D /* Assets.xcassets */; };
-	A1000010000000000000001E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001E /* Preview Assets.xcassets */; };
+		A10000100000000000000001 /* BradleyDigitalMarketingHubApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000001 /* BradleyDigitalMarketingHubApp.swift */; };
+		A10000100000000000000002 /* Models/MarketingModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000002 /* Models/MarketingModels.swift */; };
+		A10000100000000000000003 /* Supporting/Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000003 /* Supporting/Constants.swift */; };
+		A10000100000000000000004 /* Supporting/Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000004 /* Supporting/Extensions.swift */; };
+		A10000100000000000000005 /* Services/CloudKitService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000005 /* Services/CloudKitService.swift */; };
+		A10000100000000000000006 /* Services/AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000006 /* Services/AuthService.swift */; };
+		A10000100000000000000007 /* Services/SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000007 /* Services/SubscriptionManager.swift */; };
+		A10000100000000000000008 /* ViewModels/AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000008 /* ViewModels/AppViewModel.swift */; };
+		A10000100000000000000009 /* ViewModels/ContentGeneratorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000009 /* ViewModels/ContentGeneratorViewModel.swift */; };
+		A1000010000000000000000A /* ViewModels/CampaignPlannerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000000A /* ViewModels/CampaignPlannerViewModel.swift */; };
+		A1000010000000000000000B /* ViewModels/ContentCalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000000B /* ViewModels/ContentCalendarViewModel.swift */; };
+		A1000010000000000000000C /* ViewModels/TemplatesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000000C /* ViewModels/TemplatesViewModel.swift */; };
+		A1000010000000000000000D /* ViewModels/AffiliateToolsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000000D /* ViewModels/AffiliateToolsViewModel.swift */; };
+		A1000010000000000000000E /* ViewModels/BookingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000000E /* ViewModels/BookingViewModel.swift */; };
+		A1000010000000000000000F /* ViewModels/ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000000F /* ViewModels/ProfileViewModel.swift */; };
+		A10000100000000000000010 /* Views/RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000010 /* Views/RootView.swift */; };
+		A10000100000000000000011 /* Views/Home/DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000011 /* Views/Home/DashboardView.swift */; };
+		A10000100000000000000012 /* Views/Onboarding/WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000012 /* Views/Onboarding/WelcomeView.swift */; };
+		A10000100000000000000013 /* Views/Onboarding/NotificationsOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000013 /* Views/Onboarding/NotificationsOnboardingView.swift */; };
+		A10000100000000000000014 /* Views/ContentGenerator/ContentGeneratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000014 /* Views/ContentGenerator/ContentGeneratorView.swift */; };
+		A1000010000000000000002E /* Views/ContentGenerator/GeneratedContentCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000002E /* Views/ContentGenerator/GeneratedContentCard.swift */; };
+		A1000010000000000000002F /* Views/Calendar/CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000002F /* Views/Calendar/CalendarView.swift */; };
+		A10000100000000000000015 /* Views/CampaignPlanner/CampaignPlannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000015 /* Views/CampaignPlanner/CampaignPlannerView.swift */; };
+		A10000100000000000000016 /* Views/Calendar/ContentCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000016 /* Views/Calendar/ContentCalendarView.swift */; };
+		A10000100000000000000017 /* Views/Templates/TemplatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000017 /* Views/Templates/TemplatesView.swift */; };
+		A10000100000000000000018 /* Views/Affiliate/AffiliateToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000018 /* Views/Affiliate/AffiliateToolsView.swift */; };
+		A10000100000000000000019 /* Views/Booking/BookingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000019 /* Views/Booking/BookingView.swift */; };
+		A1000010000000000000001A /* Views/Profile/ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001A /* Views/Profile/ProfileView.swift */; };
+		A1000010000000000000001B /* Views/Shared/PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001B /* Views/Shared/PaywallView.swift */; };
+		A1000010000000000000001C /* Views/Shared/SafariView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001C /* Views/Shared/SafariView.swift */; };
+		A1000010000000000000001D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001D /* Assets.xcassets */; };
+		A1000010000000000000001E /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001E /* Preview Assets.xcassets */; };
+		A1000010000000000000001F /* Supporting/DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000021 /* Supporting/DemoData.swift */; };
+		A10000100000000000000020 /* Services/DemoDataSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000022 /* Services/DemoDataSeeder.swift */; };
+		A10000100000000000000021 /* Supporting/ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000023 /* Supporting/ThemeManager.swift */; };
+		A100001000000000000000024 /* Models/SocialMediaModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000024 /* Models/SocialMediaModels.swift */; };
+		A100001000000000000000025 /* Services/SocialMediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000025 /* Services/SocialMediaService.swift */; };
+		A100001000000000000000026 /* Services/NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000026 /* Services/NotificationService.swift */; };
+		A100001000000000000000027 /* Services/PostScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000027 /* Services/PostScheduler.swift */; };
+		A100001000000000000000028 /* Views/Shared/ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000028 /* Views/Shared/ShareSheet.swift */; };
+		A100001000000000000000029 /* Views/SocialMedia/SocialAccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000029 /* Views/SocialMedia/SocialAccountsView.swift */; };
+		A10000100000000000000002A /* Views/SocialMedia/PostReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000002A /* Views/SocialMedia/PostReviewView.swift */; };
+		A10000100000000000000002B /* Views/SocialMedia/PostReviewContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000002B /* Views/SocialMedia/PostReviewContainerView.swift */; };
+		A10000100000000000000002C /* Views/SocialMedia/ScheduledPostsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000002C /* Views/SocialMedia/ScheduledPostsView.swift */; };
+		A10000100000000000000002D /* Views/SocialMedia/PlatformToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000002D /* Views/SocialMedia/PlatformToggleButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-	A10001100000000000000001 /* BradleyDigitalMarketingHubApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BradleyDigitalMarketingHubApp.swift"; sourceTree = "<group>"; };
-	A10001100000000000000002 /* MarketingModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/MarketingModels.swift"; sourceTree = "<group>"; };
-	A10001100000000000000003 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Supporting/Constants.swift"; sourceTree = "<group>"; };
-	A10001100000000000000004 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Supporting/Extensions.swift"; sourceTree = "<group>"; };
-	A10001100000000000000005 /* CloudKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Services/CloudKitService.swift"; sourceTree = "<group>"; };
-	A10001100000000000000006 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Services/AuthService.swift"; sourceTree = "<group>"; };
-	A10001100000000000000007 /* SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Services/SubscriptionManager.swift"; sourceTree = "<group>"; };
-	A10001100000000000000008 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModels/AppViewModel.swift"; sourceTree = "<group>"; };
-	A10001100000000000000009 /* ContentGeneratorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModels/ContentGeneratorViewModel.swift"; sourceTree = "<group>"; };
-	A1000110000000000000000A /* CampaignPlannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModels/CampaignPlannerViewModel.swift"; sourceTree = "<group>"; };
-	A1000110000000000000000B /* ContentCalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModels/ContentCalendarViewModel.swift"; sourceTree = "<group>"; };
-	A1000110000000000000000C /* TemplatesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModels/TemplatesViewModel.swift"; sourceTree = "<group>"; };
-	A1000110000000000000000D /* AffiliateToolsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModels/AffiliateToolsViewModel.swift"; sourceTree = "<group>"; };
-	A1000110000000000000000E /* BookingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModels/BookingViewModel.swift"; sourceTree = "<group>"; };
-	A1000110000000000000000F /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewModels/ProfileViewModel.swift"; sourceTree = "<group>"; };
-	A10001100000000000000010 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/RootView.swift"; sourceTree = "<group>"; };
-	A10001100000000000000011 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Home/DashboardView.swift"; sourceTree = "<group>"; };
-	A10001100000000000000012 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Onboarding/WelcomeView.swift"; sourceTree = "<group>"; };
-	A10001100000000000000013 /* NotificationsOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Onboarding/NotificationsOnboardingView.swift"; sourceTree = "<group>"; };
-	A10001100000000000000014 /* ContentGeneratorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ContentGenerator/ContentGeneratorView.swift"; sourceTree = "<group>"; };
-	A10001100000000000000015 /* CampaignPlannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/CampaignPlanner/CampaignPlannerView.swift"; sourceTree = "<group>"; };
-	A10001100000000000000016 /* ContentCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Calendar/ContentCalendarView.swift"; sourceTree = "<group>"; };
-	A10001100000000000000017 /* TemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Templates/TemplatesView.swift"; sourceTree = "<group>"; };
-	A10001100000000000000018 /* AffiliateToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Affiliate/AffiliateToolsView.swift"; sourceTree = "<group>"; };
-	A10001100000000000000019 /* BookingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Booking/BookingView.swift"; sourceTree = "<group>"; };
-	A1000110000000000000001A /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Profile/ProfileView.swift"; sourceTree = "<group>"; };
-	A1000110000000000000001B /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Shared/PaywallView.swift"; sourceTree = "<group>"; };
-	A1000110000000000000001C /* SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/Shared/SafariView.swift"; sourceTree = "<group>"; };
-	A1000110000000000000001D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; };
-	A1000110000000000000001E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = "Preview Assets.xcassets"; path = "Preview Content/Preview Assets.xcassets"; sourceTree = "<group>"; };
-	A1000110000000000000001F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
-	A10001100000000000000020 /* Bradley Digital Marketing Hub.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Bradley Digital Marketing Hub.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-	A10001100000000000000021 /* DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Supporting/DemoData.swift"; sourceTree = "<group>"; };
-	A10001100000000000000022 /* DemoDataSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Services/DemoDataSeeder.swift"; sourceTree = "<group>"; };
+		A10001100000000000000001 /* BradleyDigitalMarketingHubApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BradleyDigitalMarketingHubApp.swift; sourceTree = "<group>"; };
+		A10001100000000000000002 /* Models/MarketingModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/MarketingModels.swift; sourceTree = "<group>"; };
+		A10001100000000000000003 /* Supporting/Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Supporting/Constants.swift; sourceTree = "<group>"; };
+		A10001100000000000000004 /* Supporting/Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Supporting/Extensions.swift; sourceTree = "<group>"; };
+		A10001100000000000000005 /* Services/CloudKitService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/CloudKitService.swift; sourceTree = "<group>"; };
+		A10001100000000000000006 /* Services/AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/AuthService.swift; sourceTree = "<group>"; };
+		A10001100000000000000007 /* Services/SubscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/SubscriptionManager.swift; sourceTree = "<group>"; };
+		A10001100000000000000008 /* ViewModels/AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/AppViewModel.swift; sourceTree = "<group>"; };
+		A10001100000000000000009 /* ViewModels/ContentGeneratorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/ContentGeneratorViewModel.swift; sourceTree = "<group>"; };
+		A1000110000000000000000A /* ViewModels/CampaignPlannerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/CampaignPlannerViewModel.swift; sourceTree = "<group>"; };
+		A1000110000000000000000B /* ViewModels/ContentCalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/ContentCalendarViewModel.swift; sourceTree = "<group>"; };
+		A1000110000000000000000C /* ViewModels/TemplatesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/TemplatesViewModel.swift; sourceTree = "<group>"; };
+		A1000110000000000000000D /* ViewModels/AffiliateToolsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/AffiliateToolsViewModel.swift; sourceTree = "<group>"; };
+		A1000110000000000000000E /* ViewModels/BookingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/BookingViewModel.swift; sourceTree = "<group>"; };
+		A1000110000000000000000F /* ViewModels/ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModels/ProfileViewModel.swift; sourceTree = "<group>"; };
+		A10001100000000000000010 /* Views/RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/RootView.swift; sourceTree = "<group>"; };
+		A10001100000000000000011 /* Views/Home/DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Home/DashboardView.swift; sourceTree = "<group>"; };
+		A10001100000000000000012 /* Views/Onboarding/WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Onboarding/WelcomeView.swift; sourceTree = "<group>"; };
+		A10001100000000000000013 /* Views/Onboarding/NotificationsOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Onboarding/NotificationsOnboardingView.swift; sourceTree = "<group>"; };
+		A10001100000000000000014 /* Views/ContentGenerator/ContentGeneratorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ContentGenerator/ContentGeneratorView.swift; sourceTree = "<group>"; };
+		A10001100000000000000015 /* Views/CampaignPlanner/CampaignPlannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/CampaignPlanner/CampaignPlannerView.swift; sourceTree = "<group>"; };
+		A10001100000000000000016 /* Views/Calendar/ContentCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Calendar/ContentCalendarView.swift; sourceTree = "<group>"; };
+		A10001100000000000000017 /* Views/Templates/TemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Templates/TemplatesView.swift; sourceTree = "<group>"; };
+		A10001100000000000000018 /* Views/Affiliate/AffiliateToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Affiliate/AffiliateToolsView.swift; sourceTree = "<group>"; };
+		A10001100000000000000019 /* Views/Booking/BookingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Booking/BookingView.swift; sourceTree = "<group>"; };
+		A1000110000000000000001A /* Views/Profile/ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Profile/ProfileView.swift; sourceTree = "<group>"; };
+		A1000110000000000000001B /* Views/Shared/PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Shared/PaywallView.swift; sourceTree = "<group>"; };
+		A1000110000000000000001C /* Views/Shared/SafariView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Shared/SafariView.swift; sourceTree = "<group>"; };
+		A1000110000000000000001D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1000110000000000000001E /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = "Preview Assets.xcassets"; path = "Preview Content/Preview Assets.xcassets"; sourceTree = "<group>"; };
+		A1000110000000000000001F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A10001100000000000000020 /* Bradley Digital Marketing Hub.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Bradley Digital Marketing Hub.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10001100000000000000021 /* Supporting/DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Supporting/DemoData.swift; sourceTree = "<group>"; };
+		A10001100000000000000022 /* Services/DemoDataSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/DemoDataSeeder.swift; sourceTree = "<group>"; };
+		A10001100000000000000023 /* Supporting/ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Supporting/ThemeManager.swift; sourceTree = "<group>"; };
+		A10001100000000000000024 /* Models/SocialMediaModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/SocialMediaModels.swift; sourceTree = "<group>"; };
+		A10001100000000000000025 /* Services/SocialMediaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/SocialMediaService.swift; sourceTree = "<group>"; };
+		A10001100000000000000026 /* Services/NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/NotificationService.swift; sourceTree = "<group>"; };
+		A10001100000000000000027 /* Services/PostScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/PostScheduler.swift; sourceTree = "<group>"; };
+		A10001100000000000000028 /* Views/Shared/ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Shared/ShareSheet.swift; sourceTree = "<group>"; };
+		A10001100000000000000029 /* Views/SocialMedia/SocialAccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SocialMedia/SocialAccountsView.swift; sourceTree = "<group>"; };
+		A1000110000000000000002A /* Views/SocialMedia/PostReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SocialMedia/PostReviewView.swift; sourceTree = "<group>"; };
+		A1000110000000000000002B /* Views/SocialMedia/PostReviewContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SocialMedia/PostReviewContainerView.swift; sourceTree = "<group>"; };
+		A1000110000000000000002C /* Views/SocialMedia/ScheduledPostsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SocialMedia/ScheduledPostsView.swift; sourceTree = "<group>"; };
+		A1000110000000000000002D /* Views/SocialMedia/PlatformToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SocialMedia/PlatformToggleButton.swift; sourceTree = "<group>"; };
+		A1000110000000000000002E /* Views/ContentGenerator/GeneratedContentCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ContentGenerator/GeneratedContentCard.swift; sourceTree = "<group>"; };
+		A1000110000000000000002F /* Views/Calendar/CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Calendar/CalendarView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-	A10002100000000000000001 /* Frameworks */ = {
-		isa = PBXFrameworksBuildPhase;
-		buildActionMask = 2147483647;
-		files = (
-		);
-		runOnlyForDeploymentPostprocessing = 0;
-	};
+		A10002100000000000000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-	A10003100000000000000001 = {
-		isa = PBXGroup;
-		children = (
-			A10004100000000000000001 /* Bradley Digital Marketing Hub */,
-			A10007100000000000000002 /* Products */
-		);
-		sourceTree = "<group>";
-	};
-	A10004100000000000000001 /* Bradley Digital Marketing Hub */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000001 /* BradleyDigitalMarketingHubApp.swift */,
-			A10005100000000000000001 /* Models */,
-			A10005100000000000000002 /* ViewModels */,
-			A10005100000000000000003 /* Services */,
-			A10005100000000000000004 /* Views */,
-			A10005100000000000000005 /* Supporting */,
-			A1000110000000000000001D /* Assets.xcassets */,
-			A1000110000000000000001E /* Preview Assets.xcassets */,
-			A1000110000000000000001F /* Info.plist */
-		);
-		path = "Bradley Digital Marketing Hub";
-		sourceTree = "<group>";
-	};
-	A10005100000000000000001 /* Models */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000002 /* MarketingModels.swift */
-		);
-		name = Models;
-		sourceTree = "<group>";
-	};
-	A10005100000000000000002 /* ViewModels */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000008 /* AppViewModel.swift */,
-			A10001100000000000000009 /* ContentGeneratorViewModel.swift */,
-			A1000110000000000000000A /* CampaignPlannerViewModel.swift */,
-			A1000110000000000000000B /* ContentCalendarViewModel.swift */,
-			A1000110000000000000000C /* TemplatesViewModel.swift */,
-			A1000110000000000000000D /* AffiliateToolsViewModel.swift */,
-			A1000110000000000000000E /* BookingViewModel.swift */,
-			A1000110000000000000000F /* ProfileViewModel.swift */
-		);
-		name = ViewModels;
-		sourceTree = "<group>";
-	};
-	A10005100000000000000003 /* Services */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000005 /* CloudKitService.swift */,
-			A10001100000000000000006 /* AuthService.swift */,
-			A10001100000000000000007 /* SubscriptionManager.swift */,
-			A10001100000000000000022 /* DemoDataSeeder.swift */
-		);
-		name = Services;
-		sourceTree = "<group>";
-	};
-	A10005100000000000000004 /* Views */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000010 /* RootView.swift */,
-			A10006100000000000000001 /* Home */,
-			A10006100000000000000002 /* Onboarding */,
-			A10006100000000000000003 /* ContentGenerator */,
-			A10006100000000000000004 /* CampaignPlanner */,
-			A10006100000000000000005 /* Calendar */,
-			A10006100000000000000006 /* Templates */,
-			A10006100000000000000007 /* Affiliate */,
-			A10006100000000000000008 /* Booking */,
-			A10006100000000000000009 /* Profile */,
-			A1000610000000000000000A /* Shared */
-		);
-		name = Views;
-		sourceTree = "<group>";
-	};
-	A10005100000000000000005 /* Supporting */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000003 /* Constants.swift */,
-			A10001100000000000000004 /* Extensions.swift */,
-			A10001100000000000000021 /* DemoData.swift */
-		);
-		name = Supporting;
-		sourceTree = "<group>";
-	};
-	A10006100000000000000001 /* Home */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000011 /* DashboardView.swift */
-		);
-		name = Home;
-		sourceTree = "<group>";
-	};
-	A10006100000000000000002 /* Onboarding */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000012 /* WelcomeView.swift */,
-			A10001100000000000000013 /* NotificationsOnboardingView.swift */
-		);
-		name = Onboarding;
-		sourceTree = "<group>";
-	};
-	A10006100000000000000003 /* ContentGenerator */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000014 /* ContentGeneratorView.swift */
-		);
-		name = ContentGenerator;
-		sourceTree = "<group>";
-	};
-	A10006100000000000000004 /* CampaignPlanner */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000015 /* CampaignPlannerView.swift */
-		);
-		name = CampaignPlanner;
-		sourceTree = "<group>";
-	};
-	A10006100000000000000005 /* Calendar */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000016 /* ContentCalendarView.swift */
-		);
-		name = Calendar;
-		sourceTree = "<group>";
-	};
-	A10006100000000000000006 /* Templates */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000017 /* TemplatesView.swift */
-		);
-		name = Templates;
-		sourceTree = "<group>";
-	};
-	A10006100000000000000007 /* Affiliate */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000018 /* AffiliateToolsView.swift */
-		);
-		name = Affiliate;
-		sourceTree = "<group>";
-	};
-	A10006100000000000000008 /* Booking */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000019 /* BookingView.swift */
-		);
-		name = Booking;
-		sourceTree = "<group>";
-	};
-	A10006100000000000000009 /* Profile */ = {
-		isa = PBXGroup;
-		children = (
-			A1000110000000000000001A /* ProfileView.swift */
-		);
-		name = Profile;
-		sourceTree = "<group>";
-	};
-	A1000610000000000000000A /* Shared */ = {
-		isa = PBXGroup;
-		children = (
-			A1000110000000000000001B /* PaywallView.swift */,
-			A1000110000000000000001C /* SafariView.swift */
-		);
-		name = Shared;
-		sourceTree = "<group>";
-	};
-	A10007100000000000000002 /* Products */ = {
-		isa = PBXGroup;
-		children = (
-			A10001100000000000000020 /* Bradley Digital Marketing Hub.app */
-		);
-		name = Products;
-		sourceTree = "<group>";
-	};
+		A10003100000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				A10004100000000000000001 /* Bradley Digital Marketing Hub */,
+				A10007100000000000000002 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A10004100000000000000001 /* Bradley Digital Marketing Hub */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000001 /* BradleyDigitalMarketingHubApp.swift */,
+				A10005100000000000000001 /* Models */,
+				A10005100000000000000002 /* ViewModels */,
+				A10005100000000000000003 /* Services */,
+				A10005100000000000000004 /* Views */,
+				A10005100000000000000005 /* Supporting */,
+				A1000110000000000000001D /* Assets.xcassets */,
+				A1000110000000000000001E /* Preview Assets.xcassets */,
+				A1000110000000000000001F /* Info.plist */,
+			);
+			path = "Bradley Digital Marketing Hub";
+			sourceTree = "<group>";
+		};
+		A10005100000000000000001 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000002 /* Models/MarketingModels.swift */,
+				A10001100000000000000024 /* Models/SocialMediaModels.swift */,
+			);
+			name = Models;
+			sourceTree = "<group>";
+		};
+		A10005100000000000000002 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000008 /* ViewModels/AppViewModel.swift */,
+				A10001100000000000000009 /* ViewModels/ContentGeneratorViewModel.swift */,
+				A1000110000000000000000A /* ViewModels/CampaignPlannerViewModel.swift */,
+				A1000110000000000000000B /* ViewModels/ContentCalendarViewModel.swift */,
+				A1000110000000000000000C /* ViewModels/TemplatesViewModel.swift */,
+				A1000110000000000000000D /* ViewModels/AffiliateToolsViewModel.swift */,
+				A1000110000000000000000E /* ViewModels/BookingViewModel.swift */,
+				A1000110000000000000000F /* ViewModels/ProfileViewModel.swift */,
+			);
+			name = ViewModels;
+			sourceTree = "<group>";
+		};
+		A10005100000000000000003 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000005 /* Services/CloudKitService.swift */,
+				A10001100000000000000006 /* Services/AuthService.swift */,
+				A10001100000000000000007 /* Services/SubscriptionManager.swift */,
+				A10001100000000000000022 /* Services/DemoDataSeeder.swift */,
+				A10001100000000000000025 /* Services/SocialMediaService.swift */,
+				A10001100000000000000026 /* Services/NotificationService.swift */,
+				A10001100000000000000027 /* Services/PostScheduler.swift */,
+			);
+			name = Services;
+			sourceTree = "<group>";
+		};
+		A10005100000000000000004 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000010 /* Views/RootView.swift */,
+				A10006100000000000000001 /* Home */,
+				A10006100000000000000002 /* Onboarding */,
+				A10006100000000000000003 /* ContentGenerator */,
+				A10006100000000000000004 /* CampaignPlanner */,
+				A10006100000000000000005 /* Calendar */,
+				A10006100000000000000006 /* Templates */,
+				A10006100000000000000007 /* Affiliate */,
+				A10006100000000000000008 /* Booking */,
+				A10006100000000000000009 /* Profile */,
+				A1000610000000000000000A /* Shared */,
+				A1000610000000000000000B /* SocialMedia */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		A10005100000000000000005 /* Supporting */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000003 /* Supporting/Constants.swift */,
+				A10001100000000000000004 /* Supporting/Extensions.swift */,
+				A10001100000000000000021 /* Supporting/DemoData.swift */,
+				A10001100000000000000023 /* Supporting/ThemeManager.swift */,
+			);
+			name = Supporting;
+			sourceTree = "<group>";
+		};
+		A10006100000000000000001 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000011 /* Views/Home/DashboardView.swift */,
+			);
+			name = Home;
+			sourceTree = "<group>";
+		};
+		A10006100000000000000002 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000012 /* Views/Onboarding/WelcomeView.swift */,
+				A10001100000000000000013 /* Views/Onboarding/NotificationsOnboardingView.swift */,
+			);
+			name = Onboarding;
+			sourceTree = "<group>";
+		};
+		A10006100000000000000003 /* ContentGenerator */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000014 /* Views/ContentGenerator/ContentGeneratorView.swift */,
+				A1000110000000000000002E /* Views/ContentGenerator/GeneratedContentCard.swift */,
+			);
+			name = ContentGenerator;
+			sourceTree = "<group>";
+		};
+		A10006100000000000000004 /* CampaignPlanner */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000015 /* Views/CampaignPlanner/CampaignPlannerView.swift */,
+			);
+			name = CampaignPlanner;
+			sourceTree = "<group>";
+		};
+		A10006100000000000000005 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000016 /* Views/Calendar/ContentCalendarView.swift */,
+				A1000110000000000000002F /* Views/Calendar/CalendarView.swift */,
+			);
+			name = Calendar;
+			sourceTree = "<group>";
+		};
+		A10006100000000000000006 /* Templates */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000017 /* Views/Templates/TemplatesView.swift */,
+			);
+			name = Templates;
+			sourceTree = "<group>";
+		};
+		A10006100000000000000007 /* Affiliate */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000018 /* Views/Affiliate/AffiliateToolsView.swift */,
+			);
+			name = Affiliate;
+			sourceTree = "<group>";
+		};
+		A10006100000000000000008 /* Booking */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000019 /* Views/Booking/BookingView.swift */,
+			);
+			name = Booking;
+			sourceTree = "<group>";
+		};
+		A10006100000000000000009 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				A1000110000000000000001A /* Views/Profile/ProfileView.swift */,
+			);
+			name = Profile;
+			sourceTree = "<group>";
+		};
+		A1000610000000000000000A /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				A1000110000000000000001B /* Views/Shared/PaywallView.swift */,
+				A1000110000000000000001C /* Views/Shared/SafariView.swift */,
+				A10001100000000000000028 /* Views/Shared/ShareSheet.swift */,
+			);
+			name = Shared;
+			sourceTree = "<group>";
+		};
+		A1000610000000000000000B /* SocialMedia */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000029 /* Views/SocialMedia/SocialAccountsView.swift */,
+				A1000110000000000000002A /* Views/SocialMedia/PostReviewView.swift */,
+				A1000110000000000000002B /* Views/SocialMedia/PostReviewContainerView.swift */,
+				A1000110000000000000002C /* Views/SocialMedia/ScheduledPostsView.swift */,
+				A1000110000000000000002D /* Views/SocialMedia/PlatformToggleButton.swift */,
+			);
+			name = SocialMedia;
+			sourceTree = "<group>";
+		};
+		A10007100000000000000002 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000020 /* Bradley Digital Marketing Hub.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-	A10007100000000000000001 /* Bradley Digital Marketing Hub */ = {
-		isa = PBXNativeTarget;
-		buildConfigurationList = A1000B100000000000000001 /* Build configuration list for PBXNativeTarget "Bradley Digital Marketing Hub" */;
-		buildPhases = (
-			A10008100000000000000001 /* Sources */,
-			A10002100000000000000001 /* Frameworks */,
-			A10009100000000000000001 /* Resources */
-		);
-		buildRules = (
-		);
-		dependencies = (
-		);
-		name = "Bradley Digital Marketing Hub";
-		productName = "Bradley Digital Marketing Hub";
-		productReference = A10001100000000000000020 /* Bradley Digital Marketing Hub.app */;
-		productType = "com.apple.product-type.application";
-	};
+		A10007100000000000000001 /* Bradley Digital Marketing Hub */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A1000B100000000000000001 /* Build configuration list for PBXNativeTarget "Bradley Digital Marketing Hub" */;
+			buildPhases = (
+				A10008100000000000000001 /* Sources */,
+				A10002100000000000000001 /* Frameworks */,
+				A10009100000000000000001 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Bradley Digital Marketing Hub";
+			productName = "Bradley Digital Marketing Hub";
+			productReference = A10001100000000000000020 /* Bradley Digital Marketing Hub.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-	A1000A100000000000000001 /* Project object */ = {
-		isa = PBXProject;
-		attributes = {
-			BuildIndependentTargetsInParallel = YES;
-			LastSwiftUpdateCheck = 1500;
-			LastUpgradeCheck = 1500;
-			TargetAttributes = {
-				A10007100000000000000001 = {
-					CreatedOnToolsVersion = 15.0;
-					DevelopmentTeam = "";
+		A1000A100000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					A10007100000000000000001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
 				};
 			};
+			buildConfigurationList = A1000A100000000000000002 /* Build configuration list for PBXProject "Bradley Digital Marketing Hub" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A10003100000000000000001;
+			productRefGroup = A10007100000000000000002 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A10007100000000000000001 /* Bradley Digital Marketing Hub */,
+			);
 		};
-		buildConfigurationList = A1000A100000000000000002 /* Build configuration list for PBXProject "Bradley Digital Marketing Hub" */;
-		compatibilityVersion = "Xcode 15.0";
-		developmentRegion = en;
-		hasScannedForEncodings = 0;
-		knownRegions = (
-			en,
-		);
-		mainGroup = A10003100000000000000001;
-		productRefGroup = A10007100000000000000002 /* Products */;
-		projectDirPath = "";
-		projectRoot = "";
-		targets = (
-			A10007100000000000000001 /* Bradley Digital Marketing Hub */
-		);
-	};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-	A10009100000000000000001 /* Resources */ = {
-		isa = PBXResourcesBuildPhase;
-		buildActionMask = 2147483647;
-		files = (
-			A1000010000000000000001D /* Assets.xcassets in Resources */,
-			A1000010000000000000001E /* Preview Assets.xcassets in Resources */
-		);
-		runOnlyForDeploymentPostprocessing = 0;
-	};
+		A10009100000000000000001 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A1000010000000000000001D /* Assets.xcassets in Resources */,
+				A1000010000000000000001E /* Preview Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-	A10008100000000000000001 /* Sources */ = {
-		isa = PBXSourcesBuildPhase;
-		buildActionMask = 2147483647;
-		files = (
-			A1000010000000000000001C /* SafariView.swift in Sources */,
-			A1000010000000000000001B /* PaywallView.swift in Sources */,
-			A1000010000000000000001A /* ProfileView.swift in Sources */,
-			A10000100000000000000019 /* BookingView.swift in Sources */,
-			A10000100000000000000018 /* AffiliateToolsView.swift in Sources */,
-			A10000100000000000000017 /* TemplatesView.swift in Sources */,
-			A10000100000000000000016 /* ContentCalendarView.swift in Sources */,
-			A10000100000000000000015 /* CampaignPlannerView.swift in Sources */,
-			A10000100000000000000014 /* ContentGeneratorView.swift in Sources */,
-			A10000100000000000000013 /* NotificationsOnboardingView.swift in Sources */,
-			A10000100000000000000012 /* WelcomeView.swift in Sources */,
-			A10000100000000000000011 /* DashboardView.swift in Sources */,
-			A10000100000000000000010 /* RootView.swift in Sources */,
-			A1000010000000000000000F /* ProfileViewModel.swift in Sources */,
-			A1000010000000000000000E /* BookingViewModel.swift in Sources */,
-			A1000010000000000000000D /* AffiliateToolsViewModel.swift in Sources */,
-			A1000010000000000000000C /* TemplatesViewModel.swift in Sources */,
-			A1000010000000000000000B /* ContentCalendarViewModel.swift in Sources */,
-			A1000010000000000000000A /* CampaignPlannerViewModel.swift in Sources */,
-			A10000100000000000000009 /* ContentGeneratorViewModel.swift in Sources */,
-			A10000100000000000000008 /* AppViewModel.swift in Sources */,
-			A10000100000000000000007 /* SubscriptionManager.swift in Sources */,
-			A10000100000000000000020 /* DemoDataSeeder.swift in Sources */,
-			A10000100000000000000006 /* AuthService.swift in Sources */,
-			A10000100000000000000005 /* CloudKitService.swift in Sources */,
-			A1000010000000000000001F /* DemoData.swift in Sources */,
-			A10000100000000000000004 /* Extensions.swift in Sources */,
-			A10000100000000000000003 /* Constants.swift in Sources */,
-			A10000100000000000000002 /* MarketingModels.swift in Sources */,
-			A10000100000000000000001 /* BradleyDigitalMarketingHubApp.swift in Sources */
-		);
-		runOnlyForDeploymentPostprocessing = 0;
-	};
+		A10008100000000000000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000100000000000000001 /* BradleyDigitalMarketingHubApp.swift in Sources */,
+				A10000100000000000000003 /* Supporting/Constants.swift in Sources */,
+				A10000100000000000000004 /* Supporting/Extensions.swift in Sources */,
+				A10000100000000000000021 /* Supporting/ThemeManager.swift in Sources */,
+				A1000010000000000000001F /* Supporting/DemoData.swift in Sources */,
+				A10000100000000000000002 /* Models/MarketingModels.swift in Sources */,
+				A10000100000000000000024 /* Models/SocialMediaModels.swift in Sources */,
+				A10000100000000000000005 /* Services/CloudKitService.swift in Sources */,
+				A10000100000000000000006 /* Services/AuthService.swift in Sources */,
+				A10000100000000000000007 /* Services/SubscriptionManager.swift in Sources */,
+				A10000100000000000000020 /* Services/DemoDataSeeder.swift in Sources */,
+				A10000100000000000000025 /* Services/SocialMediaService.swift in Sources */,
+				A10000100000000000000026 /* Services/NotificationService.swift in Sources */,
+				A10000100000000000000027 /* Services/PostScheduler.swift in Sources */,
+				A10000100000000000000008 /* ViewModels/AppViewModel.swift in Sources */,
+				A10000100000000000000009 /* ViewModels/ContentGeneratorViewModel.swift in Sources */,
+				A1000010000000000000000A /* ViewModels/CampaignPlannerViewModel.swift in Sources */,
+				A1000010000000000000000B /* ViewModels/ContentCalendarViewModel.swift in Sources */,
+				A1000010000000000000000C /* ViewModels/TemplatesViewModel.swift in Sources */,
+				A1000010000000000000000D /* ViewModels/AffiliateToolsViewModel.swift in Sources */,
+				A1000010000000000000000E /* ViewModels/BookingViewModel.swift in Sources */,
+				A1000010000000000000000F /* ViewModels/ProfileViewModel.swift in Sources */,
+				A10000100000000000000010 /* Views/RootView.swift in Sources */,
+				A10000100000000000000011 /* Views/Home/DashboardView.swift in Sources */,
+				A10000100000000000000012 /* Views/Onboarding/WelcomeView.swift in Sources */,
+				A10000100000000000000013 /* Views/Onboarding/NotificationsOnboardingView.swift in Sources */,
+				A10000100000000000000014 /* Views/ContentGenerator/ContentGeneratorView.swift in Sources */,
+				A1000010000000000000002E /* Views/ContentGenerator/GeneratedContentCard.swift in Sources */,
+				A10000100000000000000015 /* Views/CampaignPlanner/CampaignPlannerView.swift in Sources */,
+				A10000100000000000000016 /* Views/Calendar/ContentCalendarView.swift in Sources */,
+				A1000010000000000000002F /* Views/Calendar/CalendarView.swift in Sources */,
+				A10000100000000000000016 /* Views/Calendar/ContentCalendarView.swift in Sources */,
+				A10000100000000000000017 /* Views/Templates/TemplatesView.swift in Sources */,
+				A10000100000000000000018 /* Views/Affiliate/AffiliateToolsView.swift in Sources */,
+				A10000100000000000000019 /* Views/Booking/BookingView.swift in Sources */,
+				A1000010000000000000001A /* Views/Profile/ProfileView.swift in Sources */,
+				A1000010000000000000001B /* Views/Shared/PaywallView.swift in Sources */,
+				A1000010000000000000001C /* Views/Shared/SafariView.swift in Sources */,
+				A10000100000000000000028 /* Views/Shared/ShareSheet.swift in Sources */,
+				A10000100000000000000029 /* Views/SocialMedia/SocialAccountsView.swift in Sources */,
+				A1000010000000000000002A /* Views/SocialMedia/PostReviewView.swift in Sources */,
+				A1000010000000000000002B /* Views/SocialMedia/PostReviewContainerView.swift in Sources */,
+				A1000010000000000000002C /* Views/SocialMedia/ScheduledPostsView.swift in Sources */,
+				A1000010000000000000002D /* Views/SocialMedia/PlatformToggleButton.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-	A1000C100000000000000001 /* Debug */ = {
-		isa = XCBuildConfiguration;
-		buildSettings = {
-			ALWAYS_SEARCH_USER_PATHS = NO;
-			ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-			CLANG_ANALYZER_NONNULL = YES;
-			CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-			CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-			CLANG_ENABLE_MODULES = YES;
-			CLANG_ENABLE_OBJC_ARC = YES;
-			CLANG_ENABLE_OBJC_WEAK = YES;
-			CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-			CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-			CODE_SIGN_STYLE = Automatic;
-			CURRENT_PROJECT_VERSION = 1;
-			DEVELOPMENT_ASSET_PATHS = "\"Bradley Digital Marketing Hub/Preview Content\"";
-			DEVELOPMENT_TEAM = "";
-			ENABLE_PREVIEWS = YES;
-			GENERATE_INFOPLIST_FILE = NO;
-			INFOPLIST_FILE = "Bradley Digital Marketing Hub/Info.plist";
-			IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-			LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
-			MARKETING_VERSION = 1.0;
-			PRODUCT_BUNDLE_IDENTIFIER = com.bradleyhub.app;
-			PRODUCT_NAME = "Bradley Digital Marketing Hub";
-			SDKROOT = iphoneos;
-			SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-			SWIFT_EMIT_LOC_STRINGS = YES;
-			SWIFT_VERSION = 5.0;
-			TARGETED_DEVICE_FAMILY = "1,2";
+		A1000C100000000000000001 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Bradley Digital Marketing Hub/Preview Content\"";
+				DEVELOPMENT_TEAM = 4SQJ3AH62S;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Bradley Digital Marketing Hub/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bradleyhub.app;
+				CODE_SIGN_ENTITLEMENTS = "Bradley Digital Marketing Hub/Bradley Digital Marketing Hub.entitlements";
+				PRODUCT_NAME = "Bradley Digital Marketing Hub";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
 		};
-		name = Debug;
-	};
-	A1000C100000000000000002 /* Release */ = {
-		isa = XCBuildConfiguration;
-		buildSettings = {
-			ALWAYS_SEARCH_USER_PATHS = NO;
-			ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-			CLANG_ANALYZER_NONNULL = YES;
-			CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-			CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-			CLANG_ENABLE_MODULES = YES;
-			CLANG_ENABLE_OBJC_ARC = YES;
-			CLANG_ENABLE_OBJC_WEAK = YES;
-			CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-			CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-			CODE_SIGN_STYLE = Automatic;
-			CURRENT_PROJECT_VERSION = 1;
-			DEVELOPMENT_ASSET_PATHS = "\"Bradley Digital Marketing Hub/Preview Content\"";
-			DEVELOPMENT_TEAM = "";
-			ENABLE_PREVIEWS = YES;
-			GENERATE_INFOPLIST_FILE = NO;
-			INFOPLIST_FILE = "Bradley Digital Marketing Hub/Info.plist";
-			IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-			LD_RUNPATH_SEARCH_PATHS = ("$(inherited)", "@executable_path/Frameworks");
-			MARKETING_VERSION = 1.0;
-			PRODUCT_BUNDLE_IDENTIFIER = com.bradleyhub.app;
-			PRODUCT_NAME = "Bradley Digital Marketing Hub";
-			SDKROOT = iphoneos;
-			SWIFT_EMIT_LOC_STRINGS = YES;
-			SWIFT_OPTIMIZATION_LEVEL = "-O";
-			SWIFT_VERSION = 5.0;
-			TARGETED_DEVICE_FAMILY = "1,2";
+		A1000C100000000000000002 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "\"Bradley Digital Marketing Hub/Preview Content\"";
+				DEVELOPMENT_TEAM = 4SQJ3AH62S;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Bradley Digital Marketing Hub/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bradleyhub.app;
+				CODE_SIGN_ENTITLEMENTS = "Bradley Digital Marketing Hub/Bradley Digital Marketing Hub.entitlements";
+				PRODUCT_NAME = "Bradley Digital Marketing Hub";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
 		};
-		name = Release;
-	};
-	A1000C100000000000000003 /* Debug */ = {
-		isa = XCBuildConfiguration;
-		buildSettings = {
-			ALWAYS_SEARCH_USER_PATHS = NO;
-			CLANG_ANALYZER_NONNULL = YES;
-			CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-			CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-			CLANG_ENABLE_MODULES = YES;
-			CLANG_ENABLE_OBJC_ARC = YES;
-			CLANG_ENABLE_OBJC_WEAK = YES;
-			CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-			CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-			COPY_PHASE_STRIP = NO;
-			GCC_C_LANGUAGE_STANDARD = gnu17;
-			GCC_DYNAMIC_NO_PIC = NO;
-			GCC_NO_COMMON_BLOCKS = YES;
-			GCC_OPTIMIZATION_LEVEL = 0;
-			GCC_PREPROCESSOR_DEFINITIONS = (
-				"DEBUG=1",
-				"$(inherited)"
-			);
-			GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-			GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-			GCC_WARN_UNDECLARED_SELECTOR = YES;
-			GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-			GCC_WARN_UNUSED_FUNCTION = YES;
-			GCC_WARN_UNUSED_VARIABLE = YES;
-			IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-			MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-			ONLY_ACTIVE_ARCH = YES;
-			SDKROOT = iphoneos;
-			SWIFT_VERSION = 5.0;
+		A1000C100000000000000003 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
 		};
-		name = Debug;
-	};
-	A1000C100000000000000004 /* Release */ = {
-		isa = XCBuildConfiguration;
-		buildSettings = {
-			ALWAYS_SEARCH_USER_PATHS = NO;
-			CLANG_ANALYZER_NONNULL = YES;
-			CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-			CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
-			CLANG_ENABLE_MODULES = YES;
-			CLANG_ENABLE_OBJC_ARC = YES;
-			CLANG_ENABLE_OBJC_WEAK = YES;
-			CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-			CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-			COPY_PHASE_STRIP = NO;
-			ENABLE_NS_ASSERTIONS = NO;
-			GCC_C_LANGUAGE_STANDARD = gnu17;
-			GCC_NO_COMMON_BLOCKS = YES;
-			GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-			GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-			GCC_WARN_UNDECLARED_SELECTOR = YES;
-			GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-			GCC_WARN_UNUSED_FUNCTION = YES;
-			GCC_WARN_UNUSED_VARIABLE = YES;
-			IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-			MTL_ENABLE_DEBUG_INFO = NO;
-			SDKROOT = iphoneos;
-			SWIFT_COMPILATION_MODE = wholemodule;
-			SWIFT_OPTIMIZATION_LEVEL = "-O";
-			SWIFT_VERSION = 5.0;
+		A1000C100000000000000004 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
 		};
-		name = Release;
-	};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-	A1000A100000000000000002 /* Build configuration list for PBXProject "Bradley Digital Marketing Hub" */ = {
-		isa = XCConfigurationList;
-		buildConfigurations = (
-			A1000C100000000000000003 /* Debug */,
-			A1000C100000000000000004 /* Release */
-		);
-		defaultConfigurationIsVisible = 0;
-		defaultConfigurationName = Release;
-	};
-	A1000B100000000000000001 /* Build configuration list for PBXNativeTarget "Bradley Digital Marketing Hub" */ = {
-		isa = XCConfigurationList;
-		buildConfigurations = (
-			A1000C100000000000000001 /* Debug */,
-			A1000C100000000000000002 /* Release */
-		);
-		defaultConfigurationIsVisible = 0;
-		defaultConfigurationName = Release;
-	};
+		A1000A100000000000000002 /* Build configuration list for PBXProject "Bradley Digital Marketing Hub" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1000C100000000000000003 /* Debug */,
+				A1000C100000000000000004 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A1000B100000000000000001 /* Build configuration list for PBXNativeTarget "Bradley Digital Marketing Hub" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1000C100000000000000001 /* Debug */,
+				A1000C100000000000000002 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
-
 	};
 	rootObject = A1000A100000000000000001 /* Project object */;
 }

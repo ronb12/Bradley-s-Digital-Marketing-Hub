@@ -27,7 +27,17 @@ struct CampaignPlannerView: View {
                     Text(platform.rawValue).tag(platform)
                 }
             }
-            TextField("Goal (traffic, sales, awareness)", text: $viewModel.goal)
+            Picker("Campaign Goal", selection: $viewModel.goalOption) {
+                ForEach(CampaignGoal.allWithCustom) { option in
+                    Text(option.displayName).tag(option)
+                }
+            }
+            
+            // Custom Goal TextField (shown only when custom is selected)
+            if case .custom = viewModel.goalOption {
+                TextField("Enter campaign goal", text: $viewModel.customGoal)
+                    .autocapitalization(.words)
+            }
             Slider(value: $viewModel.budget, in: 100...10000, step: 100) {
                 Text("Budget")
             } minimumValueLabel: {

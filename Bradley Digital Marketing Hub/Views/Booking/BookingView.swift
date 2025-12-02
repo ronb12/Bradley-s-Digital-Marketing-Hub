@@ -12,10 +12,10 @@ struct BookingView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Picker("Service type", selection: $viewModel.serviceType) {
-                    Text("Consultation").tag("Consultation")
-                    Text("Ad Audit").tag("Ad Audit")
-                    Text("Funnel Build").tag("Funnel Build")
+                Picker("Service Type", selection: $viewModel.serviceType) {
+                    ForEach(ServiceType.allCases) { serviceType in
+                        Text(serviceType.rawValue).tag(serviceType)
+                    }
                 }
                 DatePicker("Preferred time", selection: $viewModel.requestedDate)
                 TextField("Notes", text: $viewModel.notes, axis: .vertical)

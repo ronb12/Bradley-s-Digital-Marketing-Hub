@@ -11,7 +11,7 @@ final class AppViewModel: ObservableObject {
         case authenticated
     }
 
-    @Published var authState: AuthState = .loading
+    @Published var authState: AuthState = .onboarding
     @Published var userProfile: UserProfile?
     @Published var brands: [Brand] = []
     @Published var campaignPlans: [CampaignPlan] = []
@@ -26,23 +26,47 @@ final class AppViewModel: ObservableObject {
     let cloudKitService = CloudKitService()
     let authService = AuthService()
     let subscriptionManager = SubscriptionManager()
+    let themeManager = ThemeManager.shared
+    lazy var socialMediaService = SocialMediaService(cloudKitService: cloudKitService)
 
     private var didBootstrap = false
 
     func bootstrap() async {
         guard !didBootstrap else { return }
         didBootstrap = true
-        await subscriptionManager.loadProducts()
-        await subscriptionManager.refreshEntitlements()
-
-        if let cachedId = authService.cachedUserId(),
-           let profile = try? await cloudKitService.fetchUserProfile(userId: cachedId) {
-            userProfile = profile
-            subscriptionManager.overrideTier(profile.plan)
-            authState = .authenticated
-            await refreshPortal()
-        } else {
+        
+        // Immediately transition to onboarding to show content
+        // Don't block on anything - show welcome screen right away
+        await MainActor.run {
             authState = .onboarding
+        }
+        
+        // Start loading products and entitlements in background (don't block)
+        Task { @MainActor in
+            await self.subscriptionManager.loadProducts()
+        }
+        Task { @MainActor in
+            await self.subscriptionManager.refreshEntitlements()
+        }
+
+        // Quick check for cached user in background - don't block
+        if let cachedId = authService.cachedUserId() {
+            Task {
+                do {
+                    let profile = try await cloudKitService.fetchUserProfile(userId: cachedId)
+                    if let profile = profile {
+                        await MainActor.run {
+                            userProfile = profile
+                            subscriptionManager.overrideTier(profile.plan)
+                            authState = .authenticated
+                        }
+                        await refreshPortal()
+                    }
+                } catch {
+                    // CloudKit might fail - that's OK, stay on onboarding
+                    print("CloudKit fetch failed (this is OK on first launch): \(error.localizedDescription)")
+                }
+            }
         }
     }
 
@@ -91,8 +115,24 @@ final class AppViewModel: ObservableObject {
     }
 
     func completeNotificationsOnboarding(enableReminders: Bool) async {
-        // Store onboarding preference locally for now.
+        // Store onboarding preference locally
         UserDefaults.standard.set(enableReminders, forKey: "BradleyDigitalMarketingHub.notificationsEnabled")
+        
+        // Request notification permissions if user enabled reminders
+        if enableReminders {
+            do {
+                let granted = try await NotificationService.shared.requestAuthorization()
+                if granted {
+                    NotificationService.shared.registerNotificationCategories()
+                    print("Notification permissions granted")
+                } else {
+                    print("Notification permissions denied")
+                }
+            } catch {
+                print("Error requesting notification permissions: \(error.localizedDescription)")
+            }
+        }
+        
         authState = .authenticated
         await refreshPortal()
     }

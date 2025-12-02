@@ -84,6 +84,210 @@ enum MarketingPlatform: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
+enum BusinessType: String, CaseIterable, Identifiable, Hashable {
+    case ecommerce = "E-commerce"
+    case saas = "SaaS / Tech"
+    case fitness = "Fitness & Wellness"
+    case coaching = "Coaching & Consulting"
+    case foodBeverage = "Food & Beverage"
+    case fashion = "Fashion & Beauty"
+    case realEstate = "Real Estate"
+    case finance = "Finance & Investing"
+    case education = "Education & Training"
+    case healthcare = "Healthcare"
+    case travel = "Travel & Hospitality"
+    case nonprofit = "Nonprofit"
+    case agency = "Marketing Agency"
+    case other = "Other"
+    
+    var id: String { rawValue }
+    
+    static var allWithCustom: [BusinessTypeOption] {
+        BusinessType.allCases.map { .predefined($0) } + [.custom]
+    }
+}
+
+enum BusinessTypeOption: Identifiable, Hashable {
+    case predefined(BusinessType)
+    case custom
+    
+    var id: String {
+        switch self {
+        case .predefined(let type): return type.id
+        case .custom: return "custom"
+        }
+    }
+    
+    var displayName: String {
+        switch self {
+        case .predefined(let type): return type.rawValue
+        case .custom: return "Custom..."
+        }
+    }
+}
+
+enum TargetAudience: String, CaseIterable, Identifiable, Hashable {
+    case millennials = "Millennials (25-40)"
+    case genZ = "Gen Z (18-24)"
+    case genX = "Gen X (41-56)"
+    case babyBoomers = "Baby Boomers (57+)"
+    case entrepreneurs = "Entrepreneurs & Founders"
+    case professionals = "Working Professionals"
+    case students = "Students"
+    case parents = "Parents & Families"
+    case fitnessEnthusiasts = "Fitness Enthusiasts"
+    case techEnthusiasts = "Tech Enthusiasts"
+    case smallBusiness = "Small Business Owners"
+    case creatives = "Creatives & Artists"
+    case luxuryConsumers = "Luxury Consumers"
+    case budgetConscious = "Budget-Conscious"
+    case other = "Other"
+    
+    var id: String { rawValue }
+    
+    static var allWithCustom: [TargetAudienceOption] {
+        TargetAudience.allCases.map { .predefined($0) } + [.custom]
+    }
+}
+
+enum TargetAudienceOption: Identifiable, Hashable {
+    case predefined(TargetAudience)
+    case custom
+    
+    var id: String {
+        switch self {
+        case .predefined(let audience): return audience.id
+        case .custom: return "custom"
+        }
+    }
+    
+    var displayName: String {
+        switch self {
+        case .predefined(let audience): return audience.rawValue
+        case .custom: return "Custom..."
+        }
+    }
+}
+
+enum CampaignGoal: String, CaseIterable, Identifiable, Hashable {
+    case awareness = "Brand Awareness"
+    case traffic = "Drive Traffic"
+    case sales = "Increase Sales"
+    case leads = "Generate Leads"
+    case engagement = "Boost Engagement"
+    case conversions = "Drive Conversions"
+    case retention = "Customer Retention"
+    case launch = "Product Launch"
+    case event = "Promote Event"
+    case other = "Other"
+    
+    var id: String { rawValue }
+    
+    static var allWithCustom: [CampaignGoalOption] {
+        CampaignGoal.allCases.map { .predefined($0) } + [.custom]
+    }
+}
+
+enum CampaignGoalOption: Identifiable, Hashable {
+    case predefined(CampaignGoal)
+    case custom
+    
+    var id: String {
+        switch self {
+        case .predefined(let goal): return goal.id
+        case .custom: return "custom"
+        }
+    }
+    
+    var displayName: String {
+        switch self {
+        case .predefined(let goal): return goal.rawValue
+        case .custom: return "Custom..."
+        }
+    }
+}
+
+enum ServiceType: String, CaseIterable, Identifiable, Hashable {
+    case consultation = "Consultation"
+    case adAudit = "Ad Audit"
+    case funnelBuild = "Funnel Build"
+    case strategy = "Marketing Strategy"
+    case contentCreation = "Content Creation"
+    case socialMedia = "Social Media Management"
+    case seo = "SEO Optimization"
+    case emailMarketing = "Email Marketing Setup"
+    case analytics = "Analytics Setup"
+    case other = "Other"
+    
+    var id: String { rawValue }
+}
+
+enum BrandColor: String, CaseIterable, Identifiable, Hashable {
+    case blue = "#5B8DEF"
+    case green = "#2AA876"
+    case purple = "#7F52FF"
+    case red = "#FF3B30"
+    case orange = "#FF9500"
+    case yellow = "#FFCC00"
+    case pink = "#FF2D55"
+    case teal = "#5AC8FA"
+    case indigo = "#5856D6"
+    case black = "#000000"
+    case custom = "custom"
+    
+    var id: String { rawValue }
+    
+    var displayName: String {
+        switch self {
+        case .blue: return "Blue"
+        case .green: return "Green"
+        case .purple: return "Purple"
+        case .red: return "Red"
+        case .orange: return "Orange"
+        case .yellow: return "Yellow"
+        case .pink: return "Pink"
+        case .teal: return "Teal"
+        case .indigo: return "Indigo"
+        case .black: return "Black"
+        case .custom: return "Custom Color"
+        }
+    }
+    
+    var hexValue: String {
+        rawValue
+    }
+    
+    static var allWithCustom: [BrandColorOption] {
+        BrandColor.allCases.filter { $0 != .custom }.map { .predefined($0) } + [.custom]
+    }
+}
+
+enum BrandColorOption: Identifiable, Hashable {
+    case predefined(BrandColor)
+    case custom
+    
+    var id: String {
+        switch self {
+        case .predefined(let color): return color.id
+        case .custom: return "custom"
+        }
+    }
+    
+    var displayName: String {
+        switch self {
+        case .predefined(let color): return color.displayName
+        case .custom: return "Custom Hex Color"
+        }
+    }
+    
+    var hexValue: String? {
+        switch self {
+        case .predefined(let color): return color.hexValue
+        case .custom: return nil
+        }
+    }
+}
+
 protocol CloudKitRecordConvertible {
     static var recordType: CKRecord.RecordType { get }
     var recordID: CKRecord.ID { get }

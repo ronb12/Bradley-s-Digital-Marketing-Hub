@@ -6,11 +6,17 @@ final class CloudKitService {
     private let container: CKContainer
 
     init(containerIdentifier: String = AppConstants.cloudKitContainerIdentifier) {
-        self.container = CKContainer(identifier: containerIdentifier)
+        // Use default container if no identifier provided, otherwise use specified identifier
+        if containerIdentifier.isEmpty || containerIdentifier == "iCloud.com.example.BradleyDigitalMarketingHub" {
+            // Use default container - this will work if CloudKit capability is enabled
+            self.container = CKContainer.default()
+        } else {
+            self.container = CKContainer(identifier: containerIdentifier)
+        }
     }
 
-    private var privateDB: CKDatabase { container.privateCloudDatabase }
-    private var publicDB: CKDatabase { container.publicCloudDatabase }
+    var privateDB: CKDatabase { container.privateCloudDatabase }
+    var publicDB: CKDatabase { container.publicCloudDatabase }
 
     private func database(for scope: CKDatabase.Scope) -> CKDatabase {
         switch scope {
@@ -27,13 +33,13 @@ final class CloudKitService {
 
     // MARK: - Generic Helpers
 
-    private func save<T: CloudKitRecordConvertible>(_ item: T, scope: CKDatabase.Scope) async throws -> T {
+    func save<T: CloudKitRecordConvertible>(_ item: T, scope: CKDatabase.Scope) async throws -> T {
         let record = item.makeRecord()
         let savedRecord = try await database(for: scope).save(record)
         return try T(record: savedRecord)
     }
 
-    private func fetch<T: CloudKitRecordConvertible>(
+    func fetch<T: CloudKitRecordConvertible>(
         recordType: CKRecord.RecordType,
         predicate: NSPredicate = .init(value: true),
         scope: CKDatabase.Scope,
@@ -44,8 +50,8 @@ final class CloudKitService {
         let query = CKQuery(recordType: recordType, predicate: predicate)
         query.sortDescriptors = sortDescriptors
         let (matched, _) = try await database(for: scope).records(matching: query, inZoneWith: nil, resultsLimit: limit ?? CKQueryOperation.maximumResults)
-        for value in matched.values {
-            switch value {
+        for (_, result) in matched {
+            switch result {
             case .success(let record):
                 results.append(try T(record: record))
             case .failure(let error):
@@ -80,7 +86,18 @@ final class CloudKitService {
     func updateUserAvatar(data: Data, userId: String) async throws -> UserProfile {
         let tempURL = try writeTemporaryAsset(data: data, preferredExtension: "jpg")
         let recordID = CKRecord.ID(recordName: userId)
-        let record = try await privateDB.record(for: recordID)
+        
+        // Try to fetch existing record, or create a new one if it doesn't exist
+        let record: CKRecord
+        do {
+            record = try await privateDB.record(for: recordID)
+        } catch {
+            if let ckError = error as? CKError, ckError.code == .unknownItem {
+                throw CloudKitError.operationFailed("User profile not found. Please complete onboarding first.")
+            }
+            throw CloudKitError.operationFailed(error.localizedDescription)
+        }
+        
         record["avatarAsset"] = CKAsset(fileURL: tempURL)
         let saved = try await privateDB.save(record)
         return try UserProfile(record: saved)
@@ -88,7 +105,18 @@ final class CloudKitService {
 
     func removeUserAvatar(userId: String) async throws -> UserProfile {
         let recordID = CKRecord.ID(recordName: userId)
-        let record = try await privateDB.record(for: recordID)
+        
+        // Try to fetch existing record
+        let record: CKRecord
+        do {
+            record = try await privateDB.record(for: recordID)
+        } catch {
+            if let ckError = error as? CKError, ckError.code == .unknownItem {
+                throw CloudKitError.operationFailed("User profile not found. Please complete onboarding first.")
+            }
+            throw CloudKitError.operationFailed(error.localizedDescription)
+        }
+        
         record["avatarAsset"] = nil
         let saved = try await privateDB.save(record)
         return try UserProfile(record: saved)

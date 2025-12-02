@@ -2,6 +2,8 @@ import SwiftUI
 
 struct DashboardView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
     @State private var showBooking = false
 
     var body: some View {
@@ -26,10 +28,23 @@ struct DashboardView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Welcome, \(appViewModel.userProfile?.name ?? "creator")")
-                .font(.title).bold()
+            HStack {
+                if appViewModel.isDemoMode {
+                    Image(systemName: "eye.fill")
+                        .foregroundColor(themeManager.colors(for: colorScheme).primary)
+                }
+                Text("Welcome, \(appViewModel.userProfile?.name ?? "creator")")
+                    .font(.title)
+                    .bold()
+                    .foregroundColor(themeManager.colors(for: colorScheme).primary)
+            }
             Text("Current plan: \(appViewModel.currentTier.displayName)")
                 .foregroundColor(.secondary)
+            if appViewModel.isDemoMode {
+                Text("Demo Mode - Sign in to save your work")
+                    .font(.caption)
+                    .foregroundColor(themeManager.colors(for: colorScheme).secondary)
+            }
         }
     }
 
@@ -40,6 +55,7 @@ struct DashboardView: View {
                 appViewModel.showPaywall = true
             }
             .buttonStyle(.borderedProminent)
+            .tint(themeManager.colors(for: colorScheme).primary)
         }
         .primarySectionStyle()
     }
@@ -62,7 +78,7 @@ struct DashboardView: View {
                 }
                 GridRow {
                     NavigationLink {
-                        ContentCalendarView(service: appViewModel.cloudKitService)
+                        ContentCalendarView(service: appViewModel.cloudKitService, socialMediaService: appViewModel.socialMediaService)
                     } label: {
                         actionCard(title: "Content Calendar", subtitle: "Schedule posts", icon: "calendar")
                     }
