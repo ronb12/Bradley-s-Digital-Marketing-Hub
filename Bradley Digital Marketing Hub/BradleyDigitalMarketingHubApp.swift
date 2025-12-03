@@ -62,6 +62,13 @@ struct BradleyDigitalMarketingHubApp: App {
     }
 }
 
+// MARK: - Orientation Support
+extension UIApplication {
+    static var supportedOrientations: UIInterfaceOrientationMask {
+        return .all
+    }
+}
+
 // MARK: - App Delegate for Notification Handling
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
@@ -69,6 +76,11 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         // Set notification delegate
         UNUserNotificationCenter.current().delegate = self
         return true
+    }
+    
+    // Support all orientations
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        return .all
     }
     
     // Handle notification when app is in foreground

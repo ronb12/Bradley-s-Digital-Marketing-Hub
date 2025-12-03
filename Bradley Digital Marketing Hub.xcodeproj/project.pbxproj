@@ -32,6 +32,7 @@
 		A10000100000000000000015 /* Views/CampaignPlanner/CampaignPlannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000015 /* Views/CampaignPlanner/CampaignPlannerView.swift */; };
 		A10000100000000000000016 /* Views/Calendar/ContentCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000016 /* Views/Calendar/ContentCalendarView.swift */; };
 		A10000100000000000000017 /* Views/Templates/TemplatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000017 /* Views/Templates/TemplatesView.swift */; };
+		A10000100000000000000031 /* Views/Templates/SaveTemplateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000031 /* Views/Templates/SaveTemplateView.swift */; };
 		A10000100000000000000018 /* Views/Affiliate/AffiliateToolsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000018 /* Views/Affiliate/AffiliateToolsView.swift */; };
 		A10000100000000000000019 /* Views/Booking/BookingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000019 /* Views/Booking/BookingView.swift */; };
 		A1000010000000000000001A /* Views/Profile/ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000001A /* Views/Profile/ProfileView.swift */; };
@@ -42,6 +43,7 @@
 		A1000010000000000000001F /* Supporting/DemoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000021 /* Supporting/DemoData.swift */; };
 		A10000100000000000000020 /* Services/DemoDataSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000022 /* Services/DemoDataSeeder.swift */; };
 		A10000100000000000000021 /* Supporting/ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000023 /* Supporting/ThemeManager.swift */; };
+		A10000100000000000000030 /* Supporting/HapticFeedbackService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000030 /* Supporting/HapticFeedbackService.swift */; };
 		A100001000000000000000024 /* Models/SocialMediaModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000024 /* Models/SocialMediaModels.swift */; };
 		A100001000000000000000025 /* Services/SocialMediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000025 /* Services/SocialMediaService.swift */; };
 		A100001000000000000000026 /* Services/NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000026 /* Services/NotificationService.swift */; };
@@ -78,6 +80,7 @@
 		A10001100000000000000015 /* Views/CampaignPlanner/CampaignPlannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/CampaignPlanner/CampaignPlannerView.swift; sourceTree = "<group>"; };
 		A10001100000000000000016 /* Views/Calendar/ContentCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Calendar/ContentCalendarView.swift; sourceTree = "<group>"; };
 		A10001100000000000000017 /* Views/Templates/TemplatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Templates/TemplatesView.swift; sourceTree = "<group>"; };
+		A10001100000000000000031 /* Views/Templates/SaveTemplateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Templates/SaveTemplateView.swift; sourceTree = "<group>"; };
 		A10001100000000000000018 /* Views/Affiliate/AffiliateToolsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Affiliate/AffiliateToolsView.swift; sourceTree = "<group>"; };
 		A10001100000000000000019 /* Views/Booking/BookingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Booking/BookingView.swift; sourceTree = "<group>"; };
 		A1000110000000000000001A /* Views/Profile/ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Profile/ProfileView.swift; sourceTree = "<group>"; };
@@ -90,6 +93,7 @@
 		A10001100000000000000021 /* Supporting/DemoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Supporting/DemoData.swift; sourceTree = "<group>"; };
 		A10001100000000000000022 /* Services/DemoDataSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/DemoDataSeeder.swift; sourceTree = "<group>"; };
 		A10001100000000000000023 /* Supporting/ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Supporting/ThemeManager.swift; sourceTree = "<group>"; };
+		A10001100000000000000030 /* Supporting/HapticFeedbackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Supporting/HapticFeedbackService.swift; sourceTree = "<group>"; };
 		A10001100000000000000024 /* Models/SocialMediaModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/SocialMediaModels.swift; sourceTree = "<group>"; };
 		A10001100000000000000025 /* Services/SocialMediaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/SocialMediaService.swift; sourceTree = "<group>"; };
 		A10001100000000000000026 /* Services/NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services/NotificationService.swift; sourceTree = "<group>"; };
@@ -203,6 +207,7 @@
 				A10001100000000000000004 /* Supporting/Extensions.swift */,
 				A10001100000000000000021 /* Supporting/DemoData.swift */,
 				A10001100000000000000023 /* Supporting/ThemeManager.swift */,
+				A10001100000000000000030 /* Supporting/HapticFeedbackService.swift */,
 			);
 			name = Supporting;
 			sourceTree = "<group>";
@@ -254,6 +259,7 @@
 			isa = PBXGroup;
 			children = (
 				A10001100000000000000017 /* Views/Templates/TemplatesView.swift */,
+				A10001100000000000000031 /* Views/Templates/SaveTemplateView.swift */,
 			);
 			name = Templates;
 			sourceTree = "<group>";
@@ -386,6 +392,7 @@
 				A10000100000000000000003 /* Supporting/Constants.swift in Sources */,
 				A10000100000000000000004 /* Supporting/Extensions.swift in Sources */,
 				A10000100000000000000021 /* Supporting/ThemeManager.swift in Sources */,
+				A10000100000000000000030 /* Supporting/HapticFeedbackService.swift in Sources */,
 				A1000010000000000000001F /* Supporting/DemoData.swift in Sources */,
 				A10000100000000000000002 /* Models/MarketingModels.swift in Sources */,
 				A10000100000000000000024 /* Models/SocialMediaModels.swift in Sources */,
@@ -413,8 +420,8 @@
 				A10000100000000000000015 /* Views/CampaignPlanner/CampaignPlannerView.swift in Sources */,
 				A10000100000000000000016 /* Views/Calendar/ContentCalendarView.swift in Sources */,
 				A1000010000000000000002F /* Views/Calendar/CalendarView.swift in Sources */,
-				A10000100000000000000016 /* Views/Calendar/ContentCalendarView.swift in Sources */,
 				A10000100000000000000017 /* Views/Templates/TemplatesView.swift in Sources */,
+				A10000100000000000000031 /* Views/Templates/SaveTemplateView.swift in Sources */,
 				A10000100000000000000018 /* Views/Affiliate/AffiliateToolsView.swift in Sources */,
 				A10000100000000000000019 /* Views/Booking/BookingView.swift in Sources */,
 				A1000010000000000000001A /* Views/Profile/ProfileView.swift in Sources */,
