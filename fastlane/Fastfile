@@ -1,0 +1,236 @@
+# Fastfile for Bradley Digital Marketing Hub
+# This file contains the automation configuration for App Store Connect
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Take screenshots automatically and upload to App Store Connect"
+  lane :capture_and_upload_screenshots do
+    # Step 1: Take screenshots using UI automation
+    UI.message "📸 Starting automated screenshot capture..."
+    
+    begin
+      snapshot(
+        scheme: "Bradley Digital Marketing Hub",
+        test_target_name: "Bradley Digital Marketing HubUITests",
+        test_without_building: false,
+        reinstall_app: true,
+        erase_simulator: false,
+        skip_helper_version_check: true
+      )
+    rescue => ex
+      UI.important "⚠️  Snapshot failed: #{ex.message}"
+      UI.important ""
+      UI.important "This usually means:"
+      UI.important "1. UI test target not set up yet (see UI_TEST_SETUP.md)"
+      UI.important "2. Simulators not installed (install in Xcode → Settings → Platforms)"
+      UI.important "3. Device names don't match available simulators"
+      UI.important ""
+      UI.important "You can:"
+      UI.important "- Use the interactive script: ./capture_and_upload_screenshots.sh (choose option 2)"
+      UI.important "- Or manually upload screenshots via App Store Connect"
+      UI.user_error!("Screenshot capture failed. See above for options.")
+    end
+    
+    # Step 2: Upload screenshots to App Store Connect
+    UI.message "📤 Uploading screenshots to App Store Connect..."
+    deliver(
+      skip_binary_upload: true,
+      skip_metadata: true,
+      skip_screenshots: false,
+      force: true,
+      screenshots_path: "./screenshots",
+      app_identifier: "com.bradleyhub.app"
+    )
+    
+    UI.success "✅ Screenshots captured and uploaded successfully!"
+  end
+
+  desc "Take screenshots only (don't upload)"
+  lane :take_screenshots do
+    UI.message "📸 Taking screenshots..."
+    snapshot(
+      scheme: "Bradley Digital Marketing Hub",
+      test_target_name: "Bradley Digital Marketing HubUITests",
+      skip_helper_version_check: true
+    )
+    UI.success "✅ Screenshots saved to ./screenshots/"
+  end
+
+  desc "Upload screenshots to App Store Connect"
+  lane :upload_screenshots do
+    # Upload screenshots for all device sizes
+    upload_to_app_store(
+      skip_binary_upload: true,
+      skip_metadata: false,
+      skip_screenshots: false,
+      force: true,
+      screenshots_path: "./screenshots",
+      app_identifier: "com.bradleyhub.app"
+    )
+  end
+
+  desc "Upload all metadata to App Store Connect"
+  lane :upload_metadata do
+    UI.message "📤 Uploading metadata to App Store Connect..."
+    deliver(
+      skip_binary_upload: true,
+      skip_metadata: false,
+      skip_screenshots: true,
+      force: true,
+      app_identifier: "com.bradleyhub.app"
+    )
+    UI.success "✅ Metadata uploaded successfully!"
+  end
+
+  desc "Upload everything (metadata + screenshots) to App Store Connect"
+  lane :upload_all do
+    UI.message "📤 Uploading metadata and screenshots to App Store Connect..."
+    
+    # Check if running in Xcode Cloud
+    is_xcode_cloud = ENV["CI_XCODEBUILD_ACTION"] || ENV["CI"]
+    
+    if is_xcode_cloud && ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"]
+      # Xcode Cloud with API key
+      UI.message "☁️  Running in Xcode Cloud with API key authentication"
+      app_store_connect_api_key(
+        key_id: ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"],
+        issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"],
+        key_filepath: ENV["APP_STORE_CONNECT_API_KEY_KEY_FILEPATH"],
+        duration: 1200,
+        in_house: false
+      )
+      UI.success "✅ API key configured for Xcode Cloud"
+    elsif ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"]
+      # Local with API key
+      app_store_connect_api_key(
+        key_id: ENV["APP_STORE_CONNECT_API_KEY_KEY_ID"] || "HCSFLLPRTL",
+        issuer_id: ENV["APP_STORE_CONNECT_API_KEY_ISSUER_ID"] || "b37f0fe7-81a4-439a-a070-18816dcf17ce",
+        key_filepath: ENV["APP_STORE_CONNECT_API_KEY_KEY_FILEPATH"] || File.expand_path("~/.appstoreconnect/private_keys/AuthKey_HCSFLLPRTL.p8"),
+        duration: 1200,
+        in_house: false
+      )
+      UI.success "✅ API key configured"
+    end
+    
+    # Try to upload with API key first
+    begin
+      deliver(
+        skip_binary_upload: true,
+        skip_metadata: false,
+        skip_screenshots: false,
+        force: true,
+        screenshots_path: "./screenshots",
+        app_identifier: "com.bradleyhub.app"
+      )
+    rescue => e
+      if e.message.include?("team_id") || e.message.include?("Unauthorized")
+        UI.important "⚠️  API key authentication failed: #{e.message}"
+        if is_xcode_cloud
+          UI.user_error!("Xcode Cloud: API key authentication failed. This is a known Fastlane limitation. Consider uploading metadata manually or using Xcode Cloud's native App Store Connect integration.")
+        else
+          UI.important "   Falling back to password authentication..."
+          deliver(
+            skip_binary_upload: true,
+            skip_metadata: false,
+            skip_screenshots: false,
+            force: true,
+            screenshots_path: "./screenshots",
+            app_identifier: "com.bradleyhub.app",
+            username: ENV["FASTLANE_USER"] || "ronellbradley@gmail.com"
+          )
+        end
+      else
+        raise e
+      end
+    end
+    
+    UI.success "✅ All metadata and screenshots uploaded successfully!"
+  end
+
+  desc "Upload only screenshots (without metadata or binary)"
+  lane :screenshots_only do
+    deliver(
+      skip_binary_upload: true,
+      skip_metadata: true,
+      skip_screenshots: false,
+      force: true,
+      screenshots_path: "./screenshots",
+      app_identifier: "com.bradleyhub.app"
+    )
+  end
+
+  desc "Upload screenshots for specific device size"
+  lane :upload_screenshot_device do |options|
+    device_size = options[:device_size] || "iphone-6.7"
+    
+    UI.message "Uploading screenshots for #{device_size}..."
+    
+    deliver(
+      skip_binary_upload: true,
+      skip_metadata: true,
+      skip_screenshots: false,
+      force: true,
+      screenshots_path: "./screenshots/#{device_size}",
+      app_identifier: "com.bradleyhub.app"
+    )
+  end
+
+  desc "Download existing screenshots from App Store Connect"
+  lane :download_screenshots do
+    deliver(
+      download_screenshots: true,
+      skip_binary_upload: true,
+      skip_metadata: true,
+      app_identifier: "com.bradleyhub.app"
+    )
+  end
+
+  desc "Upload app binary and screenshots"
+  lane :upload_build do
+    # Build and upload the app
+    build_app(
+      scheme: "Bradley Digital Marketing Hub",
+      export_method: "app-store"
+    )
+    
+    # Upload to App Store Connect
+    upload_to_app_store(
+      skip_metadata: false,
+      skip_screenshots: false,
+      force: true,
+      screenshots_path: "./screenshots",
+      app_identifier: "com.bradleyhub.app"
+    )
+  end
+
+  desc "Check screenshot requirements"
+  lane :check_screenshots do
+    UI.message "Checking screenshot requirements..."
+    
+    required_sizes = {
+      "iphone-6.7" => { width: 1290, height: 2796 },
+      "iphone-6.5" => { width: 1242, height: 2688 },
+      "iphone-5.5" => { width: 1242, height: 2208 },
+      "ipad-12.9" => { width: 2048, height: 2732 },
+      "ipad-11" => { width: 1668, height: 2388 }
+    }
+    
+    required_sizes.each do |device, size|
+      folder = "./screenshots/#{device}"
+      if Dir.exist?(folder)
+        files = Dir.glob("#{folder}/*.{png,jpg,jpeg}")
+        if files.empty?
+          UI.important "⚠️  No screenshots found for #{device}"
+        else
+          UI.success "✅ Found #{files.length} screenshot(s) for #{device}"
+          files.each do |file|
+            UI.message "   - #{File.basename(file)}"
+          end
+        end
+      else
+        UI.important "⚠️  Folder not found: #{folder}"
+      end
+    end
+  end
+end
