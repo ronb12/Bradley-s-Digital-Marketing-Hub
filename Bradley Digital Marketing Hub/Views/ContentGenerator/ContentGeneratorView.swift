@@ -5,6 +5,7 @@ struct ContentGeneratorView: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.colorScheme) private var colorScheme
     @StateObject private var viewModel: ContentGeneratorViewModel
+    @State private var scheduleItem: ContentGeneratorViewModel.GeneratedContentItem?
 
     private var colors: ThemeColors {
         themeManager.colors(for: colorScheme)
@@ -42,6 +43,26 @@ struct ContentGeneratorView: View {
         }
         .hubScreenBackground(colors)
         .navigationTitle("Content Generator")
+        .sheet(item: $scheduleItem) { item in
+            SchedulePostSheet(
+                platform: item.platform,
+                content: item.content,
+                defaultTitle: "Generated \(item.platform.rawValue) Post"
+            ) { title, date, enableReminder in
+                do {
+                    try await appViewModel.scheduleContent(
+                        title: title,
+                        content: item.content,
+                        platform: item.platform,
+                        date: date,
+                        enableReminder: enableReminder
+                    )
+                    viewModel.statusMessage = "Scheduled with reminder — check Home when it's time to share."
+                } catch {
+                    appViewModel.errorMessage = error.localizedDescription
+                }
+            }
+        }
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 NavigationLink {
@@ -145,6 +166,9 @@ struct ContentGeneratorView: View {
                                 )
                             }
                         }
+                    },
+                    onSchedule: {
+                        scheduleItem = viewModel.generatedContent[index]
                     },
                     onFavorite: {
                         Task {

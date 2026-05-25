@@ -27,6 +27,8 @@ struct RootView: View {
                 }
             case .onboarding:
                 WelcomeView()
+            case .manualShareOnboarding:
+                ManualShareOnboardingView()
             case .notificationsOnboarding:
                 NotificationsOnboardingView()
             case .authenticated:

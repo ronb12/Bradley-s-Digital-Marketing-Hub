@@ -161,14 +161,26 @@ struct ProfileView: View {
                         .environmentObject(themeManager)
                 } label: {
                     HStack {
-                        Image(systemName: "link.circle.fill")
+                        Image(systemName: "square.and.arrow.up.circle.fill")
                             .foregroundColor(themeManager.colors(for: colorScheme).primary)
-                        Text("Connected Accounts")
+                        Text("Manual Share Setup")
                         Spacer()
                         Image(systemName: "chevron.right")
                             .foregroundColor(.secondary)
                             .font(.caption)
                     }
+                }
+            }
+
+            Section(header: Text("Help & Support")) {
+                NavigationLink {
+                    HelpCenterView()
+                } label: {
+                    Label("Help Center", systemImage: "questionmark.circle")
+                }
+
+                Link(destination: URL(string: "mailto:\(AppConstants.marketingSupportEmail)?subject=Bradley%20Hub%20Support")!) {
+                    Label("Email Support", systemImage: "envelope")
                 }
             }
             
@@ -325,8 +337,11 @@ struct ProfileView: View {
                             .foregroundColor(.secondary)
                     }
                 }
-            } else {
-                Section(header: Text("Demo Utilities"), footer: Text("Seeds CloudKit with sample brands, campaigns, templates, and affiliate tools.")) {
+            }
+
+            #if DEBUG
+            if !appViewModel.isDemoMode {
+                Section(header: Text("Developer"), footer: Text("Seeds sample brands, campaigns, templates, and affiliate tools for testing.")) {
                     Button {
                         guard !isSeedingDemoData else { return }
                         isSeedingDemoData = true
@@ -359,6 +374,7 @@ struct ProfileView: View {
                     }
                 }
             }
+            #endif
 
             Section {
                 Button("Sign out", role: .destructive) {

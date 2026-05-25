@@ -60,7 +60,7 @@ final class SubscriptionManager: ObservableObject {
             return
         }
         guard let product = availableProducts.first(where: { $0.id == productId }) else {
-            errorMessage = "Product not available. Double-check StoreKit IDs."
+            errorMessage = "Subscriptions are unavailable right now. Please try again later."
             return
         }
         isLoading = true

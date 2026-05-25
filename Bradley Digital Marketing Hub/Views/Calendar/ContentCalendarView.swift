@@ -314,6 +314,8 @@ struct CalendarItemDetailView: View {
     @State private var isSaving = false
     @State private var showDeleteConfirmation = false
     @State private var errorMessage: String?
+    @State private var showShareSheet = false
+    @State private var statusMessage: String?
 
     private var colors: ThemeColors {
         themeManager.colors(for: colorScheme)
@@ -321,6 +323,10 @@ struct CalendarItemDetailView: View {
 
     private var platformAccent: Color {
         HubPlatformColors.accent(for: editedItem.platform, themePrimary: colors.primary)
+    }
+
+    private var linkedPost: ScheduledPost? {
+        appViewModel.linkedScheduledPost(for: editedItem.id)
     }
 
     init(item: ContentCalendarItem) {
@@ -386,6 +392,9 @@ struct CalendarItemDetailView: View {
                 Text("Are you sure you want to delete this calendar item? This action cannot be undone.")
             }
             .hubErrorAlert($errorMessage)
+            .sheet(isPresented: $showShareSheet) {
+                ShareSheet(items: ShareContentBuilder.shareItems(content: editedItem.notes))
+            }
         }
     }
     
@@ -402,6 +411,15 @@ struct CalendarItemDetailView: View {
                 
                 HStack {
                     HubPlatformChip(platform: editedItem.platform, accent: platformAccent)
+
+                    if let post = linkedPost {
+                        Text(post.status == .shared ? "Shared" : post.status.rawValue)
+                            .font(.caption2.bold())
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(statusColor(for: post.status).opacity(0.15), in: Capsule())
+                            .foregroundColor(statusColor(for: post.status))
+                    }
 
                     Text(editedItem.date.formatted(date: .abbreviated, time: .shortened))
                         .font(.subheadline)
@@ -436,26 +454,52 @@ struct CalendarItemDetailView: View {
                 Button {
                     UIPasteboard.general.string = editedItem.notes
                     HapticFeedback.success()
+                    statusMessage = "Copied to clipboard"
                 } label: {
                     Label("Copy", systemImage: "doc.on.doc")
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.bordered)
             }
 
-            if let platform = SocialPlatform(rawValue: editedItem.platform) {
+            Button {
+                showShareSheet = true
+                HapticFeedback.light()
+            } label: {
+                Label("Share Now", systemImage: "square.and.arrow.up")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .tint(colors.primary)
+            .accessibilityHint("Opens the iOS Share Sheet to publish manually")
+
+            if linkedPost?.status != .shared {
                 Button {
-                    appViewModel.socialMediaService.sharePost(
-                        content: editedItem.notes,
-                        platform: platform
-                    )
-                    HapticFeedback.light()
+                    Task {
+                        await appViewModel.markPostShared(forCalendarItem: editedItem.id)
+                        statusMessage = "Marked as shared"
+                    }
                 } label: {
-                    Label("Share to \(platform.rawValue)", systemImage: "square.and.arrow.up")
+                    Label("Mark as Shared", systemImage: "checkmark.circle")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
             }
+
+            if let statusMessage {
+                Text(statusMessage)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+
+    private func statusColor(for status: PostStatus) -> Color {
+        switch status {
+        case .shared, .posted: return .green
+        case .readyForReview: return .orange
+        case .scheduled: return colors.primary
+        default: return .secondary
         }
     }
     

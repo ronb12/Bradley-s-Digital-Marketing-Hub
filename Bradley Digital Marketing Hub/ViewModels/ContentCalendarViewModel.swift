@@ -8,7 +8,7 @@ final class ContentCalendarViewModel: ObservableObject {
     @Published var date: Date = Date()
     @Published var statusMessage: String?
     @Published var isSaving = false
-    @Published var enableReminder = false
+    @Published var enableReminder = true
 
     private let service: CloudKitService
     private let socialMediaService: SocialMediaService
@@ -78,7 +78,6 @@ final class ContentCalendarViewModel: ObservableObject {
             
             title = ""
             notes = ""
-            enableReminder = false
         } catch {
             statusMessage = error.localizedDescription
         }

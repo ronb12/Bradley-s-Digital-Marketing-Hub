@@ -12,7 +12,7 @@ struct ToolsHubView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                HubSectionHeader("Insights & Tools", subtitle: "Research, analyze, export, and share")
+                HubSectionHeader("Insights & Tools", subtitle: "Research, analyze, export, and share manually")
 
                 Grid(horizontalSpacing: 12, verticalSpacing: 12) {
                     GridRow {
@@ -36,15 +36,20 @@ struct ToolsHubView: View {
                             HubActionCard(title: "Export", subtitle: "CSV, JSON, text", icon: "square.and.arrow.up", tint: colors.secondary)
                         }
                         NavigationLink { SocialAccountsView(service: appViewModel.socialMediaService) } label: {
-                            HubActionCard(title: "Share Setup", subtitle: "Review & connect", icon: "link.circle", tint: colors.accent)
+                            HubActionCard(title: "Share Setup", subtitle: "Manual share guide", icon: "link.circle", tint: colors.accent)
                         }
                     }
                     GridRow {
-                        NavigationLink { SearchableCalendarView(service: appViewModel.cloudKitService, socialMediaService: appViewModel.socialMediaService) } label: {
-                            HubActionCard(title: "Search Calendar", subtitle: "Filter & find posts", icon: "magnifyingglass", tint: colors.primary)
+                        NavigationLink { HelpCenterView() } label: {
+                            HubActionCard(title: "Help Center", subtitle: "Manual share FAQ", icon: "questionmark.circle", tint: colors.primary)
                         }
+                        NavigationLink { SearchableCalendarView(service: appViewModel.cloudKitService, socialMediaService: appViewModel.socialMediaService) } label: {
+                            HubActionCard(title: "Search Calendar", subtitle: "Filter & find posts", icon: "magnifyingglass", tint: colors.secondary)
+                        }
+                    }
+                    GridRow {
                         NavigationLink { AffiliateToolsView() } label: {
-                            HubActionCard(title: "Affiliate Tools", subtitle: "Recommended stack", icon: "link", tint: colors.secondary)
+                            HubActionCard(title: "Affiliate Tools", subtitle: "Recommended stack", icon: "link", tint: colors.accent)
                         }
                     }
                 }
