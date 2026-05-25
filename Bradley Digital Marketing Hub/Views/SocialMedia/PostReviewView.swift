@@ -198,7 +198,9 @@ struct PostReviewView: View {
             linkURL: post.linkURL
         )
         for path in post.mediaURLs {
-            if let url = URL(string: path) ?? URL(fileURLWithPath: path) as URL? {
+            if FileManager.default.fileExists(atPath: path) {
+                items.append(URL(fileURLWithPath: path))
+            } else if let url = URL(string: path) {
                 items.append(url)
             }
         }
