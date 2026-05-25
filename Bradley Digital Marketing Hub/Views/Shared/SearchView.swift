@@ -40,6 +40,7 @@ struct SearchableCalendarView: View {
     @StateObject private var viewModel: ContentCalendarViewModel
     @State private var searchText: String = ""
     @State private var selectedFilter: CalendarFilter = .all
+    @State private var selectedItem: ContentCalendarItem?
     @State private var showFilters = false
     
     enum CalendarFilter: String, CaseIterable {
@@ -130,7 +131,7 @@ struct SearchableCalendarView: View {
                         Section(header: Text(DateFormatter.shortDate.string(from: date))) {
                             ForEach(groupedFilteredItems[date] ?? []) { item in
                                 CalendarItemRow(item: item) {
-                                    // Handle tap
+                                    selectedItem = item
                                 }
                             }
                         }
@@ -140,6 +141,10 @@ struct SearchableCalendarView: View {
             }
         }
         .navigationTitle("Search Calendar")
+        .sheet(item: $selectedItem) { item in
+            CalendarItemDetailView(item: item)
+                .environmentObject(appViewModel)
+        }
         .task {
             if let userId = appViewModel.userProfile?.userId {
                 await viewModel.loadAccounts(userId: userId)

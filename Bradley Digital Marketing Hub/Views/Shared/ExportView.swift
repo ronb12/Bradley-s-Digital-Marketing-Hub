@@ -8,6 +8,7 @@ struct ExportView: View {
     @State private var isExporting = false
     @State private var showShareSheet = false
     @State private var exportURL: URL?
+    @State private var errorMessage: String?
     
     enum ExportFormat: String, CaseIterable {
         case csv = "CSV"
@@ -119,6 +120,7 @@ struct ExportView: View {
                     ShareSheet(items: [url])
                 }
             }
+            .hubErrorAlert($errorMessage, title: "Export Failed")
         }
     }
     
@@ -160,47 +162,79 @@ struct ExportView: View {
         
         await MainActor.run {
             exportURL = url
-            if url != nil {
+            if let url {
                 showShareSheet = true
+                HapticFeedback.success()
+            } else {
+                errorMessage = "Could not create the export file. Please try again."
+                HapticFeedback.warning()
             }
+        }
+    }
+
+    private enum ExportWriteError: LocalizedError {
+        case writeFailed(String)
+
+        var errorDescription: String? {
+            switch self {
+            case .writeFailed(let detail): return detail
+            }
+        }
+    }
+
+    private func writeExport(data: Data, to fileURL: URL) throws {
+        do {
+            try data.write(to: fileURL)
+        } catch {
+            throw ExportWriteError.writeFailed(error.localizedDescription)
+        }
+    }
+
+    private func writeExport(text: String, to fileURL: URL) throws {
+        do {
+            try text.write(to: fileURL, atomically: true, encoding: .utf8)
+        } catch {
+            throw ExportWriteError.writeFailed(error.localizedDescription)
         }
     }
     
     private func exportToCSV() async -> URL? {
         let fileName = "calendar_export_\(Date().timeIntervalSince1970).csv"
         let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
-        
+
         var csvContent = "Date,Time,Platform,Title,Content\n"
-        
+
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd"
         let timeFormatter = DateFormatter()
         timeFormatter.dateFormat = "HH:mm"
-        
+
         for item in filteredItems {
             let dateString = dateFormatter.string(from: item.date)
             let timeString = timeFormatter.string(from: item.date)
             let title = escapeCSV(item.title)
             let content = escapeCSV(item.notes)
-            
+
             csvContent += "\(dateString),\(timeString),\(item.platform),\(title),\(content)\n"
         }
-        
+
         do {
-            try csvContent.write(to: fileURL, atomically: true, encoding: .utf8)
+            try writeExport(text: csvContent, to: fileURL)
             return fileURL
         } catch {
-            print("Error exporting to CSV: \(error)")
+            await MainActor.run {
+                errorMessage = "CSV export failed. \(error.localizedDescription)"
+            }
             return nil
         }
     }
-    
+
     private func exportToJSON() async -> URL? {
         let fileName = "calendar_export_\(Date().timeIntervalSince1970).json"
         let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
-        
+
         let dateFormatter = ISO8601DateFormatter()
-        
+
         let jsonItems = filteredItems.map { item in
             [
                 "id": item.id,
@@ -211,23 +245,25 @@ struct ExportView: View {
                 "brandId": item.brandId ?? ""
             ]
         }
-        
+
         let jsonData: [String: Any] = [
             "exportDate": dateFormatter.string(from: Date()),
             "totalItems": filteredItems.count,
             "items": jsonItems
         ]
-        
+
         do {
             let data = try JSONSerialization.data(withJSONObject: jsonData, options: .prettyPrinted)
-            try data.write(to: fileURL)
+            try writeExport(data: data, to: fileURL)
             return fileURL
         } catch {
-            print("Error exporting to JSON: \(error)")
+            await MainActor.run {
+                errorMessage = "JSON export failed. \(error.localizedDescription)"
+            }
             return nil
         }
     }
-    
+
     private func exportToPlainText() async -> URL? {
         let fileName = "calendar_export_\(Date().timeIntervalSince1970).txt"
         let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
@@ -245,10 +281,12 @@ struct ExportView: View {
         }
 
         do {
-            try text.write(to: fileURL, atomically: true, encoding: .utf8)
+            try writeExport(text: text, to: fileURL)
             return fileURL
         } catch {
-            print("Error exporting plain text: \(error)")
+            await MainActor.run {
+                errorMessage = "Plain text export failed. \(error.localizedDescription)"
+            }
             return nil
         }
     }

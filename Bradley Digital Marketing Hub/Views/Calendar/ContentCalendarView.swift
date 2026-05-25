@@ -300,6 +300,7 @@ struct CalendarItemDetailView: View {
     @State private var isEditing = false
     @State private var isSaving = false
     @State private var showDeleteConfirmation = false
+    @State private var errorMessage: String?
     
     init(item: ContentCalendarItem) {
         _editedItem = State(initialValue: item)
@@ -362,6 +363,7 @@ struct CalendarItemDetailView: View {
             } message: {
                 Text("Are you sure you want to delete this calendar item? This action cannot be undone.")
             }
+            .hubErrorAlert($errorMessage)
         }
     }
     
@@ -549,50 +551,51 @@ struct CalendarItemDetailView: View {
     
     private func saveChanges() async {
         guard !appViewModel.isDemoMode else {
+            errorMessage = HubMessages.demoReadOnly
             return
         }
-        
+
         isSaving = true
         defer { isSaving = false }
-        
+
         do {
             let saved = try await appViewModel.cloudKitService.saveCalendarItem(editedItem)
-            // Update the item in the app's calendar items array
             await MainActor.run {
                 if let index = appViewModel.calendarItems.firstIndex(where: { $0.id == saved.id }) {
                     appViewModel.calendarItems[index] = saved
                 } else {
-                    // Item might have been new, add it
                     appViewModel.calendarItems.append(saved)
                 }
                 editedItem = saved
                 isEditing = false
+                HapticFeedback.success()
             }
         } catch {
-            // Handle error - could show alert
-            print("Error saving calendar item: \(error)")
+            errorMessage = "Could not save this item. \(error.localizedDescription)"
+            HapticFeedback.warning()
         }
     }
-    
+
     private func deleteItem() async {
         guard !appViewModel.isDemoMode else {
+            errorMessage = HubMessages.demoReadOnly
             return
         }
-        
+
         do {
-            // Delete from CloudKit
             let recordID = CKRecord.ID(recordName: editedItem.id)
             _ = try await appViewModel.cloudKitService.privateDB.deleteRecord(withID: recordID)
-            
-            // Remove from local array
+
             await MainActor.run {
                 if let index = appViewModel.calendarItems.firstIndex(where: { $0.id == editedItem.id }) {
                     appViewModel.calendarItems.remove(at: index)
                 }
+                HapticFeedback.success()
                 dismiss()
             }
         } catch {
-            print("Error deleting calendar item: \(error)")
+            errorMessage = "Could not delete this item. \(error.localizedDescription)"
+            HapticFeedback.warning()
         }
     }
 }

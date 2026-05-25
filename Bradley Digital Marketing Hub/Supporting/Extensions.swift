@@ -36,6 +36,23 @@ extension View {
             )
         .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
     }
+
+    func hubErrorAlert(_ message: Binding<String?>, title: String = "Something went wrong") -> some View {
+        alert(title, isPresented: Binding(
+            get: { message.wrappedValue != nil },
+            set: { isPresented in
+                if !isPresented { message.wrappedValue = nil }
+            }
+        )) {
+            Button("OK", role: .cancel) { message.wrappedValue = nil }
+        } message: {
+            Text(message.wrappedValue ?? "An unexpected error occurred.")
+        }
+    }
+}
+
+enum HubMessages {
+    static let demoReadOnly = "Demo mode is read-only. Sign in with Apple to save changes."
 }
 
 struct HubMetricCard: View {

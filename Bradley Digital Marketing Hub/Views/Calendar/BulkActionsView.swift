@@ -13,6 +13,7 @@ struct BulkActionsView: View {
     @State private var selectedPlatform: MarketingPlatform = .instagram
     @State private var selectedDate: Date = Date()
     @State private var isProcessing = false
+    @State private var errorMessage: String?
     
     var selectedItemsList: [ContentCalendarItem] {
         calendarItems.filter { selectedItems.contains($0.id) }
@@ -97,28 +98,43 @@ struct BulkActionsView: View {
                 )
                 .environmentObject(appViewModel)
             }
+            .hubErrorAlert($errorMessage)
         }
     }
-    
+
     private func deleteSelected() async {
-        guard !appViewModel.isDemoMode else { return }
-        
+        guard !appViewModel.isDemoMode else {
+            errorMessage = HubMessages.demoReadOnly
+            return
+        }
+
         isProcessing = true
         defer { isProcessing = false }
-        
+
+        var deletedIDs: Set<String> = []
+        var failureCount = 0
+
         for item in selectedItemsList {
             do {
                 let recordID = CKRecord.ID(recordName: item.id)
                 _ = try await appViewModel.cloudKitService.privateDB.deleteRecord(withID: recordID)
+                deletedIDs.insert(item.id)
             } catch {
-                print("Error deleting item \(item.id): \(error)")
+                failureCount += 1
             }
         }
-        
+
         await MainActor.run {
-            appViewModel.calendarItems.removeAll { selectedItems.contains($0.id) }
-            selectedItems.removeAll()
-            dismiss()
+            appViewModel.calendarItems.removeAll { deletedIDs.contains($0.id) }
+            selectedItems.subtract(deletedIDs)
+
+            if failureCount > 0 {
+                errorMessage = "Deleted \(deletedIDs.count) item(s), but \(failureCount) could not be removed."
+                HapticFeedback.warning()
+            } else {
+                HapticFeedback.success()
+                dismiss()
+            }
         }
     }
 }
@@ -135,6 +151,7 @@ struct BulkActionOptionsView: View {
     @State private var selectedPlatform: MarketingPlatform = .instagram
     @State private var selectedDate: Date = Date()
     @State private var isProcessing = false
+    @State private var errorMessage: String?
 
     enum BulkActionType {
         case changeDate
@@ -188,18 +205,24 @@ struct BulkActionOptionsView: View {
                     }
                 }
             }
+            .hubErrorAlert($errorMessage)
         }
     }
-    
+
     private func applyBulkAction() async {
-        guard !appViewModel.isDemoMode else { return }
-        
+        guard !appViewModel.isDemoMode else {
+            errorMessage = HubMessages.demoReadOnly
+            return
+        }
+
         isProcessing = true
         defer { isProcessing = false }
-        
+
+        var updatedIDs: Set<String> = []
+        var failureCount = 0
+
         for item in selectedItemsList {
-            var updatedItem = item
-            
+            let updatedItem: ContentCalendarItem
             if actionType == .changeDate {
                 updatedItem = ContentCalendarItem(
                     id: item.id,
@@ -221,7 +244,7 @@ struct BulkActionOptionsView: View {
                     notes: item.notes
                 )
             }
-            
+
             do {
                 let saved = try await appViewModel.cloudKitService.saveCalendarItem(updatedItem)
                 await MainActor.run {
@@ -229,15 +252,22 @@ struct BulkActionOptionsView: View {
                         appViewModel.calendarItems[index] = saved
                     }
                 }
+                updatedIDs.insert(saved.id)
             } catch {
-                print("Error updating item \(item.id): \(error)")
+                failureCount += 1
             }
         }
-        
+
         await MainActor.run {
-            selectedItems.removeAll()
-            dismiss()
-            onComplete()
+            if failureCount > 0 {
+                errorMessage = "Updated \(updatedIDs.count) item(s), but \(failureCount) could not be saved."
+                HapticFeedback.warning()
+            } else {
+                selectedItems.removeAll()
+                HapticFeedback.success()
+                dismiss()
+                onComplete()
+            }
         }
     }
 }
