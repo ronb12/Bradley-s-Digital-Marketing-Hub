@@ -9,6 +9,8 @@ enum CalendarViewMode {
 
 struct ContentCalendarView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
     @StateObject private var viewModel: ContentCalendarViewModel
     @State private var viewMode: CalendarViewMode = .list
     @State private var selectedCalendarDate: Date = Date()
@@ -19,6 +21,10 @@ struct ContentCalendarView: View {
     @State private var selectedItemIDs: Set<String> = []
     @State private var showBulkActions = false
     @State private var showExport = false
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
 
     init(service: CloudKitService? = nil, socialMediaService: SocialMediaService? = nil) {
         let cloudKitService = service ?? CloudKitService()
@@ -42,6 +48,7 @@ struct ContentCalendarView: View {
                 listView
             }
         }
+        .hubScreenBackground(colors)
         .navigationTitle("Content Calendar")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -140,7 +147,7 @@ struct ContentCalendarView: View {
                             } label: {
                                 HStack {
                                     Image(systemName: selectedItemIDs.contains(item.id) ? "checkmark.circle.fill" : "circle")
-                                        .foregroundColor(selectedItemIDs.contains(item.id) ? .blue : .secondary)
+                                        .foregroundColor(selectedItemIDs.contains(item.id) ? colors.primary : .secondary)
                                     calendarListRow(item)
                                 }
                             }
@@ -163,7 +170,7 @@ struct ContentCalendarView: View {
                 } label: {
                     HStack {
                         Image(systemName: "clock.badge.checkmark")
-                            .foregroundColor(.blue)
+                            .foregroundColor(colors.primary)
                         Text("Review Scheduled Posts")
                         Spacer()
                         Image(systemName: "chevron.right")
@@ -214,6 +221,7 @@ struct ContentCalendarView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
     }
     
     private var itemsForSelectedDate: [ContentCalendarItem] {
@@ -261,7 +269,17 @@ struct ContentCalendarView: View {
 struct CalendarItemRow: View {
     let item: ContentCalendarItem
     let onTap: () -> Void
-    
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
+
+    private var platformAccent: Color {
+        HubPlatformColors.accent(for: item.platform, themePrimary: colors.primary)
+    }
+
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 6) {
@@ -269,13 +287,7 @@ struct CalendarItemRow: View {
                     Text(item.title)
                         .font(.headline)
                     Spacer()
-                    Text(item.platform)
-                        .font(.caption)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.blue.opacity(0.1))
-                        .foregroundColor(.blue)
-                        .cornerRadius(6)
+                    HubPlatformChip(platform: item.platform, accent: platformAccent)
                 }
                 Text(item.notes)
                     .font(.subheadline)
@@ -286,8 +298,7 @@ struct CalendarItemRow: View {
                     .foregroundColor(.secondary)
             }
             .padding()
-            .background(Color(.systemGray6))
-            .cornerRadius(10)
+            .hubPanelStyle(colors: colors)
         }
         .buttonStyle(.plain)
     }
@@ -296,12 +307,22 @@ struct CalendarItemRow: View {
 struct CalendarItemDetailView: View {
     @State private var editedItem: ContentCalendarItem
     @EnvironmentObject private var appViewModel: AppViewModel
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) private var dismiss
     @State private var isEditing = false
     @State private var isSaving = false
     @State private var showDeleteConfirmation = false
     @State private var errorMessage: String?
-    
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
+
+    private var platformAccent: Color {
+        HubPlatformColors.accent(for: editedItem.platform, themePrimary: colors.primary)
+    }
+
     init(item: ContentCalendarItem) {
         _editedItem = State(initialValue: item)
     }
@@ -318,6 +339,7 @@ struct CalendarItemDetailView: View {
                 }
                 .padding()
             }
+            .hubScreenBackground(colors)
             .navigationTitle(isEditing ? "Edit Item" : "Calendar Item")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -379,14 +401,8 @@ struct CalendarItemDetailView: View {
                     .bold()
                 
                 HStack {
-                    Text(editedItem.platform)
-                        .font(.subheadline)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(Color.blue.opacity(0.1))
-                        .foregroundColor(.blue)
-                        .cornerRadius(8)
-                    
+                    HubPlatformChip(platform: editedItem.platform, accent: platformAccent)
+
                     Text(editedItem.date.formatted(date: .abbreviated, time: .shortened))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
@@ -400,8 +416,8 @@ struct CalendarItemDetailView: View {
             Text(editedItem.notes)
                 .font(.body)
                 .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(colors.surface, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
 
             HStack(spacing: 12) {
                 NavigationLink {
@@ -528,8 +544,7 @@ struct CalendarItemDetailView: View {
                 ))
                     .frame(minHeight: 150)
                     .padding(8)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
+                    .background(colors.surface, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
             } header: {
                 Text("Content")
                     .font(.headline)

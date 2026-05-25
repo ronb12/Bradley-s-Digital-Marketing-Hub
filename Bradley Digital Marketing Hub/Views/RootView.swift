@@ -93,10 +93,10 @@ struct MainTabView: View {
             .tag(2)
 
             NavigationStack {
-                AffiliateToolsView()
+                ToolsHubView()
             }
             .tabItem {
-                Label("Affiliate", systemImage: "link")
+                Label("Tools", systemImage: "wrench.and.screwdriver.fill")
             }
             .tag(3)
 

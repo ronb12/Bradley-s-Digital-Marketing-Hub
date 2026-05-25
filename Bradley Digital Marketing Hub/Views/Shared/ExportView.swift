@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ExportView: View {
     let calendarItems: [ContentCalendarItem]
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
     @State private var exportFormat: ExportFormat = .csv
     @State private var dateRange: DateRange = .all
     @State private var selectedPlatform: MarketingPlatform? = nil
@@ -9,7 +11,11 @@ struct ExportView: View {
     @State private var showShareSheet = false
     @State private var exportURL: URL?
     @State private var errorMessage: String?
-    
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
+
     enum ExportFormat: String, CaseIterable {
         case csv = "CSV"
         case json = "JSON"
@@ -114,6 +120,8 @@ struct ExportView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .hubScreenBackground(colors)
             .navigationTitle("Export Calendar")
             .sheet(isPresented: $showShareSheet) {
                 if let url = exportURL {

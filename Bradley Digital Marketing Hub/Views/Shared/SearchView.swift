@@ -3,20 +3,21 @@ import SwiftUI
 struct SearchView: View {
     @Binding var searchText: String
     let placeholder: String
+    var surfaceColor: Color = Color(.secondarySystemGroupedBackground)
     var onSearch: ((String) -> Void)? = nil
-    
+
     var body: some View {
         HStack {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.secondary)
-            
+
             TextField(placeholder, text: $searchText)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .onSubmit {
                     onSearch?(searchText)
                 }
-            
+
             if !searchText.isEmpty {
                 Button(action: {
                     searchText = ""
@@ -28,21 +29,23 @@ struct SearchView: View {
             }
         }
         .padding(8)
-        .background(Color(.systemGray6))
-        .cornerRadius(10)
+        .background(surfaceColor, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 }
 
-// MARK: - Searchable Content Calendar View
-
 struct SearchableCalendarView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
     @StateObject private var viewModel: ContentCalendarViewModel
     @State private var searchText: String = ""
     @State private var selectedFilter: CalendarFilter = .all
     @State private var selectedItem: ContentCalendarItem?
-    @State private var showFilters = false
-    
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
+
     enum CalendarFilter: String, CaseIterable {
         case all = "All"
         case today = "Today"
@@ -50,7 +53,7 @@ struct SearchableCalendarView: View {
         case thisMonth = "This Month"
         case upcoming = "Upcoming"
         case past = "Past"
-        
+
         var iconName: String {
             switch self {
             case .all: return "square.grid.2x2"
@@ -62,17 +65,16 @@ struct SearchableCalendarView: View {
             }
         }
     }
-    
+
     init(service: CloudKitService? = nil, socialMediaService: SocialMediaService? = nil) {
         let cloudKitService = service ?? CloudKitService()
         let socialService = socialMediaService ?? SocialMediaService(cloudKitService: cloudKitService)
         _viewModel = StateObject(wrappedValue: ContentCalendarViewModel(service: cloudKitService, socialMediaService: socialService))
     }
-    
+
     var filteredItems: [ContentCalendarItem] {
         var items = appViewModel.calendarItems
-        
-        // Apply search filter
+
         if !searchText.isEmpty {
             items = items.filter { item in
                 item.title.localizedCaseInsensitiveContains(searchText) ||
@@ -80,38 +82,33 @@ struct SearchableCalendarView: View {
                 item.platform.localizedCaseInsensitiveContains(searchText)
             }
         }
-        
-        // Apply time filter
+
         items = applyTimeFilter(items, filter: selectedFilter)
-        
         return items.sorted { $0.date < $1.date }
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
-            // Search Bar
-            SearchView(searchText: $searchText, placeholder: "Search calendar items...")
+            SearchView(searchText: $searchText, placeholder: "Search calendar items...", surfaceColor: colors.surface)
                 .padding()
-            
-            // Filter Chips
+
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(CalendarFilter.allCases, id: \.self) { filter in
-                        FilterChip(
+                        HubFilterChip(
                             title: filter.rawValue,
                             icon: filter.iconName,
                             isSelected: selectedFilter == filter,
-                            action: {
-                                selectedFilter = filter
-                            }
+                            accent: colors.primary,
+                            surface: colors.surface,
+                            action: { selectedFilter = filter }
                         )
                     }
                 }
                 .padding(.horizontal)
             }
             .padding(.vertical, 8)
-            
-            // Results Count
+
             if !searchText.isEmpty || selectedFilter != .all {
                 HStack {
                     Text("\(filteredItems.count) result\(filteredItems.count == 1 ? "" : "s")")
@@ -121,10 +118,18 @@ struct SearchableCalendarView: View {
                 }
                 .padding(.horizontal)
             }
-            
-            // Calendar Items List
+
             if filteredItems.isEmpty {
-                emptyState
+                HubEmptyState(
+                    icon: searchText.isEmpty ? "magnifyingglass" : "tray",
+                    title: searchText.isEmpty ? "No items found" : "No results",
+                    message: searchText.isEmpty
+                        ? "Try adjusting your filters or add items to your calendar."
+                        : "No results for \"\(searchText)\".",
+                    actionTitle: searchText.isEmpty ? nil : "Clear Search",
+                    action: searchText.isEmpty ? nil : { searchText = "" }
+                )
+                .frame(maxHeight: .infinity)
             } else {
                 List {
                     ForEach(groupedFilteredItems.keys.sorted(), id: \.self) { date in
@@ -138,8 +143,10 @@ struct SearchableCalendarView: View {
                     }
                 }
                 .listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden)
             }
         }
+        .hubScreenBackground(colors)
         .navigationTitle("Search Calendar")
         .sheet(item: $selectedItem) { item in
             CalendarItemDetailView(item: item)
@@ -151,38 +158,17 @@ struct SearchableCalendarView: View {
             }
         }
     }
-    
-    private var emptyState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: searchText.isEmpty ? "magnifyingglass" : "tray")
-                .font(.system(size: 50))
-                .foregroundColor(.secondary)
-            
-            Text(searchText.isEmpty ? "No items found" : "No results for \"\(searchText)\"")
-                .font(.headline)
-                .foregroundColor(.secondary)
-            
-            if !searchText.isEmpty {
-                Button("Clear Search") {
-                    searchText = ""
-                }
-                .buttonStyle(.bordered)
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding()
-    }
-    
+
     private var groupedFilteredItems: [Date: [ContentCalendarItem]] {
         Dictionary(grouping: filteredItems) { item in
             Calendar.current.startOfDay(for: item.date)
         }
     }
-    
+
     private func applyTimeFilter(_ items: [ContentCalendarItem], filter: CalendarFilter) -> [ContentCalendarItem] {
         let calendar = Calendar.current
         let now = Date()
-        
+
         switch filter {
         case .all:
             return items
@@ -200,38 +186,16 @@ struct SearchableCalendarView: View {
     }
 }
 
-// MARK: - Filter Chip
-
-struct FilterChip: View {
-    let title: String
-    let icon: String
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            HStack(spacing: 4) {
-                Image(systemName: icon)
-                    .font(.caption)
-                Text(title)
-                    .font(.caption)
-                    .fontWeight(isSelected ? .semibold : .regular)
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(isSelected ? Color.blue : Color(.systemGray6))
-            .foregroundColor(isSelected ? .white : .primary)
-            .cornerRadius(20)
-        }
-    }
-}
-
-// MARK: - Searchable Content Generator View
-
 struct SearchableSavedContent: View {
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
     @State private var searchText: String = ""
     @State private var favorites: [[String: String]] = []
-    
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
+
     var filteredFavorites: [[String: String]] {
         if searchText.isEmpty {
             return favorites
@@ -243,43 +207,38 @@ struct SearchableSavedContent: View {
                    platform.localizedCaseInsensitiveContains(searchText)
         }
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
-            SearchView(searchText: $searchText, placeholder: "Search saved content...")
+            SearchView(searchText: $searchText, placeholder: "Search saved content...", surfaceColor: colors.surface)
                 .padding()
-            
+
             if filteredFavorites.isEmpty {
-                emptyState
+                HubEmptyState(
+                    icon: "heart.slash",
+                    title: searchText.isEmpty ? "No saved content" : "No results found",
+                    message: searchText.isEmpty
+                        ? "Favorite generated content to see it here."
+                        : "Try a different search term."
+                )
+                .frame(maxHeight: .infinity)
             } else {
                 List {
-                    ForEach(Array(filteredFavorites.enumerated()), id: \.offset) { index, favorite in
-                        SavedContentRow(favorite: favorite)
+                    ForEach(Array(filteredFavorites.enumerated()), id: \.offset) { _, favorite in
+                        SavedContentRow(favorite: favorite, themePrimary: colors.primary)
                     }
                 }
                 .listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden)
             }
         }
+        .hubScreenBackground(colors)
         .navigationTitle("Saved Content")
         .onAppear {
             loadFavorites()
         }
     }
-    
-    private var emptyState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "heart.slash")
-                .font(.system(size: 50))
-                .foregroundColor(.secondary)
-            
-            Text(searchText.isEmpty ? "No saved content" : "No results found")
-                .font(.headline)
-                .foregroundColor(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding()
-    }
-    
+
     private func loadFavorites() {
         favorites = UserDefaults.standard.array(forKey: "savedContentFavorites") as? [[String: String]] ?? []
     }
@@ -287,20 +246,18 @@ struct SearchableSavedContent: View {
 
 struct SavedContentRow: View {
     let favorite: [String: String]
-    
+    var themePrimary: Color = .accentColor
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(favorite["platform"] ?? "Unknown")
-                    .font(.caption)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color.blue.opacity(0.1))
-                    .foregroundColor(.blue)
-                    .cornerRadius(6)
-                
+                HubPlatformChip(
+                    platform: favorite["platform"] ?? "Unknown",
+                    accent: HubPlatformColors.accent(for: favorite["platform"] ?? "", themePrimary: themePrimary)
+                )
+
                 Spacer()
-                
+
                 if let dateString = favorite["date"],
                    let date = ISO8601DateFormatter().date(from: dateString) {
                     Text(date, format: .dateTime.month().day())
@@ -308,7 +265,7 @@ struct SavedContentRow: View {
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             Text(favorite["content"] ?? "")
                 .font(.subheadline)
                 .lineLimit(3)
@@ -316,4 +273,3 @@ struct SavedContentRow: View {
         .padding(.vertical, 4)
     }
 }
-

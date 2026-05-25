@@ -4,8 +4,9 @@ struct PlatformToggleButton: View {
     let platform: SocialPlatform
     let isSelected: Bool
     let isShared: Bool
+    var accentColor: Color = .accentColor
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
@@ -28,35 +29,34 @@ struct PlatformToggleButton: View {
         }
         .buttonStyle(.plain)
     }
-    
+
     private var backgroundColor: Color {
         if isShared {
             return Color.green.opacity(0.2)
         } else if isSelected {
-            return Color.blue.opacity(0.2)
+            return accentColor.opacity(0.2)
         } else {
             return Color(UIColor.secondarySystemBackground)
         }
     }
-    
+
     private var foregroundColor: Color {
         if isShared {
             return .green
         } else if isSelected {
-            return .blue
+            return accentColor
         } else {
             return .primary
         }
     }
-    
+
     private var borderColor: Color {
         if isShared {
             return .green
         } else if isSelected {
-            return .blue
+            return accentColor
         } else {
             return Color.gray.opacity(0.3)
         }
     }
 }
-

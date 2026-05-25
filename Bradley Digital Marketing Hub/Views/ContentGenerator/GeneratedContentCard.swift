@@ -14,6 +14,10 @@ struct GeneratedContentCard: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.colorScheme) private var colorScheme
     
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
+
     init(item: Binding<ContentGeneratorViewModel.GeneratedContentItem>, index: Int, onContentUpdate: @escaping (String) -> Void, onCopy: @escaping () -> Void, onSave: @escaping () -> Void, onFavorite: @escaping () -> Void, onRegenerate: @escaping () -> Void) {
         self._item = item
         self.index = index
@@ -36,8 +40,8 @@ struct GeneratedContentCard: View {
                     .font(.caption)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 4)
-                    .background(themeManager.colors(for: colorScheme).primary.opacity(0.1))
-                    .foregroundColor(themeManager.colors(for: colorScheme).primary)
+                    .background(colors.primary.opacity(0.1))
+                    .foregroundColor(colors.primary)
                     .cornerRadius(6)
             }
             
@@ -46,11 +50,10 @@ struct GeneratedContentCard: View {
                 TextEditor(text: $editedText)
                     .frame(minHeight: 120)
                     .padding(8)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
+                    .background(colors.surface, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(themeManager.colors(for: colorScheme).primary, lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 8, style: .continuous)
+                            .stroke(colors.primary, lineWidth: 1)
                     )
                 
                 HStack {
@@ -68,14 +71,13 @@ struct GeneratedContentCard: View {
                         isEditing = false
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(themeManager.colors(for: colorScheme).primary)
+                    .tint(colors.primary)
                 }
             } else {
                 Text(item.content)
                     .padding(12)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
+                    .background(colors.surface, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
                     .onTapGesture {
                         isEditing = true
                         editedText = item.content
@@ -119,13 +121,10 @@ struct GeneratedContentCard: View {
                             .font(.caption)
                     }
                     .buttonStyle(.borderedProminent)
-                    .tint(themeManager.colors(for: colorScheme).primary)
+                    .tint(colors.primary)
                 }
             }
         }
-        .padding()
-        .background(Color(.systemBackground))
-        .cornerRadius(12)
-        .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
+        .hubCardStyle(colors: colors)
     }
 }

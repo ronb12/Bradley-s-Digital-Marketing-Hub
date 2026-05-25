@@ -2,10 +2,20 @@ import SwiftUI
 
 struct PostReviewView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
     @StateObject private var viewModel: PostReviewViewModel
     @State private var showShareSheet = false
-    
+
     let post: ScheduledPost
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
+
+    private var platformAccent: Color {
+        HubPlatformColors.accent(for: post.platform, themePrimary: colors.primary)
+    }
     
     init(post: ScheduledPost, service: SocialMediaService) {
         self.post = post
@@ -33,7 +43,7 @@ struct PostReviewView: View {
                         // Platform Badge
                         HStack {
                             Image(systemName: SocialPlatform(rawValue: post.platform)?.iconName ?? "link")
-                                .foregroundColor(.blue)
+                                .foregroundColor(platformAccent)
                             Text(post.platform)
                                 .font(.headline)
                             Spacer()
@@ -55,13 +65,13 @@ struct PostReviewView: View {
                             if let hashtags = post.hashtags, !hashtags.isEmpty {
                                 Text(hashtags)
                                     .font(.caption)
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(platformAccent)
                             }
                             
                             if let linkURL = post.linkURL, !linkURL.isEmpty {
                                 Link(linkURL, destination: URL(string: linkURL)!)
                                     .font(.caption)
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(platformAccent)
                             }
                         }
                         
@@ -73,15 +83,13 @@ struct PostReviewView: View {
                         }
                     }
                     .padding()
-                    .background(Color(UIColor.secondarySystemBackground))
-                    .cornerRadius(12)
+                    .background(colors.surface, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .padding(.horizontal)
-                    
-                    // Info Card
+
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             Image(systemName: "info.circle.fill")
-                                .foregroundColor(.blue)
+                                .foregroundColor(colors.primary)
                             Text("How sharing works")
                                 .font(.headline)
                         }
@@ -95,8 +103,7 @@ struct PostReviewView: View {
                         .foregroundColor(.secondary)
                     }
                     .padding()
-                    .background(Color.blue.opacity(0.1))
-                    .cornerRadius(12)
+                    .background(colors.primary.opacity(0.1), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                     .padding(.horizontal)
                     
                     // Actions
@@ -113,9 +120,8 @@ struct PostReviewView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
-                            .background(Color.blue)
+                            .background(colors.primary, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                             .foregroundColor(.white)
-                            .cornerRadius(12)
                         }
                         
                         Button {
@@ -132,9 +138,8 @@ struct PostReviewView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .frame(height: 50)
-                            .background(Color(UIColor.secondarySystemBackground))
+                            .background(colors.surface, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                             .foregroundColor(.primary)
-                            .cornerRadius(12)
                         }
                         .disabled(viewModel.isMarkingAsShared)
                         
@@ -167,6 +172,7 @@ struct PostReviewView: View {
                 }
                 .padding(.vertical)
             }
+            .hubScreenBackground(colors)
             .navigationTitle("Review Post")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

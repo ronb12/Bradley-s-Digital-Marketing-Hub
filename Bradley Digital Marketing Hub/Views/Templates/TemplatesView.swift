@@ -2,50 +2,69 @@ import SwiftUI
 
 struct TemplatesView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
     @StateObject private var viewModel = TemplatesViewModel()
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
 
     var body: some View {
         let visibleTemplates = viewModel.filteredTemplates(appViewModel.templates, tier: appViewModel.currentTier)
 
-        return List {
-            Section {
-                TextField("Search templates", text: $viewModel.searchText)
-            }
-            Section {
-                ForEach(visibleTemplates) { template in
-                    Button {
-                        if viewModel.isLocked(template, tier: appViewModel.currentTier) {
-                            appViewModel.showPaywall = true
-                        } else {
-                            viewModel.selectedTemplate = template
-                        }
-                    } label: {
-                        HStack {
-                            VStack(alignment: .leading) {
-                                Text(template.name).bold()
-                                Text(template.description)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                            Spacer()
-                            if template.isAgencyOnly {
-                                Text("Agency").font(.caption).padding(6)
-                                    .background(Color.purple.opacity(0.2), in: Capsule())
-                            } else if template.isPremium {
-                                Text("Premium").font(.caption).padding(6)
-                                    .background(Color.orange.opacity(0.2), in: Capsule())
-                            }
-                        }
+        Group {
+            if visibleTemplates.isEmpty && viewModel.searchText.isEmpty {
+                HubEmptyState(
+                    icon: "doc.richtext",
+                    title: "No templates yet",
+                    message: "Templates sync from CloudKit. Tap + to publish your own."
+                )
+                .padding()
+            } else {
+                List {
+                    Section {
+                        SearchView(searchText: $viewModel.searchText, placeholder: "Search templates", surfaceColor: colors.surface)
                     }
-                    .tint(.primary)
+                    Section {
+                        ForEach(visibleTemplates) { template in
+                            Button {
+                                if viewModel.isLocked(template, tier: appViewModel.currentTier) {
+                                    appViewModel.showPaywall = true
+                                } else {
+                                    viewModel.selectedTemplate = template
+                                }
+                            } label: {
+                                HStack {
+                                    VStack(alignment: .leading) {
+                                        Text(template.name).bold()
+                                        Text(template.description)
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    Spacer()
+                                    if template.isAgencyOnly {
+                                        Text("Agency").font(.caption).padding(6)
+                                            .background(Color.purple.opacity(0.2), in: Capsule())
+                                    } else if template.isPremium {
+                                        Text("Premium").font(.caption).padding(6)
+                                            .background(Color.orange.opacity(0.2), in: Capsule())
+                                    }
+                                }
+                            }
+                            .tint(.primary)
+                        }
+                    } header: {
+                        Text("Templates from CloudKit public database")
+                    } footer: {
+                        Text("Templates sync from CloudKit. Tap + to publish your own.")
+                    }
                 }
-            } header: {
-                Text("Templates from CloudKit public database")
-            } footer: {
-                Text("Templates sync from CloudKit. Tap + to publish your own.")
+                .listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden)
             }
         }
-        .listStyle(.insetGrouped)
+        .hubScreenBackground(colors)
         .navigationTitle("Templates")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
@@ -64,23 +83,31 @@ struct TemplatesView: View {
 
 struct TemplateDetailView: View {
     let template: TemplateItem
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(template.name).font(.title2).bold()
-            Text(template.description)
-            Text("Preview Placeholder")
-                .frame(maxWidth: .infinity)
-                .frame(height: 200)
-                .background(Color.hubBackground, in: RoundedRectangle(cornerRadius: 16))
-                .overlay(
-                    Text("Upload actual PDF in CloudKit and render with QuickLook later.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding()
-                )
-            Spacer()
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                Text(template.name).font(.title2).bold()
+                Text(template.description)
+                Text("Preview Placeholder")
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 200)
+                    .background(colors.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .overlay(
+                        Text("Upload actual PDF in CloudKit and render with QuickLook later.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding()
+                    )
+            }
+            .padding()
         }
-        .padding()
+        .hubScreenBackground(colors)
     }
 }

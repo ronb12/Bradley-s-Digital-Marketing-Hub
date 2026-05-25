@@ -2,7 +2,13 @@ import SwiftUI
 
 struct CampaignPlannerView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
     @StateObject private var viewModel: CampaignPlannerViewModel
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
 
     init(service: CloudKitService) {
         _viewModel = StateObject(wrappedValue: CampaignPlannerViewModel(service: service))
@@ -17,11 +23,14 @@ struct CampaignPlannerView: View {
             }
             .padding()
         }
+        .hubScreenBackground(colors)
         .navigationTitle("Campaign Planner")
     }
 
     private var formSection: some View {
         VStack(alignment: .leading, spacing: 12) {
+            HubSectionHeader("Campaign Settings", subtitle: "Configure your campaign parameters")
+
             Picker("Platform", selection: $viewModel.platform) {
                 ForEach(MarketingPlatform.allCases) { platform in
                     Text(platform.rawValue).tag(platform)
@@ -32,8 +41,7 @@ struct CampaignPlannerView: View {
                     Text(option.displayName).tag(option)
                 }
             }
-            
-            // Custom Goal TextField (shown only when custom is selected)
+
             if case .custom = viewModel.goalOption {
                 TextField("Enter campaign goal", text: $viewModel.customGoal)
                     .autocapitalization(.words)
@@ -76,24 +84,27 @@ struct CampaignPlannerView: View {
             }
             .buttonStyle(.bordered)
         }
-        .primarySectionStyle()
+        .hubCardStyle(colors: colors)
     }
 
     private var outlineSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Outline").font(.headline)
+            HubSectionHeader("Outline")
             Text(viewModel.outline.isEmpty ? "Tap generate to draft an outline." : viewModel.outline)
                 .font(.body)
         }
-        .primarySectionStyle()
+        .hubCardStyle(colors: colors)
     }
 
     private var recommendedTools: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Recommended Tools").font(.headline)
+            HubSectionHeader("Recommended Tools")
             if appViewModel.affiliateTools.isEmpty {
-                Text("Add AffiliateTool records in the public database to surface them here.")
-                    .foregroundColor(.secondary)
+                HubEmptyState(
+                    icon: "link",
+                    title: "No tools yet",
+                    message: "Add AffiliateTool records in the public database to surface them here."
+                )
             } else {
                 ForEach(appViewModel.affiliateTools.prefix(3)) { tool in
                     VStack(alignment: .leading) {
@@ -101,10 +112,11 @@ struct CampaignPlannerView: View {
                         Text(tool.shortDescription).font(.caption)
                     }
                     .padding()
-                    .background(Color.hubBackground, in: RoundedRectangle(cornerRadius: 12))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(colors.surface, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
             }
         }
-        .primarySectionStyle()
+        .hubCardStyle(colors: colors)
     }
 }

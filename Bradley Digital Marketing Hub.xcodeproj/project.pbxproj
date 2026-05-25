@@ -61,6 +61,7 @@
 		A10000100000000000000036 /* Views/Shared/SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000036 /* Views/Shared/SearchView.swift */; };
 		A10000100000000000000037 /* Views/Shared/ExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000037 /* Views/Shared/ExportView.swift */; };
 		A10000100000000000000038 /* Views/Shared/BestTimeToPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000038 /* Views/Shared/BestTimeToPostView.swift */; };
+		A10000100000000000000039 /* Views/Home/ToolsHubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000039 /* Views/Home/ToolsHubView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -120,6 +121,7 @@
 		A10001100000000000000036 /* Views/Shared/SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Shared/SearchView.swift; sourceTree = "<group>"; };
 		A10001100000000000000037 /* Views/Shared/ExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Shared/ExportView.swift; sourceTree = "<group>"; };
 		A10001100000000000000038 /* Views/Shared/BestTimeToPostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Shared/BestTimeToPostView.swift; sourceTree = "<group>"; };
+		A10001100000000000000039 /* Views/Home/ToolsHubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Home/ToolsHubView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -231,6 +233,7 @@
 			isa = PBXGroup;
 			children = (
 				A10001100000000000000011 /* Views/Home/DashboardView.swift */,
+				A10001100000000000000039 /* Views/Home/ToolsHubView.swift */,
 			);
 			name = Home;
 			sourceTree = "<group>";
@@ -442,6 +445,7 @@
 				A1000010000000000000000F /* ViewModels/ProfileViewModel.swift in Sources */,
 				A10000100000000000000010 /* Views/RootView.swift in Sources */,
 				A10000100000000000000011 /* Views/Home/DashboardView.swift in Sources */,
+				A10000100000000000000039 /* Views/Home/ToolsHubView.swift in Sources */,
 				A10000100000000000000012 /* Views/Onboarding/WelcomeView.swift in Sources */,
 				A10000100000000000000013 /* Views/Onboarding/NotificationsOnboardingView.swift in Sources */,
 				A10000100000000000000014 /* Views/ContentGenerator/ContentGeneratorView.swift in Sources */,

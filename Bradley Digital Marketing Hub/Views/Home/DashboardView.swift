@@ -24,7 +24,6 @@ struct DashboardView: View {
                     upgradeBanner
                 }
                 quickActions
-                toolsSection
                 campaignSummary
                 affiliateHighlight
             }
@@ -137,50 +136,6 @@ struct DashboardView: View {
                         TemplatesView()
                     } label: {
                         HubActionCard(title: "Templates", subtitle: "Ready-to-use assets", icon: "doc.richtext", tint: colors.primary)
-                    }
-                }
-            }
-        }
-    }
-
-    private var toolsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HubSectionHeader("Insights & Tools", subtitle: "Research, preview, and analyze")
-            Grid(horizontalSpacing: 12, verticalSpacing: 12) {
-                GridRow {
-                    NavigationLink {
-                        AnalyticsDashboardView()
-                    } label: {
-                        HubActionCard(title: "Analytics", subtitle: "Content performance", icon: "chart.bar.fill", tint: colors.primary)
-                    }
-                    NavigationLink {
-                        HashtagResearchView()
-                    } label: {
-                        HubActionCard(title: "Hashtags", subtitle: "Research & suggestions", icon: "number", tint: colors.secondary)
-                    }
-                }
-                GridRow {
-                    NavigationLink {
-                        BestTimeToPostView()
-                    } label: {
-                        HubActionCard(title: "Best Times", subtitle: "When to publish", icon: "clock.arrow.circlepath", tint: colors.accent)
-                    }
-                    NavigationLink {
-                        SearchableSavedContent()
-                    } label: {
-                        HubActionCard(title: "Saved Content", subtitle: "Favorites library", icon: "heart.text.square", tint: colors.primary)
-                    }
-                }
-                GridRow {
-                    NavigationLink {
-                        ExportView(calendarItems: appViewModel.calendarItems)
-                    } label: {
-                        HubActionCard(title: "Export", subtitle: "CSV, JSON, or text", icon: "square.and.arrow.up", tint: colors.secondary)
-                    }
-                    NavigationLink {
-                        SocialAccountsView(service: appViewModel.socialMediaService)
-                    } label: {
-                        HubActionCard(title: "Share Setup", subtitle: "Connect & review posts", icon: "link.circle", tint: colors.accent)
                     }
                 }
             }

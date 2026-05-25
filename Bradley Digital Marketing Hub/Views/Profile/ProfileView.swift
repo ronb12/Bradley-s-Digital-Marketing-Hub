@@ -367,6 +367,8 @@ struct ProfileView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .hubScreenBackground(themeManager.colors(for: colorScheme))
         .navigationTitle("Profile")
         .onAppear {
             // Load current profile data into edit fields
@@ -414,7 +416,7 @@ struct ProfileView: View {
             }
         }
         .frame(width: 72, height: 72)
-        .background(Color.hubBackground, in: Circle())
+        .background(themeManager.colors(for: colorScheme).surface, in: Circle())
         .clipShape(Circle())
     }
 

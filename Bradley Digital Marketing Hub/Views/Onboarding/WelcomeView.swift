@@ -27,17 +27,9 @@ struct WelcomeView: View {
                         .frame(height: 60)
                     
                     // App Icon/Logo Area
-                    ZStack {
-                        Circle()
-                            .fill(.white.opacity(0.2))
-                            .frame(width: 120, height: 120)
-                            .blur(radius: 20)
-                        
-                        Image(systemName: "chart.bar.fill")
-                            .font(.system(size: 60))
-                            .foregroundColor(.white)
-                    }
-                    .padding(.bottom, 32)
+                    HubAppLogo(size: 112, cornerRadius: 24)
+                        .shadow(color: .black.opacity(0.2), radius: 16, y: 8)
+                        .padding(.bottom, 32)
                     
                     // Title Section
                     VStack(spacing: 16) {

@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import UIKit
 
 extension DateFormatter {
     static let shortDate: DateFormatter = {
@@ -53,6 +54,46 @@ extension View {
 
 enum HubMessages {
     static let demoReadOnly = "Demo mode is read-only. Sign in with Apple to save changes."
+}
+
+enum HubPlatformColors {
+    static func accent(for platform: String, themePrimary: Color) -> Color {
+        switch platform.lowercased() {
+        case "instagram": return .purple
+        case "facebook", "linkedin": return themePrimary
+        case "twitter", "twitter/x", "x", "tiktok": return .primary
+        case "youtube", "pinterest": return .red
+        case "email": return themePrimary
+        default: return themePrimary
+        }
+    }
+}
+
+enum AppLogoLoader {
+    static var image: Image? {
+        guard let icons = Bundle.main.object(forInfoDictionaryKey: "CFBundleIcons") as? [String: Any],
+              let primary = icons["CFBundlePrimaryIcon"] as? [String: Any],
+              let iconFiles = primary["CFBundleIconFiles"] as? [String],
+              let iconName = iconFiles.last,
+              let uiImage = UIImage(named: iconName) else { return nil }
+        return Image(uiImage: uiImage)
+    }
+}
+
+extension View {
+    func hubScreenBackground(_ colors: ThemeColors) -> some View {
+        background(colors.background.ignoresSafeArea())
+    }
+
+    func hubPanelStyle(colors: ThemeColors) -> some View {
+        padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(colors.surface, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(colors.primary.opacity(0.1), lineWidth: 1)
+        )
+    }
 }
 
 struct HubMetricCard: View {
@@ -126,6 +167,97 @@ struct HubSectionHeader: View {
                     .foregroundColor(.secondary)
             }
         }
+    }
+}
+
+struct HubEmptyState: View {
+    let icon: String
+    let title: String
+    let message: String
+    var actionTitle: String?
+    var action: (() -> Void)?
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: icon)
+                .font(.system(size: 44))
+                .foregroundStyle(.secondary)
+            Text(title)
+                .font(.headline)
+            Text(message)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+            if let actionTitle, let action {
+                Button(actionTitle, action: action)
+                    .buttonStyle(.borderedProminent)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 32)
+        .padding(.horizontal)
+    }
+}
+
+struct HubPlatformChip: View {
+    let platform: String
+    let accent: Color
+
+    var body: some View {
+        Text(platform)
+            .font(.caption.weight(.medium))
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(accent.opacity(0.12), in: Capsule())
+            .foregroundColor(accent)
+    }
+}
+
+struct HubFilterChip: View {
+    let title: String
+    let icon: String
+    let isSelected: Bool
+    let accent: Color
+    let surface: Color
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.caption)
+                Text(title)
+                    .font(.caption)
+                    .fontWeight(isSelected ? .semibold : .regular)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(isSelected ? accent : surface, in: Capsule())
+            .foregroundColor(isSelected ? .white : .primary)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+struct HubAppLogo: View {
+    var size: CGFloat = 88
+    var cornerRadius: CGFloat = 20
+
+    var body: some View {
+        Group {
+            if let logo = AppLogoLoader.image {
+                logo
+                    .resizable()
+                    .scaledToFit()
+            } else {
+                Image(systemName: "chart.bar.fill")
+                    .font(.system(size: size * 0.45))
+                    .foregroundStyle(.white)
+            }
+        }
+        .frame(width: size, height: size)
+        .background(.white.opacity(0.15), in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
     }
 }
 

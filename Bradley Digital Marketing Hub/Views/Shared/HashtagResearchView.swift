@@ -7,9 +7,12 @@ struct HashtagResearchView: View {
     @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject private var themeManager: ThemeManager
     
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
+
     var body: some View {
-        NavigationStack {
-            Form {
+        Form {
                 Section {
                     Picker("Platform", selection: $selectedPlatform) {
                         ForEach(MarketingPlatform.allCases) { platform in
@@ -80,8 +83,9 @@ struct HashtagResearchView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .hubScreenBackground(colors)
             .navigationTitle("Hashtag Research")
-        }
     }
 }
 

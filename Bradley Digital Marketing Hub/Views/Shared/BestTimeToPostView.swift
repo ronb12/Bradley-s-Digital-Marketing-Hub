@@ -4,43 +4,39 @@ import Charts
 struct BestTimeToPostView: View {
     @StateObject private var viewModel = BestTimeToPostViewModel()
     @EnvironmentObject private var appViewModel: AppViewModel
+    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(\.colorScheme) private var colorScheme
     @State private var selectedPlatform: MarketingPlatform = .instagram
-    
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
+
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // Platform Selector
-                    platformSelector
-                    
-                    // Best Times Summary
-                    bestTimesSummary
-                    
-                    // Day of Week Analysis
-                    dayOfWeekAnalysis
-                    
-                    // Hourly Analysis
-                    hourlyAnalysis
-                    
-                    // Recommendations
-                    recommendations
-                }
-                .padding()
+        ScrollView {
+            VStack(spacing: 20) {
+                platformSelector
+                bestTimesSummary
+                dayOfWeekAnalysis
+                hourlyAnalysis
+                recommendations
             }
-            .navigationTitle("Best Time to Post")
-            .task {
+            .padding()
+        }
+        .hubScreenBackground(colors)
+        .navigationTitle("Best Time to Post")
+        .task {
+            await viewModel.analyzePostingTimes(
+                calendarItems: appViewModel.calendarItems,
+                platform: selectedPlatform
+            )
+        }
+        .onChange(of: selectedPlatform) { _, newValue in
+            Task {
                 await viewModel.analyzePostingTimes(
                     calendarItems: appViewModel.calendarItems,
-                    platform: selectedPlatform
+                    platform: newValue
                 )
-            }
-            .onChange(of: selectedPlatform) { oldValue, newValue in
-                Task {
-                    await viewModel.analyzePostingTimes(
-                        calendarItems: appViewModel.calendarItems,
-                        platform: newValue
-                    )
-                }
             }
         }
     }
@@ -60,19 +56,18 @@ struct BestTimeToPostView: View {
                 .font(.headline)
             
             if viewModel.optimalTimes.isEmpty {
-                Text("Not enough data to analyze. Schedule more posts to get personalized recommendations.")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .padding()
+                HubEmptyState(
+                    icon: "clock.arrow.circlepath",
+                    title: "Not enough data",
+                    message: "Schedule more posts to get personalized best-time recommendations."
+                )
             } else {
                 ForEach(viewModel.optimalTimes.prefix(5)) { time in
-                    OptimalTimeCard(time: time, platform: selectedPlatform)
+                    OptimalTimeCard(time: time, platform: selectedPlatform, surfaceColor: colors.surface)
                 }
             }
         }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .hubPanelStyle(colors: colors)
     }
     
     private var dayOfWeekAnalysis: some View {
@@ -86,7 +81,7 @@ struct BestTimeToPostView: View {
                         x: .value("Day", item.day),
                         y: .value("Posts", item.postCount)
                     )
-                    .foregroundStyle(Color.blue.gradient)
+                    .foregroundStyle(colors.primary.gradient)
                 }
                 .frame(height: 200)
             } else {
@@ -102,7 +97,7 @@ struct BestTimeToPostView: View {
                                         .fill(Color.gray.opacity(0.2))
                                         .frame(height: 20)
                                     Rectangle()
-                                        .fill(Color.blue)
+                                        .fill(colors.primary)
                                         .frame(width: geometry.size.width * CGFloat(item.postCount) / CGFloat(max(viewModel.dayPerformance.map { $0.postCount }.max() ?? 1, 1)), height: 20)
                                 }
                             }
@@ -115,11 +110,9 @@ struct BestTimeToPostView: View {
                 .frame(height: 200)
             }
         }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .hubPanelStyle(colors: colors)
     }
-    
+
     private var hourlyAnalysis: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Performance by Hour")
@@ -131,14 +124,14 @@ struct BestTimeToPostView: View {
                         x: .value("Hour", item.hour),
                         y: .value("Posts", item.postCount)
                     )
-                    .foregroundStyle(Color.green.gradient)
+                    .foregroundStyle(colors.accent.gradient)
                     .interpolationMethod(.catmullRom)
                     
                     AreaMark(
                         x: .value("Hour", item.hour),
                         y: .value("Posts", item.postCount)
                     )
-                    .foregroundStyle(Color.green.opacity(0.2).gradient)
+                    .foregroundStyle(colors.accent.opacity(0.2).gradient)
                     .interpolationMethod(.catmullRom)
                 }
                 .frame(height: 200)
@@ -156,7 +149,7 @@ struct BestTimeToPostView: View {
                                 .font(.caption)
                                 .frame(width: 60, alignment: .leading)
                             Rectangle()
-                                .fill(Color.green)
+                                .fill(colors.accent)
                                 .frame(width: CGFloat(item.postCount) * 20, height: 16)
                             Text("\(item.postCount)")
                                 .font(.caption2)
@@ -166,23 +159,19 @@ struct BestTimeToPostView: View {
                 .frame(height: 200)
             }
         }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .hubPanelStyle(colors: colors)
     }
-    
+
     private var recommendations: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Recommendations")
                 .font(.headline)
             
             ForEach(viewModel.recommendations) { recommendation in
-                RecommendationCard(recommendation: recommendation)
+                RecommendationCard(recommendation: recommendation, surfaceColor: colors.surface)
             }
         }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .hubPanelStyle(colors: colors)
     }
 }
 
@@ -191,7 +180,8 @@ struct BestTimeToPostView: View {
 struct OptimalTimeCard: View {
     let time: OptimalPostingTime
     let platform: MarketingPlatform
-    
+    var surfaceColor: Color = Color(.secondarySystemGroupedBackground)
+
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
@@ -220,14 +210,14 @@ struct OptimalTimeCard: View {
             }
         }
         .padding()
-        .background(Color.white)
-        .cornerRadius(8)
+        .background(surfaceColor, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 
 struct RecommendationCard: View {
     let recommendation: PostingRecommendation
-    
+    var surfaceColor: Color = Color(.secondarySystemGroupedBackground)
+
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: recommendation.icon)
@@ -244,8 +234,7 @@ struct RecommendationCard: View {
             }
         }
         .padding()
-        .background(Color.white)
-        .cornerRadius(8)
+        .background(surfaceColor, in: RoundedRectangle(cornerRadius: 8, style: .continuous))
     }
 }
 
@@ -478,7 +467,7 @@ enum RecommendationType {
     
     var color: Color {
         switch self {
-        case .timing: return .blue
+        case .timing: return .accentColor
         case .engagement: return .green
         case .data: return .orange
         }

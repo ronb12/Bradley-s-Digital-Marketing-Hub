@@ -4,10 +4,15 @@ struct ContentCalendarGridView: View {
     @Binding var selectedDate: Date
     let calendarItems: [ContentCalendarItem]
     let onItemTap: (ContentCalendarItem) -> Void
-    
+
     @State private var currentMonth: Date = Date()
+    @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.colorScheme) private var colorScheme
-    
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
+
     private let calendar = Calendar.current
     
     var body: some View {
@@ -63,6 +68,7 @@ struct ContentCalendarGridView: View {
                         isSelected: calendar.isDate(date, inSameDayAs: selectedDate),
                         isToday: calendar.isDateInToday(date),
                         items: itemsForDate(date),
+                        themePrimary: colors.primary,
                         onTap: {
                             selectedDate = date
                         },
@@ -138,9 +144,10 @@ struct CalendarDayView: View {
     let isSelected: Bool
     let isToday: Bool
     let items: [ContentCalendarItem]
+    var themePrimary: Color = .accentColor
     let onTap: () -> Void
     let onItemTap: (ContentCalendarItem) -> Void
-    
+
     @Environment(\.colorScheme) private var colorScheme
     
     private var dayNumber: Int {
@@ -161,10 +168,10 @@ struct CalendarDayView: View {
                     Group {
                         if isSelected {
                             Circle()
-                                .fill(Color.blue)
+                                .fill(themePrimary)
                         } else if isToday {
                             Circle()
-                                .fill(Color.red)
+                                .fill(themePrimary.opacity(0.35))
                         } else {
                             Circle()
                                 .fill(Color.clear)
@@ -195,16 +202,7 @@ struct CalendarDayView: View {
     }
     
     private func colorForPlatform(_ platform: String) -> Color {
-        switch platform.lowercased() {
-        case "instagram": return Color.purple
-        case "facebook": return Color.blue
-        case "twitter", "x": return Color.black
-        case "linkedin": return Color.blue.opacity(0.8)
-        case "tiktok": return Color.black
-        case "youtube": return Color.red
-        case "pinterest": return Color.red
-        default: return Color.gray
-        }
+        HubPlatformColors.accent(for: platform, themePrimary: themePrimary)
     }
 }
 

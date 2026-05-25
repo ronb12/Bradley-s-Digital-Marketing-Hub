@@ -9,6 +9,10 @@ struct ContentPreviewView: View {
     @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var selectedPreview: PreviewStyle = .feed
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
     
     enum PreviewStyle: String, CaseIterable {
         case feed = "Feed"
@@ -52,6 +56,7 @@ struct ContentPreviewView: View {
                 .padding()
             }
         }
+        .hubScreenBackground(colors)
         .navigationTitle("Preview")
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -94,11 +99,11 @@ struct ContentPreviewView: View {
     }
     
     private var facebookPreview: some View {
-        FacebookPreview(content: content, title: title)
+        FacebookPreview(content: content, title: title, accent: colors.primary)
     }
-    
+
     private var linkedInPreview: some View {
-        LinkedInPreview(content: content, title: title)
+        LinkedInPreview(content: content, title: title, accent: colors.primary)
     }
     
     private var twitterPreview: some View {
@@ -321,12 +326,13 @@ struct InstagramCarouselPreview: View {
 struct FacebookPreview: View {
     let content: String
     let title: String?
-    
+    var accent: Color = .accentColor
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Circle()
-                    .fill(Color.blue.opacity(0.3))
+                    .fill(accent.opacity(0.3))
                     .frame(width: 40, height: 40)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title ?? "Page Name")
@@ -343,7 +349,7 @@ struct FacebookPreview: View {
                 .padding(.horizontal, 12)
                 .padding(.bottom, 12)
         }
-        .background(Color(.systemGray6))
+        .background(Color(.secondarySystemGroupedBackground))
         .cornerRadius(8)
         .frame(maxWidth: 500)
     }
@@ -352,12 +358,13 @@ struct FacebookPreview: View {
 struct LinkedInPreview: View {
     let content: String
     let title: String?
-    
+    var accent: Color = .accentColor
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Circle()
-                    .fill(Color.blue.opacity(0.3))
+                    .fill(accent.opacity(0.3))
                     .frame(width: 48, height: 48)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(title ?? "Your Name")
