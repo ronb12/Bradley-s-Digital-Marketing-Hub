@@ -12,7 +12,7 @@ struct ToolsHubView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                HubSectionHeader("Insights & Tools", subtitle: "Research, analyze, export, and share")
+                HubSectionHeader("Insights & Tools", subtitle: "Research, analyze, export, and share manually")
 
                 Grid(horizontalSpacing: 12, verticalSpacing: 12) {
                     GridRow {
@@ -32,19 +32,31 @@ struct ToolsHubView: View {
                         }
                     }
                     GridRow {
-                        NavigationLink { ExportView(calendarItems: appViewModel.calendarItems) } label: {
-                            HubActionCard(title: "Export", subtitle: "CSV, JSON, text", icon: "square.and.arrow.up", tint: colors.secondary)
+                        NavigationLink { HubSearchView() } label: {
+                            HubActionCard(title: "Search All", subtitle: "Calendar, campaigns, templates", icon: "magnifyingglass", tint: colors.primary)
                         }
+                        NavigationLink { ExportView(calendarItems: appViewModel.calendarItems) } label: {
+                            HubActionCard(title: "Export", subtitle: appViewModel.currentTier == .free ? "Pro feature" : "CSV, JSON, text", icon: "square.and.arrow.up", tint: colors.secondary)
+                        }
+                        .disabled(appViewModel.currentTier == .free)
+                        .simultaneousGesture(TapGesture().onEnded {
+                            if appViewModel.currentTier == .free { appViewModel.showPaywall = true }
+                        })
+                    }
+                    GridRow {
                         NavigationLink { SocialAccountsView(service: appViewModel.socialMediaService) } label: {
-                            HubActionCard(title: "Share Setup", subtitle: "Review & connect", icon: "link.circle", tint: colors.accent)
+                            HubActionCard(title: "Share Setup", subtitle: "Manual share guide", icon: "link.circle", tint: colors.accent)
+                        }
+                        NavigationLink { HelpCenterView() } label: {
+                            HubActionCard(title: "Help Center", subtitle: "Manual share FAQ", icon: "questionmark.circle", tint: colors.primary)
                         }
                     }
                     GridRow {
-                        NavigationLink { SearchableCalendarView(service: appViewModel.cloudKitService, socialMediaService: appViewModel.socialMediaService) } label: {
-                            HubActionCard(title: "Search Calendar", subtitle: "Filter & find posts", icon: "magnifyingglass", tint: colors.primary)
-                        }
                         NavigationLink { AffiliateToolsView() } label: {
                             HubActionCard(title: "Affiliate Tools", subtitle: "Recommended stack", icon: "link", tint: colors.secondary)
+                        }
+                        NavigationLink { SearchableCalendarView(service: appViewModel.cloudKitService, socialMediaService: appViewModel.socialMediaService) } label: {
+                            HubActionCard(title: "Calendar Search", subtitle: "Filter & find posts", icon: "calendar.badge.clock", tint: colors.accent)
                         }
                     }
                 }

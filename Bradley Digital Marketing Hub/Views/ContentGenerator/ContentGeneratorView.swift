@@ -5,6 +5,7 @@ struct ContentGeneratorView: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.colorScheme) private var colorScheme
     @StateObject private var viewModel: ContentGeneratorViewModel
+    @State private var scheduleItem: ContentGeneratorViewModel.GeneratedContentItem?
 
     private var colors: ThemeColors {
         themeManager.colors(for: colorScheme)
@@ -42,6 +43,27 @@ struct ContentGeneratorView: View {
         }
         .hubScreenBackground(colors)
         .navigationTitle("Content Generator")
+        .sheet(item: $scheduleItem) { item in
+            SchedulePostSheet(
+                platform: item.platform,
+                content: item.content,
+                defaultTitle: "Generated \(item.platform.rawValue) Post"
+            ) { title, date, enableReminder, mediaURLs in
+                do {
+                    try await appViewModel.scheduleContent(
+                        title: title,
+                        content: item.content,
+                        platform: item.platform,
+                        date: date,
+                        enableReminder: enableReminder,
+                        mediaURLs: mediaURLs
+                    )
+                    viewModel.statusMessage = "Scheduled with reminder — check Home when it's time to share."
+                } catch {
+                    appViewModel.errorMessage = error.localizedDescription
+                }
+            }
+        }
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 NavigationLink {
@@ -100,20 +122,32 @@ struct ContentGeneratorView: View {
     }
 
     private var generateButtonSection: some View {
-        Button {
-            HapticFeedback.light()
-            viewModel.generate()
-        } label: {
-            HStack {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 16, weight: .semibold))
-                Text("Generate Content")
-                    .font(.system(size: 17, weight: .semibold))
+        VStack(spacing: 8) {
+            if let remaining = viewModel.remainingGenerations(tier: appViewModel.currentTier) {
+                Text("\(remaining) free generations left today")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(maxWidth: .infinity)
+            Button {
+                if !viewModel.canGenerate(tier: appViewModel.currentTier) {
+                    appViewModel.showPaywall = true
+                    return
+                }
+                HapticFeedback.light()
+                viewModel.generate()
+            } label: {
+                HStack {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 16, weight: .semibold))
+                    Text("Generate Content")
+                        .font(.system(size: 17, weight: .semibold))
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
         }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.large)
     }
 
     private var generatedSection: some View {
@@ -145,6 +179,9 @@ struct ContentGeneratorView: View {
                                 )
                             }
                         }
+                    },
+                    onSchedule: {
+                        scheduleItem = viewModel.generatedContent[index]
                     },
                     onFavorite: {
                         Task {

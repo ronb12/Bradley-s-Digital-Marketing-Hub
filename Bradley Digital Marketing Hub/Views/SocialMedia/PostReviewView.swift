@@ -192,20 +192,18 @@ struct PostReviewView: View {
     }
     
     private var shareItems: [Any] {
-        var items: [Any] = []
-        
-        // Combine content with hashtags
-        var fullContent = post.content
-        if let hashtags = post.hashtags, !hashtags.isEmpty {
-            fullContent += "\n\n\(hashtags)"
+        var items = ShareContentBuilder.shareItems(
+            content: post.content,
+            hashtags: post.hashtags,
+            linkURL: post.linkURL
+        )
+        for path in post.mediaURLs {
+            if FileManager.default.fileExists(atPath: path) {
+                items.append(URL(fileURLWithPath: path))
+            } else if let url = URL(string: path) {
+                items.append(url)
+            }
         }
-        items.append(fullContent)
-        
-        // Add link if available
-        if let linkURL = post.linkURL, !linkURL.isEmpty, let url = URL(string: linkURL) {
-            items.append(url)
-        }
-        
         return items
     }
 }

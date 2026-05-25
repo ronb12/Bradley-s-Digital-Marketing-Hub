@@ -1,5 +1,4 @@
 import SwiftUI
-import CloudKit
 
 struct BulkActionsView: View {
     @Binding var selectedItems: Set<String>
@@ -111,25 +110,15 @@ struct BulkActionsView: View {
         isProcessing = true
         defer { isProcessing = false }
 
-        var deletedIDs: Set<String> = []
-        var failureCount = 0
-
-        for item in selectedItemsList {
-            do {
-                let recordID = CKRecord.ID(recordName: item.id)
-                _ = try await appViewModel.cloudKitService.privateDB.deleteRecord(withID: recordID)
-                deletedIDs.insert(item.id)
-            } catch {
-                failureCount += 1
-            }
-        }
+        let (deleted, failureCount) = await appViewModel.deleteCalendarItemsWithSync(selectedItemsList)
 
         await MainActor.run {
-            appViewModel.calendarItems.removeAll { deletedIDs.contains($0.id) }
-            selectedItems.subtract(deletedIDs)
+            for item in selectedItemsList where !appViewModel.calendarItems.contains(where: { $0.id == item.id }) {
+                selectedItems.remove(item.id)
+            }
 
             if failureCount > 0 {
-                errorMessage = "Deleted \(deletedIDs.count) item(s), but \(failureCount) could not be removed."
+                errorMessage = "Deleted \(deleted) item(s), but \(failureCount) could not be removed."
                 HapticFeedback.warning()
             } else {
                 HapticFeedback.success()
@@ -246,12 +235,7 @@ struct BulkActionOptionsView: View {
             }
 
             do {
-                let saved = try await appViewModel.cloudKitService.saveCalendarItem(updatedItem)
-                await MainActor.run {
-                    if let index = appViewModel.calendarItems.firstIndex(where: { $0.id == saved.id }) {
-                        appViewModel.calendarItems[index] = saved
-                    }
-                }
+                let saved = try await appViewModel.updateCalendarItemWithSync(updatedItem)
                 updatedIDs.insert(saved.id)
             } catch {
                 failureCount += 1

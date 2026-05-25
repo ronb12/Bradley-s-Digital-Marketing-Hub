@@ -52,6 +52,40 @@ final class ContentGeneratorViewModel: ObservableObject {
     func generate() {
         let contentPieces = generatePlatformSpecificContent()
         generatedContent = contentPieces.map { GeneratedContentItem(content: $0, platform: platform) }
+        recordGeneration()
+    }
+
+    private static let freeDailyGenerationLimit = 10
+    private static let generationCountKey = "BradleyDigitalMarketingHub.generationCount"
+    private static let generationDateKey = "BradleyDigitalMarketingHub.generationDate"
+
+    func canGenerate(tier: SubscriptionTier) -> Bool {
+        guard tier == .free else { return true }
+        resetGenerationCountIfNeeded()
+        let count = UserDefaults.standard.integer(forKey: Self.generationCountKey)
+        return count < Self.freeDailyGenerationLimit
+    }
+
+    func remainingGenerations(tier: SubscriptionTier) -> Int? {
+        guard tier == .free else { return nil }
+        resetGenerationCountIfNeeded()
+        let count = UserDefaults.standard.integer(forKey: Self.generationCountKey)
+        return max(0, Self.freeDailyGenerationLimit - count)
+    }
+
+    private func recordGeneration() {
+        resetGenerationCountIfNeeded()
+        let count = UserDefaults.standard.integer(forKey: Self.generationCountKey)
+        UserDefaults.standard.set(count + 1, forKey: Self.generationCountKey)
+    }
+
+    private func resetGenerationCountIfNeeded() {
+        let today = Calendar.current.startOfDay(for: Date())
+        let storedDay = UserDefaults.standard.object(forKey: Self.generationDateKey) as? Date ?? .distantPast
+        if !Calendar.current.isDate(storedDay, inSameDayAs: today) {
+            UserDefaults.standard.set(0, forKey: Self.generationCountKey)
+            UserDefaults.standard.set(today, forKey: Self.generationDateKey)
+        }
     }
     
     func regenerateItem(at index: Int) {

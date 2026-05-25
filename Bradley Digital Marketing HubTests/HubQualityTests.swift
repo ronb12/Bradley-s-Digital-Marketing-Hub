@@ -21,4 +21,35 @@ final class HubQualityTests: XCTestCase {
         let error = SocialMediaError.accountConnectionUnavailable
         XCTAssertTrue(error.errorDescription?.contains("manually") == true)
     }
+
+    func testShareContentBuilderCombinesHashtags() {
+        let text = ShareContentBuilder.fullText(content: "Hello world", hashtags: "#marketing #growth")
+        XCTAssertTrue(text.contains("Hello world"))
+        XCTAssertTrue(text.contains("#marketing"))
+    }
+
+    func testShareContentBuilderIncludesLinkURL() {
+        let items = ShareContentBuilder.shareItems(content: "Post body", linkURL: "https://example.com")
+        XCTAssertEqual(items.count, 2)
+        XCTAssertTrue(items[1] is URL)
+    }
+
+    func testMarketingPlatformSocialPlatformMapping() {
+        XCTAssertEqual(MarketingPlatform.instagram.socialPlatform, .instagram)
+        XCTAssertEqual(MarketingPlatform.email.socialPlatform, nil)
+    }
+
+    func testCampaignPlanParserExtractsHookIdeas() {
+        let outline = """
+        HOOK IDEAS
+        • Behind-the-scenes Reel
+        • Customer testimonial post
+
+        CONTENT THEMES
+        • Education
+        """
+        let hooks = CampaignPlanParser.hookIdeas(from: outline)
+        XCTAssertEqual(hooks.count, 2)
+        XCTAssertTrue(hooks.first?.contains("Behind-the-scenes") == true)
+    }
 }

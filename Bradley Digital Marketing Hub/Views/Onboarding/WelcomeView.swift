@@ -41,7 +41,7 @@ struct WelcomeView: View {
                             .font(.system(size: 36, weight: .bold, design: .rounded))
                             .foregroundColor(.white)
                         
-                        Text("Plan campaigns, generate content, and grow your business with Apple-native tools")
+                        Text("Plan campaigns, schedule content, and share manually — your mobile publishing command center")
                             .font(.system(size: 17, weight: .medium))
                             .foregroundColor(.white.opacity(0.9))
                             .multilineTextAlignment(.center)
@@ -55,7 +55,7 @@ struct WelcomeView: View {
                         FeatureRow(
                             icon: "calendar.badge.clock",
                             title: "Content Calendar",
-                            description: "Schedule and organize your marketing content"
+                            description: "Plan posts and get reminded when it's time to share"
                         )
                         
                         FeatureRow(
@@ -71,9 +71,15 @@ struct WelcomeView: View {
                         )
                         
                         FeatureRow(
+                            icon: "square.and.arrow.up",
+                            title: "Manual Share Workflow",
+                            description: "Publish via iOS Share Sheet — honest, reliable, no fake auto-posts"
+                        )
+
+                        FeatureRow(
                             icon: "chart.bar.xaxis",
-                            title: "Analytics & Insights",
-                            description: "Track content performance and best posting times"
+                            title: "Planning Analytics",
+                            description: "Track your consistency and schedule — not platform engagement"
                         )
                         
                         FeatureRow(
