@@ -18,7 +18,7 @@ struct TemplatesView: View {
                 HubEmptyState(
                     icon: "doc.richtext",
                     title: "No templates yet",
-                    message: "Templates sync from CloudKit. Tap + to publish your own."
+                    message: "Templates appear here once published. Tap + to add your own."
                 )
                 .padding()
             } else {
@@ -55,9 +55,9 @@ struct TemplatesView: View {
                             .tint(.primary)
                         }
                     } header: {
-                        Text("Templates from CloudKit public database")
+                        Text("Marketing Templates")
                     } footer: {
-                        Text("Templates sync from CloudKit. Tap + to publish your own.")
+                        Text("Browse ready-to-use assets for your campaigns.")
                     }
                 }
                 .listStyle(.insetGrouped)
@@ -95,16 +95,20 @@ struct TemplateDetailView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text(template.name).font(.title2).bold()
                 Text(template.description)
-                Text("Preview Placeholder")
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 200)
-                    .background(colors.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .overlay(
-                        Text("Upload actual PDF in CloudKit and render with QuickLook later.")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .padding()
-                    )
+                VStack(spacing: 12) {
+                    Image(systemName: "doc.richtext.fill")
+                        .font(.system(size: 48))
+                        .foregroundColor(colors.primary.opacity(0.6))
+                    Text("Template preview")
+                        .font(.headline)
+                    Text("Open this template to copy content into your calendar or generator.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 200)
+                .background(colors.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
             .padding()
         }

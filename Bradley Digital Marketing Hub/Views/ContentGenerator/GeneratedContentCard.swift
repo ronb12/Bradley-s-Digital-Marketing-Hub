@@ -8,6 +8,7 @@ struct GeneratedContentCard: View {
     let onContentUpdate: (String) -> Void
     let onCopy: () -> Void
     let onSave: () -> Void
+    let onSchedule: () -> Void
     let onFavorite: () -> Void
     let onRegenerate: () -> Void
     
@@ -18,12 +19,13 @@ struct GeneratedContentCard: View {
         themeManager.colors(for: colorScheme)
     }
 
-    init(item: Binding<ContentGeneratorViewModel.GeneratedContentItem>, index: Int, onContentUpdate: @escaping (String) -> Void, onCopy: @escaping () -> Void, onSave: @escaping () -> Void, onFavorite: @escaping () -> Void, onRegenerate: @escaping () -> Void) {
+    init(item: Binding<ContentGeneratorViewModel.GeneratedContentItem>, index: Int, onContentUpdate: @escaping (String) -> Void, onCopy: @escaping () -> Void, onSave: @escaping () -> Void, onSchedule: @escaping () -> Void, onFavorite: @escaping () -> Void, onRegenerate: @escaping () -> Void) {
         self._item = item
         self.index = index
         self.onContentUpdate = onContentUpdate
         self.onCopy = onCopy
         self.onSave = onSave
+        self.onSchedule = onSchedule
         self.onFavorite = onFavorite
         self.onRegenerate = onRegenerate
         self._editedText = State(initialValue: item.wrappedValue.content)
@@ -92,8 +94,15 @@ struct GeneratedContentCard: View {
                             .font(.caption)
                     }
                     .buttonStyle(.bordered)
-                    
-                    Button(action: { 
+
+                    Button(action: onSchedule) {
+                        Label("Schedule", systemImage: "calendar.badge.plus")
+                            .font(.caption)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(colors.primary)
+
+                    Button(action: {
                         isEditing = true
                         editedText = item.content
                     }) {
@@ -101,27 +110,28 @@ struct GeneratedContentCard: View {
                             .font(.caption)
                     }
                     .buttonStyle(.bordered)
-                    
+                }
+
+                HStack(spacing: 8) {
                     Button(action: onFavorite) {
                         Label("Favorite", systemImage: "heart")
                             .font(.caption)
                     }
                     .buttonStyle(.bordered)
-                    
+
                     Button(action: onRegenerate) {
                         Label("Regenerate", systemImage: "arrow.clockwise")
                             .font(.caption)
                     }
                     .buttonStyle(.bordered)
-                    
+
                     Spacer()
-                    
+
                     Button(action: onSave) {
                         Label("Save to Calendar", systemImage: "tray.and.arrow.down")
                             .font(.caption)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .tint(colors.primary)
+                    .buttonStyle(.bordered)
                 }
             }
         }

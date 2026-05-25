@@ -46,27 +46,13 @@ struct SocialAccountsView: View {
 
                 if !viewModel.legacyAccounts.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        HubSectionHeader("Legacy Placeholder Accounts", subtitle: "These were created by an older demo flow and can be removed.")
-
-                        ForEach(viewModel.legacyAccounts) { account in
-                            HStack {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(account.accountName)
-                                        .font(.subheadline.bold())
-                                    Text(account.platform)
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                                Spacer()
-                                Button("Remove") {
-                                    Task { await viewModel.removeLegacyAccount(account) }
-                                }
-                                .font(.caption)
-                            }
-                            .padding(.vertical, 4)
-                        }
+                        HubSectionHeader("Cleaning up", subtitle: "Removing outdated placeholder records…")
+                        ProgressView()
                     }
                     .hubCardStyle(colors: colors)
+                    .task {
+                        await viewModel.loadAccounts()
+                    }
                 }
             }
             .padding()
@@ -118,9 +104,13 @@ final class SocialAccountsViewModel: ObservableObject {
         guard let userId else { return }
         do {
             let accounts = try await service.fetchConnectedAccounts(userId: userId)
-            legacyAccounts = accounts.filter {
+            let legacy = accounts.filter {
                 ($0.accessToken?.hasPrefix("mock_") == true) || $0.accountName.hasPrefix("Mock ")
             }
+            for account in legacy {
+                try? await service.removeLegacyPlaceholderAccount(account)
+            }
+            legacyAccounts = []
         } catch {
             legacyAccounts = []
         }

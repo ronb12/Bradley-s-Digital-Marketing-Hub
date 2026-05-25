@@ -17,7 +17,7 @@ struct AffiliateToolsView: View {
                 HubEmptyState(
                     icon: "link",
                     title: "No affiliate tools",
-                    message: "Affiliate tools sync from the CloudKit public database."
+                    message: "Recommended tools will appear here as they're added."
                 )
                 .padding()
             } else {
@@ -44,7 +44,7 @@ struct AffiliateToolsView: View {
                         }
                         .padding(.vertical, 6)
                     }
-                    Section(footer: Text("Affiliate clicks are logged via AffiliateClick records.")) { EmptyView() }
+                    Section(footer: Text("Affiliate links open in Safari. Clicks help us recommend better tools.")) { EmptyView() }
                 }
                 .listStyle(.insetGrouped)
                 .scrollContentBackground(.hidden)

@@ -192,21 +192,11 @@ struct PostReviewView: View {
     }
     
     private var shareItems: [Any] {
-        var items: [Any] = []
-        
-        // Combine content with hashtags
-        var fullContent = post.content
-        if let hashtags = post.hashtags, !hashtags.isEmpty {
-            fullContent += "\n\n\(hashtags)"
-        }
-        items.append(fullContent)
-        
-        // Add link if available
-        if let linkURL = post.linkURL, !linkURL.isEmpty, let url = URL(string: linkURL) {
-            items.append(url)
-        }
-        
-        return items
+        ShareContentBuilder.shareItems(
+            content: post.content,
+            hashtags: post.hashtags,
+            linkURL: post.linkURL
+        )
     }
 }
 

@@ -19,7 +19,7 @@ struct BookingView: View {
                 }
                 DatePicker("Preferred time", selection: $viewModel.requestedDate)
                 TextField("Notes", text: $viewModel.notes, axis: .vertical)
-                Section(footer: Text("Payment link to be integrated later.")) {
+                Section(footer: Text("We'll confirm your booking by email. Payment is handled separately.")) {
                     Button("Submit booking") {
                         Task {
                             if let userId = appViewModel.userProfile?.userId {
