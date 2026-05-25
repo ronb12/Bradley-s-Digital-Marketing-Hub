@@ -42,11 +42,20 @@ struct TemplatesView: View {
             } header: {
                 Text("Templates from CloudKit public database")
             } footer: {
-                Text("Add Template records in CloudKit Dashboard. Placeholder PDFs can be attached via CKAsset.")
+                Text("Templates sync from CloudKit. Tap + to publish your own.")
             }
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Templates")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    SaveTemplateView()
+                } label: {
+                    Label("Add Template", systemImage: "plus")
+                }
+            }
+        }
         .sheet(item: $viewModel.selectedTemplate) { template in
             TemplateDetailView(template: template)
         }

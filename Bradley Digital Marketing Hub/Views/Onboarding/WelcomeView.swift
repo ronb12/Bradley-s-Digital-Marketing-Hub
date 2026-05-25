@@ -69,19 +69,31 @@ struct WelcomeView: View {
                         FeatureRow(
                             icon: "doc.richtext.fill",
                             title: "Smart Templates",
-                            description: "AI-powered content generation for all platforms"
+                            description: "Ready-to-use assets for every platform"
+                        )
+
+                        FeatureRow(
+                            icon: "target",
+                            title: "Campaign Planner",
+                            description: "Strategic outlines tailored to your goals"
                         )
                         
                         FeatureRow(
-                            icon: "chart.line.uptrend.xyaxis",
-                            title: "Campaign Planner",
-                            description: "Strategic planning tools for marketing success"
+                            icon: "chart.bar.xaxis",
+                            title: "Analytics & Insights",
+                            description: "Track content performance and best posting times"
+                        )
+                        
+                        FeatureRow(
+                            icon: "number.circle.fill",
+                            title: "Hashtag Research",
+                            description: "Platform-specific tags to grow reach"
                         )
                     }
                     .padding(.horizontal, 32)
                     .padding(.bottom, 48)
                     
-                    // Action Buttons
+                    // Action Buttons (legacy block removed duplicate features above)
                     VStack(spacing: 16) {
                         SignInWithAppleButton(.continue) { request in
                             appViewModel.prepareSignInRequest(request)

@@ -1,4 +1,5 @@
 import SwiftUI
+import CloudKit
 
 enum CalendarViewMode {
     case list
@@ -12,6 +13,11 @@ struct ContentCalendarView: View {
     @State private var selectedCalendarDate: Date = Date()
     @State private var selectedItem: ContentCalendarItem?
     @State private var showItemDetail = false
+    @State private var searchText = ""
+    @State private var isSelecting = false
+    @State private var selectedItemIDs: Set<String> = []
+    @State private var showBulkActions = false
+    @State private var showExport = false
 
     init(service: CloudKitService? = nil, socialMediaService: SocialMediaService? = nil) {
         let cloudKitService = service ?? CloudKitService()
@@ -36,6 +42,48 @@ struct ContentCalendarView: View {
             }
         }
         .navigationTitle("Content Calendar")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button {
+                        isSelecting.toggle()
+                        if !isSelecting { selectedItemIDs.removeAll() }
+                    } label: {
+                        Label(isSelecting ? "Done Selecting" : "Select Items", systemImage: "checkmark.circle")
+                    }
+                    NavigationLink {
+                        SearchableCalendarView(
+                            service: appViewModel.cloudKitService,
+                            socialMediaService: appViewModel.socialMediaService
+                        )
+                    } label: {
+                        Label("Advanced Search", systemImage: "magnifyingglass")
+                    }
+                    Button {
+                        showExport = true
+                    } label: {
+                        Label("Export Calendar", systemImage: "square.and.arrow.up")
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
+            if isSelecting {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button("Bulk Edit (\(selectedItemIDs.count))") {
+                        showBulkActions = true
+                    }
+                    .disabled(selectedItemIDs.isEmpty)
+                }
+            }
+        }
+        .sheet(isPresented: $showBulkActions) {
+            BulkActionsView(selectedItems: $selectedItemIDs, calendarItems: appViewModel.calendarItems)
+                .environmentObject(appViewModel)
+        }
+        .sheet(isPresented: $showExport) {
+            ExportView(calendarItems: appViewModel.calendarItems)
+        }
         .sheet(item: $selectedItem) { item in
             CalendarItemDetailView(item: item)
                 .environmentObject(appViewModel)
@@ -78,13 +126,31 @@ struct ContentCalendarView: View {
     
     private var listView: some View {
         List {
+            Section {
+                SearchView(searchText: $searchText, placeholder: "Search title, platform, or notes...")
+            }
+
             ForEach(groupedEntries.keys.sorted(), id: \.self) { date in
                 Section(header: Text(DateFormatter.shortDate.string(from: date))) {
                     ForEach(groupedEntries[date] ?? []) { item in
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(item.title).bold()
-                            Text(item.platform).font(.caption).foregroundColor(.secondary)
-                            Text(item.notes).font(.footnote)
+                        if isSelecting {
+                            Button {
+                                toggleSelection(item.id)
+                            } label: {
+                                HStack {
+                                    Image(systemName: selectedItemIDs.contains(item.id) ? "checkmark.circle.fill" : "circle")
+                                        .foregroundColor(selectedItemIDs.contains(item.id) ? .blue : .secondary)
+                                    calendarListRow(item)
+                                }
+                            }
+                            .buttonStyle(.plain)
+                        } else {
+                            Button {
+                                selectedItem = item
+                            } label: {
+                                calendarListRow(item)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }
@@ -155,9 +221,36 @@ struct ContentCalendarView: View {
         }
     }
 
+    private func calendarListRow(_ item: ContentCalendarItem) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(item.title).bold()
+            Text(item.platform).font(.caption).foregroundColor(.secondary)
+            Text(item.notes).font(.footnote).lineLimit(2)
+        }
+    }
+
+    private func toggleSelection(_ id: String) {
+        HapticFeedback.selection()
+        if selectedItemIDs.contains(id) {
+            selectedItemIDs.remove(id)
+        } else {
+            selectedItemIDs.insert(id)
+        }
+    }
+
     private var groupedEntries: [Date: [ContentCalendarItem]] {
-        Dictionary(grouping: appViewModel.calendarItems) { item in
+        let items = filteredCalendarItems
+        return Dictionary(grouping: items) { item in
             Calendar.current.startOfDay(for: item.date)
+        }
+    }
+
+    private var filteredCalendarItems: [ContentCalendarItem] {
+        guard !searchText.isEmpty else { return appViewModel.calendarItems }
+        return appViewModel.calendarItems.filter { item in
+            item.title.localizedCaseInsensitiveContains(searchText) ||
+            item.notes.localizedCaseInsensitiveContains(searchText) ||
+            item.platform.localizedCaseInsensitiveContains(searchText)
         }
     }
 }
@@ -306,6 +399,44 @@ struct CalendarItemDetailView: View {
                 .padding()
                 .background(Color(.systemGray6))
                 .cornerRadius(10)
+
+            HStack(spacing: 12) {
+                NavigationLink {
+                    ContentPreviewView(
+                        content: editedItem.notes,
+                        platform: MarketingPlatform(rawValue: editedItem.platform) ?? .instagram,
+                        title: editedItem.title,
+                        scheduledDate: editedItem.date
+                    )
+                } label: {
+                    Label("Preview", systemImage: "eye")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+
+                Button {
+                    UIPasteboard.general.string = editedItem.notes
+                    HapticFeedback.success()
+                } label: {
+                    Label("Copy", systemImage: "doc.on.doc")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+            }
+
+            if let platform = SocialPlatform(rawValue: editedItem.platform) {
+                Button {
+                    appViewModel.socialMediaService.sharePost(
+                        content: editedItem.notes,
+                        platform: platform
+                    )
+                    HapticFeedback.light()
+                } label: {
+                    Label("Share to \(platform.rawValue)", systemImage: "square.and.arrow.up")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+            }
         }
     }
     

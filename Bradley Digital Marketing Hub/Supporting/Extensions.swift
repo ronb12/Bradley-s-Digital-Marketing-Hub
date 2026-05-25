@@ -25,6 +25,91 @@ extension View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16))
     }
+
+    func hubCardStyle(colors: ThemeColors) -> some View {
+        padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(colors.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(colors.primary.opacity(0.12), lineWidth: 1)
+            )
+        .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
+    }
+}
+
+struct HubMetricCard: View {
+    let title: String
+    let value: String
+    let icon: String
+    let color: Color
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundColor(color)
+                Spacer()
+            }
+            Text(value)
+                .font(.title2.bold())
+            Text(title)
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .padding()
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(color.opacity(0.08), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+}
+
+struct HubActionCard: View {
+    let title: String
+    let subtitle: String
+    let icon: String
+    let tint: Color
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundColor(tint)
+                .frame(width: 36, height: 36)
+                .background(tint.opacity(0.12), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+            Text(title)
+                .font(.subheadline.bold())
+                .foregroundColor(.primary)
+            Text(subtitle)
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .lineLimit(2)
+        }
+        .padding(14)
+        .frame(maxWidth: .infinity, minHeight: 110, alignment: .leading)
+        .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+}
+
+struct HubSectionHeader: View {
+    let title: String
+    let subtitle: String?
+
+    init(_ title: String, subtitle: String? = nil) {
+        self.title = title
+        self.subtitle = subtitle
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.headline)
+            if let subtitle {
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
 }
 
 extension Array where Element == TemplateItem {
@@ -65,92 +150,5 @@ extension Color {
             blue: Double(b) / 255,
             opacity: Double(a) / 255
         )
-    }
-}
-
-// MARK: - Temporary Stubs (until Xcode recognizes separate files)
-import Foundation
-
-enum PostStatus: String {
-    case scheduled
-}
-
-struct ScheduledPost: Identifiable, Hashable {
-    var id: String = UUID().uuidString
-    var userId: String
-    var brandId: String?
-    var calendarItemId: String?
-    var platform: String
-    var accountId: String?
-    var content: String
-    var scheduledDate: Date
-    var status: PostStatus
-    
-    init(id: String = UUID().uuidString,
-         userId: String,
-         brandId: String? = nil,
-         calendarItemId: String? = nil,
-         platform: String,
-         accountId: String? = nil,
-         content: String,
-         scheduledDate: Date,
-         status: PostStatus) {
-        self.id = id
-        self.userId = userId
-        self.brandId = brandId
-        self.calendarItemId = calendarItemId
-        self.platform = platform
-        self.accountId = accountId
-        self.content = content
-        self.scheduledDate = scheduledDate
-        self.status = status
-    }
-}
-
-struct ConnectedSocialAccount: Identifiable, Hashable {
-    var id: String
-}
-
-@MainActor
-final class SocialMediaService {
-    private let cloudKitService: CloudKitService
-    
-    init(cloudKitService: CloudKitService) {
-        self.cloudKitService = cloudKitService
-    }
-    
-    func fetchConnectedAccounts(userId: String) async throws -> [ConnectedSocialAccount] {
-        return []
-    }
-    
-    func saveScheduledPost(_ post: ScheduledPost) async throws -> ScheduledPost {
-        return post
-    }
-}
-
-// MARK: - Temporary View Stubs
-import SwiftUI
-
-struct ScheduledPostsView: View {
-    let service: SocialMediaService
-    
-    var body: some View {
-        Text("Scheduled Posts")
-    }
-}
-
-struct SocialAccountsView: View {
-    let service: SocialMediaService
-    
-    var body: some View {
-        Text("Social Accounts")
-    }
-}
-
-struct PostReviewContainerView: View {
-    let postId: String
-    
-    var body: some View {
-        Text("Post Review")
     }
 }

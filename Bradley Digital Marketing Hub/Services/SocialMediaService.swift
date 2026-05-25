@@ -64,6 +64,11 @@ final class SocialMediaService {
     func saveScheduledPost(_ post: ScheduledPost) async throws -> ScheduledPost {
         return try await cloudKitService.save(post, scope: .private)
     }
+
+    func deleteScheduledPost(_ post: ScheduledPost) async throws {
+        let recordID = CKRecord.ID(recordName: post.id)
+        _ = try await cloudKitService.privateDB.deleteRecord(withID: recordID)
+    }
     
     func updatePostStatus(_ post: ScheduledPost, status: PostStatus, errorMessage: String? = nil) async throws -> ScheduledPost {
         var updated = post
@@ -115,57 +120,16 @@ final class SocialMediaService {
         }
     }
     
-    // MARK: - Auto-Post Processing
-    
+    // MARK: - Reminder Processing
+
+    /// Marks due posts as ready for review and sends reminders — honest manual-share workflow.
     func processScheduledPosts(userId: String) async {
         do {
-            let postsToPost = try await fetchPostsDueNow(userId: userId)
-            
-            for post in postsToPost {
-                // Update status to posting
-                var updatedPost = try await updatePostStatus(post, status: .posting)
-                
-                guard let accountId = post.accountId else {
-                    try await updatePostStatus(updatedPost, status: .failed, errorMessage: "No connected account")
-                    continue
-                }
-                
-                // Fetch the connected account
-                let accounts = try await fetchConnectedAccounts(userId: userId)
-                guard let account = accounts.first(where: { $0.id == accountId && $0.isActive }) else {
-                    try await updatePostStatus(updatedPost, status: .failed, errorMessage: "Account not found or inactive")
-                    continue
-                }
-                
-                guard let platform = SocialPlatform(rawValue: post.platform) else {
-                    try await updatePostStatus(updatedPost, status: .failed, errorMessage: "Invalid platform")
-                    continue
-                }
-                
-                do {
-                    // Convert media URLs
-                    let mediaURLs = post.mediaURLs.compactMap { URL(string: $0) }
-                    
-                    // Post to platform
-                    let postId = try await postToPlatform(
-                        platform,
-                        account: account,
-                        content: post.content,
-                        mediaURLs: mediaURLs,
-                        hashtags: post.hashtags,
-                        linkURL: post.linkURL
-                    )
-                    
-                    // Update as posted
-                    updatedPost.status = .posted
-                    updatedPost.postedAt = Date()
-                    updatedPost.errorMessage = nil
-                    _ = try await saveScheduledPost(updatedPost)
-                    
-                } catch {
-                    // Update as failed
-                    try await updatePostStatus(updatedPost, status: .failed, errorMessage: error.localizedDescription)
-                }
+            let postsDue = try await fetchPostsDueNow(userId: userId)
+
+            for post in postsDue {
+                var updated = try await updatePostStatus(post, status: .readyForReview)
+                try? await NotificationService.shared.schedulePostReminder(for: updated)
             }
         } catch {
             print("Error processing scheduled posts: \(error.localizedDescription)")

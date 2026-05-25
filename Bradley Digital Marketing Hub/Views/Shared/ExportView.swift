@@ -12,7 +12,7 @@ struct ExportView: View {
     enum ExportFormat: String, CaseIterable {
         case csv = "CSV"
         case json = "JSON"
-        case pdf = "PDF (Coming Soon)"
+        case plainText = "Plain Text"
     }
     
     enum DateRange: String, CaseIterable {
@@ -89,7 +89,7 @@ struct ExportView: View {
                             }
                         }
                     }
-                    .disabled(isExporting || filteredItems.isEmpty || exportFormat == .pdf)
+                    .disabled(isExporting || filteredItems.isEmpty)
                 }
                 
                 if !filteredItems.isEmpty {
@@ -154,8 +154,8 @@ struct ExportView: View {
             url = await exportToCSV()
         case .json:
             url = await exportToJSON()
-        case .pdf:
-            url = nil // Not implemented yet
+        case .plainText:
+            url = await exportToPlainText()
         }
         
         await MainActor.run {
@@ -228,6 +228,31 @@ struct ExportView: View {
         }
     }
     
+    private func exportToPlainText() async -> URL? {
+        let fileName = "calendar_export_\(Date().timeIntervalSince1970).txt"
+        let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
+
+        var text = "Bradley Digital Marketing Hub — Calendar Export\n"
+        text += "Exported: \(Date().formatted())\n"
+        text += "Items: \(filteredItems.count)\n\n"
+
+        for item in filteredItems {
+            text += "---\n"
+            text += "Title: \(item.title)\n"
+            text += "Platform: \(item.platform)\n"
+            text += "Date: \(item.date.formatted(date: .complete, time: .shortened))\n"
+            text += "Content:\n\(item.notes)\n\n"
+        }
+
+        do {
+            try text.write(to: fileURL, atomically: true, encoding: .utf8)
+            return fileURL
+        } catch {
+            print("Error exporting plain text: \(error)")
+            return nil
+        }
+    }
+
     private func escapeCSV(_ text: String) -> String {
         // Escape quotes and wrap in quotes if contains comma or quote
         if text.contains(",") || text.contains("\"") || text.contains("\n") {

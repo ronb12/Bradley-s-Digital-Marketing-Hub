@@ -5,144 +5,225 @@ struct DashboardView: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.colorScheme) private var colorScheme
     @State private var showBooking = false
+    @State private var selectedAffiliateURL: URL?
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
+
+    private var upcomingCount: Int {
+        appViewModel.calendarItems.filter { $0.date > Date() }.count
+    }
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 24) {
                 header
+                metricsRow
                 if appViewModel.currentTier == .free {
                     upgradeBanner
                 }
                 quickActions
+                toolsSection
                 campaignSummary
                 affiliateHighlight
             }
             .padding()
         }
+        .background(colors.background.ignoresSafeArea())
         .navigationTitle("Home")
         .sheet(isPresented: $showBooking) {
             BookingView(service: appViewModel.cloudKitService)
                 .environmentObject(appViewModel)
         }
+        .sheet(isPresented: Binding(
+            get: { selectedAffiliateURL != nil },
+            set: { if !$0 { selectedAffiliateURL = nil } }
+        )) {
+            if let url = selectedAffiliateURL {
+                SafariView(url: url)
+            }
+        }
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 8) {
                 if appViewModel.isDemoMode {
-                    Image(systemName: "eye.fill")
-                        .foregroundColor(themeManager.colors(for: colorScheme).primary)
+                    Label("Demo", systemImage: "eye.fill")
+                        .font(.caption.bold())
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(colors.primary.opacity(0.15), in: Capsule())
+                        .foregroundColor(colors.primary)
                 }
-                Text("Welcome, \(appViewModel.userProfile?.name ?? "creator")")
-                    .font(.title)
-                    .bold()
-                    .foregroundColor(themeManager.colors(for: colorScheme).primary)
+                Spacer()
+                Text(appViewModel.currentTier.displayName)
+                    .font(.caption.bold())
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(colors.primary.opacity(0.12), in: Capsule())
+                    .foregroundColor(colors.primary)
             }
-            Text("Current plan: \(appViewModel.currentTier.displayName)")
+
+            Text("Welcome back, \(appViewModel.userProfile?.name ?? "creator")")
+                .font(.title.bold())
+                .foregroundColor(.primary)
+
+            Text("Your content command center")
+                .font(.subheadline)
                 .foregroundColor(.secondary)
-            if appViewModel.isDemoMode {
-                Text("Demo Mode - Sign in to save your work")
-                    .font(.caption)
-                    .foregroundColor(themeManager.colors(for: colorScheme).secondary)
-            }
+        }
+    }
+
+    private var metricsRow: some View {
+        HStack(spacing: 12) {
+            HubMetricCard(
+                title: "Campaigns",
+                value: "\(appViewModel.campaignPlans.count)",
+                icon: "target",
+                color: colors.primary
+            )
+            HubMetricCard(
+                title: "Scheduled",
+                value: "\(appViewModel.calendarItems.count)",
+                icon: "calendar",
+                color: colors.secondary
+            )
+            HubMetricCard(
+                title: "Upcoming",
+                value: "\(upcomingCount)",
+                icon: "clock.badge.checkmark",
+                color: colors.accent
+            )
         }
     }
 
     private var upgradeBanner: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Upgrade to Pro or Agency for unlimited plans and premium templates.")
-            Button("See benefits") {
+        VStack(alignment: .leading, spacing: 10) {
+            HubSectionHeader("Unlock Pro", subtitle: "Unlimited campaigns, premium templates, and exports")
+            Button("See plans") {
                 appViewModel.showPaywall = true
             }
             .buttonStyle(.borderedProminent)
-            .tint(themeManager.colors(for: colorScheme).primary)
+            .tint(colors.primary)
         }
-        .primarySectionStyle()
+        .hubCardStyle(colors: colors)
     }
 
     private var quickActions: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Productivity Hub").font(.headline)
+            HubSectionHeader("Create", subtitle: "Generate, plan, and schedule")
             Grid(horizontalSpacing: 12, verticalSpacing: 12) {
                 GridRow {
                     NavigationLink {
                         ContentGeneratorView(service: appViewModel.cloudKitService)
                     } label: {
-                        actionCard(title: "Content Generator", subtitle: "3-5 caption ideas", icon: "sparkles")
+                        HubActionCard(title: "Content Generator", subtitle: "Platform-ready captions", icon: "sparkles", tint: colors.primary)
                     }
                     NavigationLink {
                         CampaignPlannerView(service: appViewModel.cloudKitService)
                     } label: {
-                        actionCard(title: "Campaign Planner", subtitle: "Outline goals", icon: "target")
+                        HubActionCard(title: "Campaign Planner", subtitle: "Strategy outlines", icon: "target", tint: colors.secondary)
                     }
                 }
                 GridRow {
                     NavigationLink {
                         ContentCalendarView(service: appViewModel.cloudKitService, socialMediaService: appViewModel.socialMediaService)
                     } label: {
-                        actionCard(title: "Content Calendar", subtitle: "Schedule posts", icon: "calendar")
+                        HubActionCard(title: "Content Calendar", subtitle: "Plan your schedule", icon: "calendar", tint: colors.accent)
                     }
                     NavigationLink {
                         TemplatesView()
                     } label: {
-                        actionCard(title: "Templates", subtitle: "Ready-to-use", icon: "doc.richtext")
+                        HubActionCard(title: "Templates", subtitle: "Ready-to-use assets", icon: "doc.richtext", tint: colors.primary)
+                    }
+                }
+            }
+        }
+    }
+
+    private var toolsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HubSectionHeader("Insights & Tools", subtitle: "Research, preview, and analyze")
+            Grid(horizontalSpacing: 12, verticalSpacing: 12) {
+                GridRow {
+                    NavigationLink {
+                        AnalyticsDashboardView()
+                    } label: {
+                        HubActionCard(title: "Analytics", subtitle: "Content performance", icon: "chart.bar.fill", tint: colors.primary)
+                    }
+                    NavigationLink {
+                        HashtagResearchView()
+                    } label: {
+                        HubActionCard(title: "Hashtags", subtitle: "Research & suggestions", icon: "number", tint: colors.secondary)
                     }
                 }
                 GridRow {
                     NavigationLink {
-                        AffiliateToolsView()
+                        BestTimeToPostView()
                     } label: {
-                        actionCard(title: "Affiliate Tools", subtitle: "Handpicked stack", icon: "link")
+                        HubActionCard(title: "Best Times", subtitle: "When to publish", icon: "clock.arrow.circlepath", tint: colors.accent)
                     }
-                    Button {
-                        showBooking = true
+                    NavigationLink {
+                        SearchableSavedContent()
                     } label: {
-                        actionCard(title: "Book a Service", subtitle: "Consulting + builds", icon: "person.2.wave.2")
+                        HubActionCard(title: "Saved Content", subtitle: "Favorites library", icon: "heart.text.square", tint: colors.primary)
+                    }
+                }
+                GridRow {
+                    NavigationLink {
+                        ExportView(calendarItems: appViewModel.calendarItems)
+                    } label: {
+                        HubActionCard(title: "Export", subtitle: "CSV, JSON, or text", icon: "square.and.arrow.up", tint: colors.secondary)
+                    }
+                    NavigationLink {
+                        SocialAccountsView(service: appViewModel.socialMediaService)
+                    } label: {
+                        HubActionCard(title: "Share Setup", subtitle: "Connect & review posts", icon: "link.circle", tint: colors.accent)
                     }
                 }
             }
         }
-    }
-
-    private func actionCard(title: String, subtitle: String, icon: String) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Label(title, systemImage: icon)
-                .font(.headline)
-            Text(subtitle).font(.caption).foregroundColor(.secondary)
-        }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color.hubBackground, in: RoundedRectangle(cornerRadius: 16))
     }
 
     private var campaignSummary: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Campaigns Overview").font(.headline)
+        VStack(alignment: .leading, spacing: 10) {
+            HubSectionHeader("Campaigns Overview")
             Text("\(appViewModel.campaignPlans.count) saved plans • \(appViewModel.calendarItems.count) calendar items")
                 .foregroundColor(.secondary)
-            Button("View Planner") {
-                appViewModel.showPaywall = appViewModel.currentTier == .free && !(appViewModel.canAddCampaignPlan())
+            NavigationLink {
+                CampaignPlannerView(service: appViewModel.cloudKitService)
+            } label: {
+                Text("Open Campaign Planner")
+                    .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered)
         }
-        .primarySectionStyle()
+        .hubCardStyle(colors: colors)
     }
 
     private var affiliateHighlight: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Recommended Tool").font(.headline)
-            if let tool = appViewModel.affiliateTools.first(where: { $0.isProRecommended }) ?? appViewModel.affiliateTools.first {
+        VStack(alignment: .leading, spacing: 10) {
+            HubSectionHeader("Recommended Tool")
+            if let tool = appViewModel.affiliateTools.first(where: { $0.isProRecommended }) ?? appViewModel.affiliateTools.first,
+               let url = URL(string: tool.url) {
                 Text(tool.name).bold()
                 Text(tool.shortDescription).foregroundColor(.secondary)
                 Button("Open tool") {
-                    appViewModel.showPaywall = false
+                    selectedAffiliateURL = url
+                    Task { await appViewModel.logAffiliateClick(tool: tool) }
                 }
-                .buttonStyle(.bordered)
+                .buttonStyle(.borderedProminent)
+                .tint(colors.primary)
             } else {
-                Text("Add affiliate tools in CloudKit public database to highlight them here.")
-                    .foregroundColor(.secondary)
+                NavigationLink {
+                    AffiliateToolsView()
+                } label: {
+                    Label("Browse affiliate tools", systemImage: "link")
+                }
             }
         }
-        .primarySectionStyle()
+        .hubCardStyle(colors: colors)
     }
 }

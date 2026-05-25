@@ -1,4 +1,5 @@
 import SwiftUI
+import CloudKit
 
 struct BulkActionsView: View {
     @Binding var selectedItems: Set<String>
@@ -7,7 +8,8 @@ struct BulkActionsView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var showDeleteConfirmation = false
-    @State private var showMoveConfirmation = false
+    @State private var showBulkEdit = false
+    @State private var bulkEditMode: BulkActionOptionsView.BulkActionType = .changeDate
     @State private var selectedPlatform: MarketingPlatform = .instagram
     @State private var selectedDate: Date = Date()
     @State private var isProcessing = false
@@ -26,14 +28,16 @@ struct BulkActionsView: View {
                 
                 Section("Actions") {
                     Button {
-                        showMoveConfirmation = true
+                        bulkEditMode = .changeDate
+                        showBulkEdit = true
                     } label: {
                         Label("Move to Date", systemImage: "calendar")
                     }
                     .disabled(selectedItems.isEmpty)
-                    
+
                     Button {
-                        showMoveConfirmation = true
+                        bulkEditMode = .changePlatform
+                        showBulkEdit = true
                     } label: {
                         Label("Change Platform", systemImage: "app.badge")
                     }
@@ -82,10 +86,11 @@ struct BulkActionsView: View {
             } message: {
                 Text("Are you sure you want to delete \(selectedItems.count) item\(selectedItems.count == 1 ? "" : "s")? This action cannot be undone.")
             }
-            .sheet(isPresented: $showMoveConfirmation) {
+            .sheet(isPresented: $showBulkEdit) {
                 BulkActionOptionsView(
                     selectedItems: $selectedItems,
                     calendarItems: calendarItems,
+                    initialAction: bulkEditMode,
                     onComplete: {
                         dismiss()
                     }
@@ -121,6 +126,7 @@ struct BulkActionsView: View {
 struct BulkActionOptionsView: View {
     @Binding var selectedItems: Set<String>
     let calendarItems: [ContentCalendarItem]
+    var initialAction: BulkActionType = .changeDate
     let onComplete: () -> Void
     
     @EnvironmentObject private var appViewModel: AppViewModel
@@ -129,7 +135,7 @@ struct BulkActionOptionsView: View {
     @State private var selectedPlatform: MarketingPlatform = .instagram
     @State private var selectedDate: Date = Date()
     @State private var isProcessing = false
-    
+
     enum BulkActionType {
         case changeDate
         case changePlatform
@@ -172,6 +178,9 @@ struct BulkActionOptionsView: View {
             }
             .navigationTitle("Bulk Edit")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                actionType = initialAction
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Cancel") {

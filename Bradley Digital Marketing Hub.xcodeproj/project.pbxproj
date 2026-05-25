@@ -54,6 +54,13 @@
 		A10000100000000000000002B /* Views/SocialMedia/PostReviewContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000002B /* Views/SocialMedia/PostReviewContainerView.swift */; };
 		A10000100000000000000002C /* Views/SocialMedia/ScheduledPostsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000002C /* Views/SocialMedia/ScheduledPostsView.swift */; };
 		A10000100000000000000002D /* Views/SocialMedia/PlatformToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000110000000000000002D /* Views/SocialMedia/PlatformToggleButton.swift */; };
+		A10000100000000000000032 /* Views/Analytics/AnalyticsDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000032 /* Views/Analytics/AnalyticsDashboardView.swift */; };
+		A10000100000000000000033 /* Views/Calendar/BulkActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000033 /* Views/Calendar/BulkActionsView.swift */; };
+		A10000100000000000000034 /* Views/Shared/ContentPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000034 /* Views/Shared/ContentPreviewView.swift */; };
+		A10000100000000000000035 /* Views/Shared/HashtagResearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000035 /* Views/Shared/HashtagResearchView.swift */; };
+		A10000100000000000000036 /* Views/Shared/SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000036 /* Views/Shared/SearchView.swift */; };
+		A10000100000000000000037 /* Views/Shared/ExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000037 /* Views/Shared/ExportView.swift */; };
+		A10000100000000000000038 /* Views/Shared/BestTimeToPostView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10001100000000000000038 /* Views/Shared/BestTimeToPostView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +113,13 @@
 		A1000110000000000000002D /* Views/SocialMedia/PlatformToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SocialMedia/PlatformToggleButton.swift; sourceTree = "<group>"; };
 		A1000110000000000000002E /* Views/ContentGenerator/GeneratedContentCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ContentGenerator/GeneratedContentCard.swift; sourceTree = "<group>"; };
 		A1000110000000000000002F /* Views/Calendar/CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Calendar/CalendarView.swift; sourceTree = "<group>"; };
+		A10001100000000000000032 /* Views/Analytics/AnalyticsDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Analytics/AnalyticsDashboardView.swift; sourceTree = "<group>"; };
+		A10001100000000000000033 /* Views/Calendar/BulkActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Calendar/BulkActionsView.swift; sourceTree = "<group>"; };
+		A10001100000000000000034 /* Views/Shared/ContentPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Shared/ContentPreviewView.swift; sourceTree = "<group>"; };
+		A10001100000000000000035 /* Views/Shared/HashtagResearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Shared/HashtagResearchView.swift; sourceTree = "<group>"; };
+		A10001100000000000000036 /* Views/Shared/SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Shared/SearchView.swift; sourceTree = "<group>"; };
+		A10001100000000000000037 /* Views/Shared/ExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Shared/ExportView.swift; sourceTree = "<group>"; };
+		A10001100000000000000038 /* Views/Shared/BestTimeToPostView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Shared/BestTimeToPostView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,6 +210,7 @@
 				A10006100000000000000009 /* Profile */,
 				A1000610000000000000000A /* Shared */,
 				A1000610000000000000000B /* SocialMedia */,
+				A1000610000000000000000C /* Analytics */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -251,6 +266,7 @@
 			children = (
 				A10001100000000000000016 /* Views/Calendar/ContentCalendarView.swift */,
 				A1000110000000000000002F /* Views/Calendar/CalendarView.swift */,
+				A10001100000000000000033 /* Views/Calendar/BulkActionsView.swift */,
 			);
 			name = Calendar;
 			sourceTree = "<group>";
@@ -294,8 +310,21 @@
 				A1000110000000000000001B /* Views/Shared/PaywallView.swift */,
 				A1000110000000000000001C /* Views/Shared/SafariView.swift */,
 				A10001100000000000000028 /* Views/Shared/ShareSheet.swift */,
+				A10001100000000000000034 /* Views/Shared/ContentPreviewView.swift */,
+				A10001100000000000000035 /* Views/Shared/HashtagResearchView.swift */,
+				A10001100000000000000036 /* Views/Shared/SearchView.swift */,
+				A10001100000000000000037 /* Views/Shared/ExportView.swift */,
+				A10001100000000000000038 /* Views/Shared/BestTimeToPostView.swift */,
 			);
 			name = Shared;
+			sourceTree = "<group>";
+		};
+		A1000610000000000000000C /* Analytics */ = {
+			isa = PBXGroup;
+			children = (
+				A10001100000000000000032 /* Views/Analytics/AnalyticsDashboardView.swift */,
+			);
+			name = Analytics;
 			sourceTree = "<group>";
 		};
 		A1000610000000000000000B /* SocialMedia */ = {
@@ -433,6 +462,13 @@
 				A1000010000000000000002B /* Views/SocialMedia/PostReviewContainerView.swift in Sources */,
 				A1000010000000000000002C /* Views/SocialMedia/ScheduledPostsView.swift in Sources */,
 				A1000010000000000000002D /* Views/SocialMedia/PlatformToggleButton.swift in Sources */,
+				A10000100000000000000032 /* Views/Analytics/AnalyticsDashboardView.swift in Sources */,
+				A10000100000000000000033 /* Views/Calendar/BulkActionsView.swift in Sources */,
+				A10000100000000000000034 /* Views/Shared/ContentPreviewView.swift in Sources */,
+				A10000100000000000000035 /* Views/Shared/HashtagResearchView.swift in Sources */,
+				A10000100000000000000036 /* Views/Shared/SearchView.swift in Sources */,
+				A10000100000000000000037 /* Views/Shared/ExportView.swift in Sources */,
+				A10000100000000000000038 /* Views/Shared/BestTimeToPostView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

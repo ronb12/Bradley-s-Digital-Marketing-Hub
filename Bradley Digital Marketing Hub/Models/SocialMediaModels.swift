@@ -118,6 +118,9 @@ enum PostStatus: String, Codable {
     case reviewed = "Reviewed"
     case shared = "Shared"
     case cancelled = "Cancelled"
+    case posting = "Posting"
+    case posted = "Posted"
+    case failed = "Failed"
 }
 
 struct ScheduledPost: Identifiable, Hashable, CloudKitRecordConvertible {

@@ -54,6 +54,7 @@ struct ContentGeneratorView: View {
             
             Section {
                 Button {
+                    HapticFeedback.light()
                     viewModel.generate()
                 } label: {
                     HStack {
@@ -79,6 +80,7 @@ struct ContentGeneratorView: View {
                             },
                             onCopy: {
                                 UIPasteboard.general.string = viewModel.generatedContent[index].content
+                                HapticFeedback.success()
                                 viewModel.copyStatusMessage = "Copied to clipboard!"
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                                     viewModel.copyStatusMessage = nil
@@ -129,6 +131,20 @@ struct ContentGeneratorView: View {
             }
         }
         .navigationTitle("Content Generator")
+        .toolbar {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                NavigationLink {
+                    SearchableSavedContent()
+                } label: {
+                    Label("Saved", systemImage: "heart.text.square")
+                }
+                NavigationLink {
+                    HashtagResearchView()
+                } label: {
+                    Label("Hashtags", systemImage: "number")
+                }
+            }
+        }
     }
 }
 

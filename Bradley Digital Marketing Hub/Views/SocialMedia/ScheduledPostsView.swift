@@ -90,8 +90,9 @@ struct PostRow: View {
         switch status {
         case .scheduled: return .blue
         case .readyForReview: return .orange
-        case .shared: return .green
-        case .cancelled: return .gray
+        case .shared, .posted: return .green
+        case .cancelled, .failed: return .gray
+        case .posting: return .purple
         default: return .secondary
         }
     }
@@ -121,8 +122,15 @@ final class ScheduledPostsViewModel: ObservableObject {
     }
     
     func deletePost(_ post: ScheduledPost) async {
-        // TODO: Implement delete in SocialMediaService
-        await loadPosts(userId: post.userId)
+        do {
+            try await service.deleteScheduledPost(post)
+            await NotificationService.shared.cancelPostReminder(postId: post.id)
+            posts.removeAll { $0.id == post.id }
+            HapticFeedback.success()
+        } catch {
+            errorMessage = "Could not delete post: \(error.localizedDescription)"
+            HapticFeedback.warning()
+        }
     }
 }
 

@@ -3,7 +3,7 @@ import SwiftUI
 
 enum AppConstants {
     /// Update with your iCloud container identifier in CloudKit Dashboard.
-    static let cloudKitContainerIdentifier = "iCloud.com.example.BradleyDigitalMarketingHub"
+    static let cloudKitContainerIdentifier = "iCloud.com.bradleyhub.app"
     static let marketingSupportEmail = "support@bradleyvirtualsolutions.com"
 }
 
