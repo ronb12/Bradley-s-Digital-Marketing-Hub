@@ -25,6 +25,15 @@ struct CampaignPlannerView: View {
         }
         .hubScreenBackground(colors)
         .navigationTitle("Campaign Planner")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    CampaignPlansListView()
+                } label: {
+                    Label("Saved Plans", systemImage: "folder")
+                }
+            }
+        }
     }
 
     private var formSection: some View {
@@ -71,6 +80,7 @@ struct CampaignPlannerView: View {
             }
             .buttonStyle(.borderedProminent)
             Button("Save plan") {
+                if appViewModel.presentPaywallIfNeededForCampaign() { return }
                 Task {
                     guard let userId = appViewModel.userProfile?.userId else { return }
                     await viewModel.savePlan(

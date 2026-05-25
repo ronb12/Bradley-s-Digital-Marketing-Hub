@@ -38,4 +38,18 @@ final class HubQualityTests: XCTestCase {
         XCTAssertEqual(MarketingPlatform.instagram.socialPlatform, .instagram)
         XCTAssertEqual(MarketingPlatform.email.socialPlatform, nil)
     }
+
+    func testCampaignPlanParserExtractsHookIdeas() {
+        let outline = """
+        HOOK IDEAS
+        • Behind-the-scenes Reel
+        • Customer testimonial post
+
+        CONTENT THEMES
+        • Education
+        """
+        let hooks = CampaignPlanParser.hookIdeas(from: outline)
+        XCTAssertEqual(hooks.count, 2)
+        XCTAssertTrue(hooks.first?.contains("Behind-the-scenes") == true)
+    }
 }

@@ -26,6 +26,7 @@ struct AnalyticsDashboardView: View {
 
                 periodSelector
                 keyMetricsSection
+                shareCompletionSection
                 engagementChart
                 platformPerformance
                 contentPerformance
@@ -36,7 +37,28 @@ struct AnalyticsDashboardView: View {
         .hubScreenBackground(colors)
         .navigationTitle("Planning Analytics")
         .task {
-            await viewModel.loadAnalytics(calendarItems: appViewModel.calendarItems)
+            await viewModel.loadAnalytics(
+                calendarItems: appViewModel.calendarItems,
+                scheduledPosts: appViewModel.scheduledPosts
+            )
+        }
+        .onChange(of: appViewModel.calendarItems.count) { _, _ in
+            Task {
+                await viewModel.loadAnalytics(
+                    calendarItems: appViewModel.calendarItems,
+                    scheduledPosts: appViewModel.scheduledPosts,
+                    period: selectedPeriod
+                )
+            }
+        }
+        .onChange(of: appViewModel.scheduledPosts.count) { _, _ in
+            Task {
+                await viewModel.loadAnalytics(
+                    calendarItems: appViewModel.calendarItems,
+                    scheduledPosts: appViewModel.scheduledPosts,
+                    period: selectedPeriod
+                )
+            }
         }
     }
 
@@ -49,7 +71,44 @@ struct AnalyticsDashboardView: View {
         .pickerStyle(.segmented)
         .onChange(of: selectedPeriod) { _, newValue in
             Task {
-                await viewModel.loadAnalytics(calendarItems: appViewModel.calendarItems, period: newValue)
+                await viewModel.loadAnalytics(
+                    calendarItems: appViewModel.calendarItems,
+                    scheduledPosts: appViewModel.scheduledPosts,
+                    period: newValue
+                )
+            }
+        }
+    }
+
+    private var shareCompletionSection: some View {
+        VStack(spacing: 12) {
+            HubSectionHeader("Share Completion", subtitle: "Based on Mark as Shared — not platform engagement")
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                HubMetricCard(
+                    title: "Shared",
+                    value: "\(viewModel.sharedPostsCount)",
+                    icon: "checkmark.circle.fill",
+                    color: .green
+                )
+                HubMetricCard(
+                    title: "Overdue",
+                    value: "\(viewModel.overduePostsCount)",
+                    icon: "exclamationmark.circle.fill",
+                    color: colors.accent
+                )
+                HubMetricCard(
+                    title: "Completion",
+                    value: "\(Int(viewModel.shareCompletionRate * 100))%",
+                    icon: "chart.pie.fill",
+                    color: colors.primary
+                )
+                HubMetricCard(
+                    title: "In Queue",
+                    value: "\(viewModel.queuePostsCount)",
+                    icon: "clock.badge.exclamationmark",
+                    color: colors.secondary
+                )
             }
         }
     }
@@ -67,7 +126,7 @@ struct AnalyticsDashboardView: View {
                 )
                 HubMetricCard(
                     title: "Scheduled",
-                    value: "\(viewModel.scheduledPosts)",
+                    value: "\(viewModel.upcomingCalendarCount)",
                     icon: "calendar.badge.clock",
                     color: colors.accent
                 )
@@ -303,19 +362,28 @@ struct BestTimeRow: View {
 @MainActor
 class AnalyticsViewModel: ObservableObject {
     @Published var totalPosts: Int = 0
-    @Published var scheduledPosts: Int = 0
+    @Published var upcomingCalendarCount: Int = 0
     @Published var platformCount: Int = 0
     @Published var averagePostsPerWeek: Double = 0
     @Published var postsByDate: [PostDateCount] = []
     @Published var platformDistribution: [PlatformDistribution] = []
     @Published var topContent: [ContentAnalyticsItem] = []
     @Published var bestPostingTimes: [BestPostingTime] = []
+    @Published var sharedPostsCount: Int = 0
+    @Published var overduePostsCount: Int = 0
+    @Published var queuePostsCount: Int = 0
+    @Published var shareCompletionRate: Double = 0
 
-    func loadAnalytics(calendarItems: [ContentCalendarItem], period: AnalyticsPeriod = .last7Days) async {
+    func loadAnalytics(
+        calendarItems: [ContentCalendarItem],
+        scheduledPosts: [ScheduledPost],
+        period: AnalyticsPeriod = .last7Days
+    ) async {
         let filteredItems = filterItems(calendarItems, period: period)
+        let filteredPosts = filterPosts(scheduledPosts, period: period)
 
         totalPosts = filteredItems.count
-        scheduledPosts = filteredItems.filter { $0.date > Date() }.count
+        upcomingCalendarCount = filteredItems.filter { $0.date > Date() }.count
         platformCount = Set(filteredItems.map { $0.platform }).count
 
         let calendar = Calendar.current
@@ -337,6 +405,29 @@ class AnalyticsViewModel: ObservableObject {
         }.sorted { $0.date > $1.date }
 
         bestPostingTimes = calculateBestPostingTimes(filteredItems)
+
+        let now = Date()
+        sharedPostsCount = filteredPosts.filter { $0.status == .shared || $0.status == .posted }.count
+        overduePostsCount = filteredPosts.filter {
+            ($0.status == .scheduled || $0.status == .readyForReview) && $0.scheduledDate < now
+        }.count
+        queuePostsCount = filteredPosts.filter {
+            $0.status == .scheduled || $0.status == .readyForReview
+        }.count
+        let relevant = filteredPosts.filter {
+            $0.status == .shared || $0.status == .posted ||
+            $0.status == .readyForReview || $0.status == .scheduled
+        }
+        shareCompletionRate = relevant.isEmpty ? 0 : Double(sharedPostsCount) / Double(relevant.count)
+    }
+
+    private func filterPosts(_ posts: [ScheduledPost], period: AnalyticsPeriod) -> [ScheduledPost] {
+        let calendar = Calendar.current
+        guard period != .allTime,
+              let startDate = calendar.date(byAdding: .day, value: -period.days, to: Date()) else {
+            return posts
+        }
+        return posts.filter { $0.scheduledDate >= startDate }
     }
 
     private func filterItems(_ items: [ContentCalendarItem], period: AnalyticsPeriod) -> [ContentCalendarItem] {

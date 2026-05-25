@@ -113,10 +113,22 @@ final class NotificationService {
             title: "Review Post",
             options: [.foreground]
         )
-        
+
+        let snooze1hAction = UNNotificationAction(
+            identifier: "SNOOZE_1H",
+            title: "Snooze 1 hour",
+            options: []
+        )
+
+        let snoozeTomorrowAction = UNNotificationAction(
+            identifier: "SNOOZE_TOMORROW",
+            title: "Tomorrow 9 AM",
+            options: []
+        )
+
         let category = UNNotificationCategory(
             identifier: "POST_REMINDER",
-            actions: [reviewAction],
+            actions: [reviewAction, snooze1hAction, snoozeTomorrowAction],
             intentIdentifiers: [],
             options: []
         )

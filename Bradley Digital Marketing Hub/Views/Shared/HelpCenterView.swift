@@ -65,6 +65,9 @@ struct HelpCenterView: View {
     }
 }
 
+import SwiftUI
+import PhotosUI
+
 struct SchedulePostSheet: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var themeManager: ThemeManager
@@ -73,12 +76,14 @@ struct SchedulePostSheet: View {
     let platform: MarketingPlatform
     let content: String
     let defaultTitle: String
-    let onSchedule: (String, Date, Bool) async -> Void
+    let onSchedule: (String, Date, Bool, [String]) async -> Void
 
     @State private var title: String
     @State private var scheduledDate = Date().addingTimeInterval(3600)
     @State private var enableReminder = true
     @State private var isScheduling = false
+    @State private var photoItem: PhotosPickerItem?
+    @State private var attachedImagePath: String?
 
     private var colors: ThemeColors {
         themeManager.colors(for: colorScheme)
@@ -88,7 +93,7 @@ struct SchedulePostSheet: View {
         platform: MarketingPlatform,
         content: String,
         defaultTitle: String = "Scheduled Post",
-        onSchedule: @escaping (String, Date, Bool) async -> Void
+        onSchedule: @escaping (String, Date, Bool, [String]) async -> Void
     ) {
         self.platform = platform
         self.content = content
@@ -107,6 +112,18 @@ struct SchedulePostSheet: View {
                     Text(content)
                         .font(.caption)
                         .lineLimit(6)
+                }
+
+                Section("Media (optional)") {
+                    PhotosPicker(selection: $photoItem, matching: .images) {
+                        Label(attachedImagePath == nil ? "Attach photo" : "Photo attached", systemImage: "photo")
+                    }
+                    if attachedImagePath != nil {
+                        Button("Remove photo", role: .destructive) {
+                            attachedImagePath = nil
+                            photoItem = nil
+                        }
+                    }
                 }
 
                 Section("Schedule") {
@@ -129,12 +146,25 @@ struct SchedulePostSheet: View {
                     Button("Schedule") {
                         Task {
                             isScheduling = true
-                            await onSchedule(title, scheduledDate, enableReminder)
+                            let media = attachedImagePath.map { [$0] } ?? []
+                            await onSchedule(title, scheduledDate, enableReminder, media)
                             isScheduling = false
                             dismiss()
                         }
                     }
                     .disabled(isScheduling || title.isEmpty)
+                }
+            }
+            .onChange(of: photoItem) { _, newValue in
+                guard let newValue else { return }
+                Task {
+                    if let data = try? await newValue.loadTransferable(type: Data.self) {
+                        let url = FileManager.default.temporaryDirectory
+                            .appendingPathComponent(UUID().uuidString)
+                            .appendingPathExtension("jpg")
+                        try? data.write(to: url)
+                        attachedImagePath = url.path
+                    }
                 }
             }
         }

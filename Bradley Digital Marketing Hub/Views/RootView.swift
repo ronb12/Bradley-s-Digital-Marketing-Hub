@@ -131,6 +131,13 @@ struct MainTabView: View {
                 showPostReview = true
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("SnoozePost"))) { notification in
+            if let userInfo = notification.userInfo,
+               let postId = userInfo["postId"] as? String,
+               let interval = userInfo["interval"] as? TimeInterval {
+                Task { await appViewModel.snoozeScheduledPost(postId: postId, by: interval) }
+            }
+        }
         .onAppear {
             setupNavigationBarAppearance()
         }

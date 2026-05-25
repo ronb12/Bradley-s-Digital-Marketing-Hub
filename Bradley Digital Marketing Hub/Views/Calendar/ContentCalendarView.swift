@@ -72,6 +72,7 @@ struct ContentCalendarView: View {
                     } label: {
                         Label("Export Calendar", systemImage: "square.and.arrow.up")
                     }
+                    .disabled(appViewModel.currentTier == .free)
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
@@ -90,7 +91,11 @@ struct ContentCalendarView: View {
                 .environmentObject(appViewModel)
         }
         .sheet(isPresented: $showExport) {
-            ExportView(calendarItems: appViewModel.calendarItems)
+            if appViewModel.currentTier == .free {
+                PaywallView()
+            } else {
+                ExportView(calendarItems: appViewModel.calendarItems)
+            }
         }
         .sheet(item: $selectedItem) { item in
             CalendarItemDetailView(item: item)
@@ -201,6 +206,7 @@ struct ContentCalendarView: View {
                 }
                 
                 Button("Schedule item") {
+                    if appViewModel.presentPaywallIfNeededForCalendar() { return }
                     Task {
                         guard let userId = appViewModel.userProfile?.userId else { return }
                         await viewModel.addItem(
@@ -618,13 +624,8 @@ struct CalendarItemDetailView: View {
         defer { isSaving = false }
 
         do {
-            let saved = try await appViewModel.cloudKitService.saveCalendarItem(editedItem)
+            let saved = try await appViewModel.updateCalendarItemWithSync(editedItem)
             await MainActor.run {
-                if let index = appViewModel.calendarItems.firstIndex(where: { $0.id == saved.id }) {
-                    appViewModel.calendarItems[index] = saved
-                } else {
-                    appViewModel.calendarItems.append(saved)
-                }
                 editedItem = saved
                 isEditing = false
                 HapticFeedback.success()
@@ -642,13 +643,8 @@ struct CalendarItemDetailView: View {
         }
 
         do {
-            let recordID = CKRecord.ID(recordName: editedItem.id)
-            _ = try await appViewModel.cloudKitService.privateDB.deleteRecord(withID: recordID)
-
+            try await appViewModel.deleteCalendarItemWithSync(editedItem)
             await MainActor.run {
-                if let index = appViewModel.calendarItems.firstIndex(where: { $0.id == editedItem.id }) {
-                    appViewModel.calendarItems.remove(at: index)
-                }
                 HapticFeedback.success()
                 dismiss()
             }

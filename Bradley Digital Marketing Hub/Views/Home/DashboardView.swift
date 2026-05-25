@@ -27,8 +27,14 @@ struct DashboardView: View {
                 if !appViewModel.readyToSharePosts.isEmpty {
                     readyToShareSection
                 }
+                if !appViewModel.overduePosts.isEmpty {
+                    overdueSection
+                }
                 if !appViewModel.todaysCalendarItems.isEmpty {
                     todaySection
+                }
+                if !appViewModel.daysWithEmptySchedule.isEmpty {
+                    planningGapsSection
                 }
                 if appViewModel.currentTier == .free {
                     upgradeBanner
@@ -129,6 +135,56 @@ struct DashboardView: View {
                 color: colors.secondary
             )
         }
+    }
+
+    private var overdueSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HubSectionHeader("Overdue", subtitle: "Past due — review and share or reschedule")
+
+            ForEach(appViewModel.overduePosts.prefix(3)) { post in
+                Button {
+                    selectedReviewPost = post
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(post.platform)
+                                .font(.subheadline.bold())
+                            Text(post.content)
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .lineLimit(2)
+                        }
+                        Spacer()
+                        Text("Overdue")
+                            .font(.caption2.bold())
+                            .foregroundColor(colors.accent)
+                    }
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .hubCardStyle(colors: colors)
+    }
+
+    private var planningGapsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HubSectionHeader("Planning gaps", subtitle: "Days with nothing scheduled yet")
+
+            ForEach(appViewModel.daysWithEmptySchedule, id: \.self) { day in
+                HStack {
+                    Text(day.formatted(.dateTime.weekday(.wide).month().day()))
+                        .font(.subheadline)
+                    Spacer()
+                    NavigationLink {
+                        ContentGeneratorView(service: appViewModel.cloudKitService)
+                    } label: {
+                        Text("Plan content")
+                            .font(.caption)
+                    }
+                }
+            }
+        }
+        .hubCardStyle(colors: colors)
     }
 
     private var readyToShareSection: some View {
@@ -252,6 +308,13 @@ struct DashboardView: View {
             HubSectionHeader("Campaigns Overview")
             Text("\(appViewModel.campaignPlans.count) saved plans • \(upcomingCount) upcoming items")
                 .foregroundColor(.secondary)
+            NavigationLink {
+                CampaignPlansListView()
+            } label: {
+                Text("View Campaign Plans")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
             NavigationLink {
                 AnalyticsDashboardView()
             } label: {

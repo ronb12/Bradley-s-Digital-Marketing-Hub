@@ -1,6 +1,7 @@
 import Foundation
 import AuthenticationServices
 import SwiftUI
+import CloudKit
 
 @MainActor
 final class AppViewModel: ObservableObject {
@@ -241,7 +242,8 @@ final class AppViewModel: ObservableObject {
         content: String,
         platform: MarketingPlatform,
         date: Date,
-        enableReminder: Bool
+        enableReminder: Bool,
+        mediaURLs: [String] = []
     ) async throws {
         guard !isDemoMode else {
             throw CloudKitError.operationFailed(HubMessages.demoReadOnly)
@@ -272,7 +274,8 @@ final class AppViewModel: ObservableObject {
                 platform: platform.rawValue,
                 content: content,
                 scheduledDate: date,
-                status: .scheduled
+                status: .scheduled,
+                mediaURLs: mediaURLs
             )
             let savedPost = try await socialMediaService.saveScheduledPost(scheduledPost)
             scheduledPosts.append(savedPost)
@@ -294,6 +297,157 @@ final class AppViewModel: ObservableObject {
             HapticFeedback.success()
         } catch {
             errorMessage = error.localizedDescription
+        }
+    }
+
+    // MARK: - Calendar ↔ Scheduled Post Sync
+
+    func updateCalendarItemWithSync(_ item: ContentCalendarItem) async throws -> ContentCalendarItem {
+        guard !isDemoMode else { throw CloudKitError.operationFailed(HubMessages.demoReadOnly) }
+        let saved = try await cloudKitService.saveCalendarItem(item)
+        if let index = calendarItems.firstIndex(where: { $0.id == saved.id }) {
+            calendarItems[index] = saved
+        } else {
+            calendarItems.append(saved)
+        }
+
+        if let post = scheduledPosts.first(where: { $0.calendarItemId == saved.id }) {
+            var updated = post
+            updated.platform = saved.platform
+            updated.content = saved.notes.isEmpty ? saved.title : "\(saved.title)\n\n\(saved.notes)"
+            updated.scheduledDate = saved.date
+            let savedPost = try await socialMediaService.saveScheduledPost(updated)
+            if let postIndex = scheduledPosts.firstIndex(where: { $0.id == savedPost.id }) {
+                scheduledPosts[postIndex] = savedPost
+            }
+            if savedPost.status == .scheduled || savedPost.status == .readyForReview {
+                try? await NotificationService.shared.schedulePostReminder(for: savedPost)
+            }
+        }
+        return saved
+    }
+
+    func deleteCalendarItemWithSync(_ item: ContentCalendarItem) async throws {
+        guard !isDemoMode else { throw CloudKitError.operationFailed(HubMessages.demoReadOnly) }
+        let recordID = CKRecord.ID(recordName: item.id)
+        _ = try await cloudKitService.privateDB.deleteRecord(withID: recordID)
+        calendarItems.removeAll { $0.id == item.id }
+
+        if let post = scheduledPosts.first(where: { $0.calendarItemId == item.id }) {
+            try? await socialMediaService.deleteScheduledPost(post)
+            await NotificationService.shared.cancelPostReminder(postId: post.id)
+            scheduledPosts.removeAll { $0.id == post.id }
+        }
+    }
+
+    func deleteCalendarItemsWithSync(_ items: [ContentCalendarItem]) async -> (deleted: Int, failed: Int) {
+        var deleted = 0
+        var failed = 0
+        for item in items {
+            do {
+                try await deleteCalendarItemWithSync(item)
+                deleted += 1
+            } catch {
+                failed += 1
+            }
+        }
+        return (deleted, failed)
+    }
+
+    func scheduleHooksFromCampaignPlan(_ plan: CampaignPlan, startDate: Date, spacingDays: Int = 1) async throws -> Int {
+        let hooks = CampaignPlanParser.hookIdeas(from: plan.outlineDetails)
+        guard !hooks.isEmpty else {
+            throw CloudKitError.operationFailed("No hook ideas found in this plan.")
+        }
+        var date = startDate
+        var scheduled = 0
+        let platform = MarketingPlatform(rawValue: plan.platform) ?? .instagram
+
+        for hook in hooks.prefix(5) {
+            guard canAddCalendarItem() else {
+                if scheduled == 0 { throw CloudKitError.operationFailed("Calendar limit reached for your plan.") }
+                break
+            }
+            try await scheduleContent(
+                title: "Campaign: \(String(hook.prefix(40)))",
+                content: hook,
+                platform: platform,
+                date: date,
+                enableReminder: true
+            )
+            scheduled += 1
+            date = Calendar.current.date(byAdding: .day, value: spacingDays, to: date) ?? date
+        }
+        return scheduled
+    }
+
+    func snoozeScheduledPost(postId: String, by interval: TimeInterval) async {
+        guard let post = scheduledPosts.first(where: { $0.id == postId }) else { return }
+        let newDate = Date().addingTimeInterval(interval)
+        var updated = post
+        updated.scheduledDate = newDate
+        updated.status = .scheduled
+        do {
+            let saved = try await socialMediaService.saveScheduledPost(updated)
+            if let index = scheduledPosts.firstIndex(where: { $0.id == saved.id }) {
+                scheduledPosts[index] = saved
+            }
+            if let calendarItemId = saved.calendarItemId,
+               let item = calendarItems.first(where: { $0.id == calendarItemId }) {
+                let updatedItem = ContentCalendarItem(
+                    id: item.id,
+                    userId: item.userId,
+                    brandId: item.brandId,
+                    date: newDate,
+                    platform: item.platform,
+                    title: item.title,
+                    notes: item.notes
+                )
+                _ = try? await updateCalendarItemWithSync(updatedItem)
+            } else {
+                try? await NotificationService.shared.schedulePostReminder(for: saved)
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func presentPaywallIfNeededForCalendar() -> Bool {
+        guard !canAddCalendarItem() else { return false }
+        showPaywall = true
+        return true
+    }
+
+    func presentPaywallIfNeededForCampaign() -> Bool {
+        guard !canAddCampaignPlan() else { return false }
+        showPaywall = true
+        return true
+    }
+
+    var overduePosts: [ScheduledPost] {
+        let now = Date()
+        return scheduledPosts.filter { post in
+            (post.status == .scheduled || post.status == .readyForReview) && post.scheduledDate < now
+        }.sorted { $0.scheduledDate < $1.scheduledDate }
+    }
+
+    var shareCompletionRate: Double {
+        let relevant = scheduledPosts.filter { post in
+            post.status == .shared || post.status == .posted ||
+            post.status == .readyForReview || post.status == .scheduled
+        }
+        guard !relevant.isEmpty else { return 0 }
+        let shared = relevant.filter { $0.status == .shared || $0.status == .posted }.count
+        return Double(shared) / Double(relevant.count)
+    }
+
+    var daysWithEmptySchedule: [Date] {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+        return (1...3).compactMap { offset in
+            guard let day = calendar.date(byAdding: .day, value: offset, to: today) else { return nil }
+            let hasItems = calendarItems.contains { calendar.isDate($0.date, inSameDayAs: day) }
+            return hasItems ? nil : day
         }
     }
 

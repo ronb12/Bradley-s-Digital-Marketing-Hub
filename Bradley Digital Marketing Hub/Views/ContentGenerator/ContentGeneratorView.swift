@@ -48,14 +48,15 @@ struct ContentGeneratorView: View {
                 platform: item.platform,
                 content: item.content,
                 defaultTitle: "Generated \(item.platform.rawValue) Post"
-            ) { title, date, enableReminder in
+            ) { title, date, enableReminder, mediaURLs in
                 do {
                     try await appViewModel.scheduleContent(
                         title: title,
                         content: item.content,
                         platform: item.platform,
                         date: date,
-                        enableReminder: enableReminder
+                        enableReminder: enableReminder,
+                        mediaURLs: mediaURLs
                     )
                     viewModel.statusMessage = "Scheduled with reminder — check Home when it's time to share."
                 } catch {
@@ -121,20 +122,32 @@ struct ContentGeneratorView: View {
     }
 
     private var generateButtonSection: some View {
-        Button {
-            HapticFeedback.light()
-            viewModel.generate()
-        } label: {
-            HStack {
-                Image(systemName: "sparkles")
-                    .font(.system(size: 16, weight: .semibold))
-                Text("Generate Content")
-                    .font(.system(size: 17, weight: .semibold))
+        VStack(spacing: 8) {
+            if let remaining = viewModel.remainingGenerations(tier: appViewModel.currentTier) {
+                Text("\(remaining) free generations left today")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .frame(maxWidth: .infinity)
+            Button {
+                if !viewModel.canGenerate(tier: appViewModel.currentTier) {
+                    appViewModel.showPaywall = true
+                    return
+                }
+                HapticFeedback.light()
+                viewModel.generate()
+            } label: {
+                HStack {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 16, weight: .semibold))
+                    Text("Generate Content")
+                        .font(.system(size: 17, weight: .semibold))
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
         }
-        .buttonStyle(.borderedProminent)
-        .controlSize(.large)
     }
 
     private var generatedSection: some View {

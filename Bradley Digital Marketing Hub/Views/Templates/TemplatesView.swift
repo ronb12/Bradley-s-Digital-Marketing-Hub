@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct TemplatesView: View {
     @EnvironmentObject private var appViewModel: AppViewModel
@@ -43,7 +44,10 @@ struct TemplatesView: View {
                                             .foregroundColor(.secondary)
                                     }
                                     Spacer()
-                                    if template.isAgencyOnly {
+                                    if viewModel.isLocked(template, tier: appViewModel.currentTier) {
+                                        Image(systemName: "lock.fill")
+                                            .foregroundColor(.secondary)
+                                    } else if template.isAgencyOnly {
                                         Text("Agency").font(.caption).padding(6)
                                             .background(Color.purple.opacity(0.2), in: Capsule())
                                     } else if template.isPremium {
@@ -51,6 +55,7 @@ struct TemplatesView: View {
                                             .background(Color.orange.opacity(0.2), in: Capsule())
                                     }
                                 }
+                                .opacity(viewModel.isLocked(template, tier: appViewModel.currentTier) ? 0.65 : 1)
                             }
                             .tint(.primary)
                         }
@@ -83,6 +88,7 @@ struct TemplatesView: View {
 
 struct TemplateDetailView: View {
     let template: TemplateItem
+    @EnvironmentObject private var appViewModel: AppViewModel
     @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.colorScheme) private var colorScheme
 
@@ -101,14 +107,31 @@ struct TemplateDetailView: View {
                         .foregroundColor(colors.primary.opacity(0.6))
                     Text("Template preview")
                         .font(.headline)
-                    Text("Open this template to copy content into your calendar or generator.")
+                    Text("Use the actions below to copy or schedule this template.")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                 }
                 .frame(maxWidth: .infinity)
-                .frame(height: 200)
+                .frame(height: 180)
                 .background(colors.surface, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+
+                Button {
+                    UIPasteboard.general.string = "\(template.name)\n\n\(template.description)"
+                    HapticFeedback.success()
+                } label: {
+                    Label("Copy to clipboard", systemImage: "doc.on.doc")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+
+                NavigationLink {
+                    ContentGeneratorView(service: appViewModel.cloudKitService)
+                } label: {
+                    Label("Open Content Generator", systemImage: "sparkles")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
             }
             .padding()
         }

@@ -192,11 +192,17 @@ struct PostReviewView: View {
     }
     
     private var shareItems: [Any] {
-        ShareContentBuilder.shareItems(
+        var items = ShareContentBuilder.shareItems(
             content: post.content,
             hashtags: post.hashtags,
             linkURL: post.linkURL
         )
+        for path in post.mediaURLs {
+            if let url = URL(string: path) ?? URL(fileURLWithPath: path) as URL? {
+                items.append(url)
+            }
+        }
+        return items
     }
 }
 
