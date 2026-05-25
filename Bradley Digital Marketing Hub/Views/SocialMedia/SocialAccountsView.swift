@@ -5,95 +5,74 @@ struct SocialAccountsView: View {
     @EnvironmentObject private var themeManager: ThemeManager
     @Environment(\.colorScheme) private var colorScheme
     @StateObject private var viewModel: SocialAccountsViewModel
-    @Environment(\.dismiss) private var dismiss
-    
+
+    private var colors: ThemeColors {
+        themeManager.colors(for: colorScheme)
+    }
+
     init(service: SocialMediaService) {
         _viewModel = StateObject(wrappedValue: SocialAccountsViewModel(service: service))
     }
-    
+
     var body: some View {
-        List {
-            Section(header: Text("Connected Accounts")) {
-                if viewModel.connectedAccounts.isEmpty {
-                    Text("No accounts connected")
-                        .foregroundColor(.secondary)
-                        .font(.subheadline)
-                } else {
-                    ForEach(viewModel.connectedAccounts) { account in
-                        HStack {
-                            Image(systemName: SocialPlatform(rawValue: account.platform)?.iconName ?? "link")
-                                .foregroundColor(themeManager.colors(for: colorScheme).primary)
-                                .frame(width: 24)
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(account.accountName)
-                                    .font(.headline)
-                                Text(account.platform)
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                HubSectionHeader(
+                    "Manual Share Workflow",
+                    subtitle: "Bradley Hub schedules reminders — you publish through each platform's app using the iOS Share Sheet."
+                )
+
+                VStack(alignment: .leading, spacing: 12) {
+                    workflowStep(number: 1, title: "Schedule a post", detail: "Add content to your calendar or scheduled posts queue.")
+                    workflowStep(number: 2, title: "Get reminded", detail: "When it's time, you'll receive a notification to review the post.")
+                    workflowStep(number: 3, title: "Share manually", detail: "Tap Share to open the iOS Share Sheet and pick Instagram, Facebook, X, or any installed app.")
+                    workflowStep(number: 4, title: "Mark as shared", detail: "Confirm once you've published so your queue stays accurate.")
+                }
+                .hubCardStyle(colors: colors)
+
+                NavigationLink {
+                    ScheduledPostsView(service: appViewModel.socialMediaService)
+                } label: {
+                    Label("View Scheduled Posts", systemImage: "clock.badge.checkmark")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(colors.primary)
+
+                HubDataDisclaimer(
+                    title: "Direct API posting coming later",
+                    message: "Automatic publishing through platform APIs requires OAuth setup per network. Until then, sharing is manual and transparent — no mock connections or fake auto-posts."
+                )
+
+                if !viewModel.legacyAccounts.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HubSectionHeader("Legacy Placeholder Accounts", subtitle: "These were created by an older demo flow and can be removed.")
+
+                        ForEach(viewModel.legacyAccounts) { account in
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(account.accountName)
+                                        .font(.subheadline.bold())
+                                    Text(account.platform)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                Button("Remove") {
+                                    Task { await viewModel.removeLegacyAccount(account) }
+                                }
+                                .font(.caption)
                             }
-                            Spacer()
-                            if account.isActive {
-                                Image(systemName: "checkmark.circle.fill")
-                                    .foregroundColor(.green)
-                            } else {
-                                Text("Inactive")
-                                    .font(.caption)
-                                    .foregroundColor(.orange)
-                            }
+                            .padding(.vertical, 4)
                         }
                     }
-                    .onDelete { indexSet in
-                        Task {
-                            for index in indexSet {
-                                await viewModel.disconnectAccount(viewModel.connectedAccounts[index])
-                            }
-                        }
-                    }
+                    .hubCardStyle(colors: colors)
                 }
             }
-            
-            Section(header: Text("Connect Account"), footer: Text("Connect your social media accounts to enable automatic posting. Posts will be published at their scheduled times.")) {
-                ForEach(SocialPlatform.allCases) { platform in
-                    Button {
-                        Task {
-                            await viewModel.connectAccount(platform: platform)
-                        }
-                    } label: {
-                        HStack {
-                            Image(systemName: platform.iconName)
-                                .foregroundColor(themeManager.colors(for: colorScheme).primary)
-                                .frame(width: 24)
-                            Text(platform.rawValue)
-                            Spacer()
-                            if viewModel.connectedAccounts.contains(where: { $0.platform == platform.rawValue && $0.isActive }) {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(.green)
-                            }
-                        }
-                    }
-                    .disabled(viewModel.isConnecting)
-                }
-            }
-            
-            if viewModel.isConnecting {
-                Section {
-                    HStack {
-                        ProgressView()
-                        Text("Connecting account...")
-                            .foregroundColor(.secondary)
-                    }
-                }
-            }
-            
-            if let message = viewModel.statusMessage {
-                Section {
-                    Text(message)
-                        .foregroundColor(message.contains("error") || message.contains("failed") ? .red : .secondary)
-                        .font(.caption)
-                }
-            }
+            .padding()
         }
-        .navigationTitle("Social Accounts")
+        .hubScreenBackground(colors)
+        .navigationTitle("Share Setup")
         .task {
             if let userId = appViewModel.userProfile?.userId {
                 viewModel.setUserId(userId)
@@ -101,71 +80,58 @@ struct SocialAccountsView: View {
             await viewModel.loadAccounts()
         }
     }
+
+    private func workflowStep(number: Int, title: String, detail: String) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            Text("\(number)")
+                .font(.caption.bold())
+                .frame(width: 24, height: 24)
+                .background(colors.primary.opacity(0.15), in: Circle())
+                .foregroundColor(colors.primary)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.subheadline.bold())
+                Text(detail)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
 }
 
 @MainActor
 final class SocialAccountsViewModel: ObservableObject {
-    @Published var connectedAccounts: [ConnectedSocialAccount] = []
-    @Published var isConnecting = false
-    @Published var statusMessage: String?
-    
+    @Published var legacyAccounts: [ConnectedSocialAccount] = []
+
     private let service: SocialMediaService
     private var userId: String?
-    
+
     init(service: SocialMediaService) {
         self.service = service
     }
-    
-    func loadAccounts() async {
-        guard let userId = userId else {
-            // Get userId from AppViewModel via environment
-            statusMessage = "Please sign in to connect accounts"
-            return
-        }
-        do {
-            connectedAccounts = try await service.fetchConnectedAccounts(userId: userId)
-        } catch {
-            statusMessage = "Error loading accounts: \(error.localizedDescription)"
-        }
-    }
-    
-    func connectAccount(platform: SocialPlatform) async {
-        guard let userId = userId else {
-            statusMessage = "Error: User not found. Please sign in."
-            return
-        }
-        
-        // Check if already connected
-        if connectedAccounts.contains(where: { $0.platform == platform.rawValue && $0.isActive }) {
-            statusMessage = "\(platform.rawValue) is already connected"
-            return
-        }
-        
-        isConnecting = true
-        statusMessage = nil
-        defer { isConnecting = false }
-        
-        do {
-            let account = try await service.connectAccount(for: platform, userId: userId)
-            await loadAccounts()
-            statusMessage = "Successfully connected \(platform.rawValue)!"
-        } catch {
-            statusMessage = "Error connecting \(platform.rawValue): \(error.localizedDescription)"
-        }
-    }
-    
-    func disconnectAccount(_ account: ConnectedSocialAccount) async {
-        do {
-            try await service.disconnectAccount(account)
-            await loadAccounts()
-            statusMessage = "Disconnected \(account.platform)"
-        } catch {
-            statusMessage = "Error disconnecting account: \(error.localizedDescription)"
-        }
-    }
-    
+
     func setUserId(_ userId: String) {
         self.userId = userId
     }
-}
 
+    func loadAccounts() async {
+        guard let userId else { return }
+        do {
+            let accounts = try await service.fetchConnectedAccounts(userId: userId)
+            legacyAccounts = accounts.filter {
+                ($0.accessToken?.hasPrefix("mock_") == true) || $0.accountName.hasPrefix("Mock ")
+            }
+        } catch {
+            legacyAccounts = []
+        }
+    }
+
+    func removeLegacyAccount(_ account: ConnectedSocialAccount) async {
+        do {
+            try await service.removeLegacyPlaceholderAccount(account)
+            await loadAccounts()
+        } catch {
+            print("Failed to remove legacy account: \(error.localizedDescription)")
+        }
+    }
+}

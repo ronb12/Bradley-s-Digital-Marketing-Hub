@@ -13,7 +13,16 @@ struct HashtagResearchView: View {
 
     var body: some View {
         Form {
-                Section {
+            Section {
+                HubDataDisclaimer(
+                    title: "Suggested tags only",
+                    message: "Hashtags are generated from your topic and platform — not live reach or trending data from social networks."
+                )
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+            }
+
+            Section {
                     Picker("Platform", selection: $selectedPlatform) {
                         ForEach(MarketingPlatform.allCases) { platform in
                             Text(platform.rawValue).tag(platform)
@@ -117,11 +126,9 @@ struct HashtagChip: View {
             HStack(spacing: 4) {
                 Text(hashtag.text)
                     .font(.caption)
-                if hashtag.estimatedReach > 0 {
-                    Text("• \(formatReach(hashtag.estimatedReach))")
-                        .font(.caption2)
-                        .opacity(0.7)
-                }
+                Text("• \(hashtag.category.label)")
+                    .font(.caption2)
+                    .opacity(0.7)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
@@ -134,16 +141,6 @@ struct HashtagChip: View {
             )
         }
         .buttonStyle(.plain)
-    }
-    
-    private func formatReach(_ reach: Int) -> String {
-        if reach >= 1_000_000 {
-            return String(format: "%.1fM", Double(reach) / 1_000_000.0)
-        } else if reach >= 1_000 {
-            return String(format: "%.1fK", Double(reach) / 1_000.0)
-        } else {
-            return "\(reach)"
-        }
     }
 }
 
@@ -253,8 +250,7 @@ class HashtagResearchViewModel: ObservableObject {
         var allHashtags = (baseHashtags + platformSpecific + categoryHashtags).map { hashtag in
             HashtagInfo(
                 text: hashtag,
-                category: categorizeHashtag(hashtag),
-                estimatedReach: Int.random(in: 1000...10000000)
+                category: categorizeHashtag(hashtag)
             )
         }
         
@@ -327,7 +323,7 @@ class HashtagResearchViewModel: ObservableObject {
                 HashtagInsight(
                     type: .optimalCount,
                     title: "Optimal Hashtag Count",
-                    description: "Use 5-10 hashtags for best engagement. Mix popular (1M+ posts) and niche (10K-500K posts) hashtags.",
+                    description: "Use 5–10 relevant hashtags. Mix broad topic tags with niche tags that match your audience.",
                     icon: "number.circle.fill"
                 ),
                 HashtagInsight(
@@ -379,7 +375,6 @@ struct HashtagInfo: Identifiable {
     let id = UUID()
     let text: String
     let category: HashtagCategory
-    let estimatedReach: Int
 }
 
 enum HashtagCategory {
@@ -388,6 +383,16 @@ enum HashtagCategory {
     case lifestyle
     case food
     case travel
+
+    var label: String {
+        switch self {
+        case .general: return "General"
+        case .business: return "Business"
+        case .lifestyle: return "Lifestyle"
+        case .food: return "Food"
+        case .travel: return "Travel"
+        }
+    }
     
     var color: Color {
         switch self {

@@ -37,11 +37,10 @@ final class NotificationService {
         
         // Remove any existing notification for this post
         await cancelPostReminder(postId: post.id)
-        
-        // Create notification content
+
         let content = UNMutableNotificationContent()
         content.title = "Time to Review Your Post"
-        content.body = "Your \(post.platform) post is scheduled for now. Review and share it!"
+        content.body = "Your \(post.platform) post is ready. Review and share it manually."
         content.sound = .default
         content.badge = 1
         content.categoryIdentifier = "POST_REMINDER"
@@ -49,18 +48,21 @@ final class NotificationService {
             "postId": post.id,
             "type": "scheduledPost"
         ]
-        
-        // Schedule notification at the scheduled time
-        let triggerDate = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: post.scheduledDate)
-        let trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
-        
-        // Use post ID as identifier for easy cancellation
+
+        let trigger: UNNotificationTrigger
+        if post.scheduledDate <= Date().addingTimeInterval(60) {
+            trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+        } else {
+            let triggerDate = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: post.scheduledDate)
+            trigger = UNCalendarNotificationTrigger(dateMatching: triggerDate, repeats: false)
+        }
+
         let request = UNNotificationRequest(
             identifier: "post-\(post.id)",
             content: content,
             trigger: trigger
         )
-        
+
         try await center.add(request)
         print("Scheduled notification for post \(post.id) at \(post.scheduledDate)")
     }

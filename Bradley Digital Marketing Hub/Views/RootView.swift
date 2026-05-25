@@ -75,6 +75,7 @@ struct MainTabView: View {
                 Label("Home", systemImage: "house.fill")
             }
             .tag(0)
+            .accessibilityIdentifier("tab_home")
 
             NavigationStack {
                 ContentCalendarView(service: appViewModel.cloudKitService, socialMediaService: appViewModel.socialMediaService)
@@ -99,6 +100,7 @@ struct MainTabView: View {
                 Label("Tools", systemImage: "wrench.and.screwdriver.fill")
             }
             .tag(3)
+            .accessibilityIdentifier("tab_tools")
 
             NavigationStack {
                 ProfileView()

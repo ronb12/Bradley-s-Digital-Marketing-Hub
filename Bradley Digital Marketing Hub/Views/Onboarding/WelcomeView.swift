@@ -116,6 +116,7 @@ struct WelcomeView: View {
                                     .stroke(.white.opacity(0.3), lineWidth: 1)
                             )
                         }
+                        .accessibilityIdentifier("welcome_demo_mode_button")
                     }
                     .padding(.horizontal, 32)
                     .padding(.bottom, 24)
@@ -140,6 +141,7 @@ struct WelcomeView: View {
                 }
             }
         }
+        .accessibilityIdentifier("welcome_screen")
     }
 }
 

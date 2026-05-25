@@ -19,6 +19,11 @@ struct AnalyticsDashboardView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
+                HubDataDisclaimer(
+                    title: "Planning analytics only",
+                    message: "These stats come from your calendar schedule — not live engagement, reach, or impressions from social platforms."
+                )
+
                 periodSelector
                 keyMetricsSection
                 engagementChart
@@ -29,7 +34,7 @@ struct AnalyticsDashboardView: View {
             .padding()
         }
         .hubScreenBackground(colors)
-        .navigationTitle("Analytics")
+        .navigationTitle("Planning Analytics")
         .task {
             await viewModel.loadAnalytics(calendarItems: appViewModel.calendarItems)
         }
@@ -51,7 +56,7 @@ struct AnalyticsDashboardView: View {
 
     private var keyMetricsSection: some View {
         VStack(spacing: 12) {
-            HubSectionHeader("Key Metrics")
+            HubSectionHeader("Calendar Overview")
 
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                 HubMetricCard(
@@ -86,6 +91,9 @@ struct AnalyticsDashboardView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Posts Over Time")
                 .font(.headline)
+            Text("Scheduled items in your calendar")
+                .font(.caption)
+                .foregroundColor(.secondary)
 
             if #available(iOS 16.0, *) {
                 Chart(viewModel.postsByDate, id: \.date) { item in
@@ -144,14 +152,14 @@ struct AnalyticsDashboardView: View {
 
     private var contentPerformance: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Top Performing Content")
+            Text("Recent Scheduled Content")
                 .font(.headline)
 
             if viewModel.topContent.isEmpty {
                 HubEmptyState(
                     icon: "doc.text.magnifyingglass",
                     title: "No content yet",
-                    message: "Schedule posts in your calendar to see performance insights here."
+                    message: "Schedule posts in your calendar to see them listed here."
                 )
             } else {
                 ForEach(viewModel.topContent.prefix(5)) { item in
@@ -164,8 +172,11 @@ struct AnalyticsDashboardView: View {
 
     private var bestTimesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Best Times to Post")
+            Text("Posting Patterns")
                 .font(.headline)
+            Text("Based on when you've scheduled content — not platform engagement")
+                .font(.caption)
+                .foregroundColor(.secondary)
 
             if viewModel.bestPostingTimes.isEmpty {
                 HubEmptyState(

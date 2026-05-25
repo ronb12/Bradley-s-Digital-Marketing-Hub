@@ -85,8 +85,15 @@ final class SubscriptionManager: ObservableObject {
     }
 
     func restorePurchases() async {
+        isLoading = true
+        defer { isLoading = false }
         try? await AppStore.sync()
         await refreshEntitlements()
+    }
+
+    func displayPrice(for tier: SubscriptionTier) -> String? {
+        guard let productId = tier.productIdentifier else { return nil }
+        return availableProducts.first(where: { $0.id == productId })?.displayPrice
     }
 
     func overrideTier(_ tier: SubscriptionTier) {

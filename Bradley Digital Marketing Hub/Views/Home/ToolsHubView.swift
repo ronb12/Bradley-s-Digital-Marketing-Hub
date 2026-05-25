@@ -17,7 +17,7 @@ struct ToolsHubView: View {
                 Grid(horizontalSpacing: 12, verticalSpacing: 12) {
                     GridRow {
                         NavigationLink { AnalyticsDashboardView() } label: {
-                            HubActionCard(title: "Analytics", subtitle: "Performance overview", icon: "chart.bar.fill", tint: colors.primary)
+                            HubActionCard(title: "Planning Analytics", subtitle: "Calendar schedule stats", icon: "chart.bar.fill", tint: colors.primary)
                         }
                         NavigationLink { HashtagResearchView() } label: {
                             HubActionCard(title: "Hashtags", subtitle: "Tag research", icon: "number", tint: colors.secondary)

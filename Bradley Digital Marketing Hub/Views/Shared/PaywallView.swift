@@ -12,65 +12,81 @@ struct PaywallView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    VStack(spacing: 8) {
-                        Image(systemName: "crown.fill")
-                            .font(.largeTitle)
-                            .foregroundStyle(colors.primary)
-                        Text("Unlock more marketing firepower")
-                            .font(.title2.bold())
-                            .multilineTextAlignment(.center)
-                        Text("Choose the plan that fits your workflow")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding(.top, 8)
+            ZStack {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        VStack(spacing: 8) {
+                            Image(systemName: "crown.fill")
+                                .font(.largeTitle)
+                                .foregroundStyle(colors.primary)
+                            Text("Unlock more marketing firepower")
+                                .font(.title2.bold())
+                                .multilineTextAlignment(.center)
+                            Text("Choose the plan that fits your workflow")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(.top, 8)
 
-                    VStack(spacing: 14) {
-                        planCard(tier: .free, features: [
-                            "3 campaign plans",
-                            "10 calendar items",
-                            "Core templates",
-                            "Affiliate list",
-                            "Booking access"
-                        ])
-                        planCard(tier: .pro, features: [
-                            "Unlimited plans",
-                            "Unlimited calendar",
-                            "Premium templates",
-                            "Pro affiliate picks",
-                            "Priority booking"
-                        ], highlighted: true)
-                        planCard(tier: .agency, features: [
-                            "10 brands",
-                            "Agency-only templates",
-                            "Brand switching",
-                            "Campaign exports",
-                            "Team-ready workflows"
-                        ])
-                    }
+                        VStack(spacing: 14) {
+                            planCard(tier: .free, features: [
+                                "3 campaign plans",
+                                "10 calendar items",
+                                "Core templates",
+                                "Affiliate list",
+                                "Booking access"
+                            ])
+                            planCard(tier: .pro, features: [
+                                "Unlimited plans",
+                                "Unlimited calendar",
+                                "Premium templates",
+                                "Pro affiliate picks",
+                                "Priority booking"
+                            ], highlighted: true)
+                            planCard(tier: .agency, features: [
+                                "10 brands",
+                                "Agency-only templates",
+                                "Brand switching",
+                                "Campaign exports",
+                                "Team-ready workflows"
+                            ])
+                        }
 
-                    if let message = subscriptionManager.errorMessage {
-                        Text(message)
-                            .font(.caption)
-                            .foregroundColor(.red)
-                            .multilineTextAlignment(.center)
-                    }
+                        if let message = subscriptionManager.errorMessage {
+                            Text(message)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                                .multilineTextAlignment(.center)
+                        }
 
-                    Button("Restore Purchases") {
-                        Task { await subscriptionManager.restorePurchases() }
+                        Button("Restore Purchases") {
+                            Task { await subscriptionManager.restorePurchases() }
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(subscriptionManager.isLoading)
                     }
-                    .buttonStyle(.bordered)
+                    .padding()
                 }
-                .padding()
+                .hubScreenBackground(colors)
+
+                if subscriptionManager.isLoading {
+                    Color.black.opacity(0.2)
+                        .ignoresSafeArea()
+                    ProgressView("Processing…")
+                        .padding()
+                        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                }
             }
-            .hubScreenBackground(colors)
             .navigationTitle("Plans")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close") { appViewModel.showPaywall = false }
+                }
+            }
+            .onChange(of: subscriptionManager.currentTier) { _, tier in
+                if tier != .free {
+                    appViewModel.showPaywall = false
                 }
             }
         }
@@ -78,9 +94,24 @@ struct PaywallView: View {
 
     private func planCard(tier: SubscriptionTier, features: [String], highlighted: Bool = false) -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text(tier.displayName)
-                    .font(.title3.bold())
+            HStack(alignment: .firstTextBaseline) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(tier.displayName)
+                        .font(.title3.bold())
+                    if tier == .free {
+                        Text("Free")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    } else if let price = subscriptionManager.displayPrice(for: tier) {
+                        Text("\(price) / month")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("Price loads from App Store")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
                 Spacer()
                 if highlighted {
                     Text("Popular")
@@ -99,18 +130,12 @@ struct PaywallView: View {
             }
 
             Button(action: { purchase(tier: tier) }) {
-                Text(tier == .free ? "Current plan" : "Choose \(tier.displayName)")
+                Text(buttonTitle(for: tier))
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
             .tint(colors.primary)
-            .disabled(tier == .free && appViewModel.currentTier == .free)
-
-            if tier != .free {
-                Text(tier.productIdentifier ?? "")
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-            }
+            .disabled(isPlanDisabled(tier))
         }
         .hubCardStyle(colors: colors)
         .overlay {
@@ -119,10 +144,31 @@ struct PaywallView: View {
                     .stroke(colors.primary.opacity(0.35), lineWidth: 2)
             }
         }
+        .accessibilityIdentifier("paywall_plan_\(tier.rawValue)")
+    }
+
+    private func buttonTitle(for tier: SubscriptionTier) -> String {
+        if tier == .free {
+            return appViewModel.currentTier == .free ? "Current plan" : "Free tier"
+        }
+        if appViewModel.currentTier == tier {
+            return "Current plan"
+        }
+        return "Choose \(tier.displayName)"
+    }
+
+    private func isPlanDisabled(_ tier: SubscriptionTier) -> Bool {
+        if subscriptionManager.isLoading { return true }
+        if tier == .free { return appViewModel.currentTier == .free }
+        if appViewModel.currentTier == tier { return true }
+        if tier != .free && subscriptionManager.displayPrice(for: tier) == nil && subscriptionManager.availableProducts.isEmpty {
+            return false
+        }
+        return false
     }
 
     private func purchase(tier: SubscriptionTier) {
-        guard tier != .free else { return }
+        guard tier != .free, appViewModel.currentTier != tier else { return }
         Task {
             await subscriptionManager.purchase(tier: tier)
             await appViewModel.updatePlan(to: subscriptionManager.currentTier)

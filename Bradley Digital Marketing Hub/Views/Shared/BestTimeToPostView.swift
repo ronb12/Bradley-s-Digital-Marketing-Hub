@@ -15,6 +15,11 @@ struct BestTimeToPostView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
+                HubDataDisclaimer(
+                    title: "Schedule-based suggestions",
+                    message: "Recommendations use your calendar history and general platform guidance — not live engagement metrics."
+                )
+
                 platformSelector
                 bestTimesSummary
                 dayOfWeekAnalysis

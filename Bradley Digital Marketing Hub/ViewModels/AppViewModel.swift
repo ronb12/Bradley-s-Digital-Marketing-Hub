@@ -61,6 +61,7 @@ final class AppViewModel: ObservableObject {
                             authState = .authenticated
                         }
                         await refreshPortal()
+                        await activateSchedulingPipeline()
                     }
                 } catch {
                     // CloudKit might fail - that's OK, stay on onboarding
@@ -135,6 +136,30 @@ final class AppViewModel: ObservableObject {
         
         authState = .authenticated
         await refreshPortal()
+        await activateSchedulingPipeline()
+    }
+
+    private func activateSchedulingPipeline() async {
+        guard let userId = userProfile?.userId, !isDemoMode else {
+            PostScheduler.shared.stopScheduling()
+            return
+        }
+
+        PostScheduler.shared.configure(service: socialMediaService)
+        PostScheduler.shared.startScheduling(socialMediaService: socialMediaService, userId: userId)
+        PostScheduler.shared.scheduleBackgroundTask()
+
+        do {
+            let posts = try await socialMediaService.fetchScheduledPosts(userId: userId)
+            await NotificationService.shared.rescheduleAllReminders(
+                userId: userId,
+                posts: posts,
+                service: socialMediaService
+            )
+            await socialMediaService.processScheduledPosts(userId: userId)
+        } catch {
+            print("Failed to sync scheduling pipeline: \(error.localizedDescription)")
+        }
     }
 
     func enterDemoMode() {
@@ -187,6 +212,8 @@ final class AppViewModel: ObservableObject {
         if let tools = try? await toolsTask {
             affiliateTools = tools
         }
+
+        await activateSchedulingPipeline()
     }
 
     private func fetchBrands(for profile: UserProfile) async throws -> [Brand] {
@@ -210,6 +237,7 @@ final class AppViewModel: ObservableObject {
     }
 
     func signOut() {
+        PostScheduler.shared.stopScheduling()
         authService.signOut()
         isDemoMode = false
         didBootstrap = false
