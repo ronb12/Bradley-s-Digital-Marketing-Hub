@@ -29,6 +29,10 @@ Bradley Digital Marketing Hub is a native iOS 17+ SwiftUI application that helps
 
 Update StoreKit 2 product IDs inside `SubscriptionTier.productIdentifier` and match them with App Store Connect before shipping.
 
+## AI / Codex
+
+Agents and [OpenAI Codex CLI](https://developers.openai.com/codex/) read [`AGENTS.md`](AGENTS.md) for repository conventions, architecture, and verification steps. Update that file when workflows or project boundaries change.
+
 ## Project Structure
 ```
 Bradley-Digital-Marketing-Hub
